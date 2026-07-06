@@ -1,0 +1,8 @@
+# MacOS
+.DS_Store
+
+# ENV
+.env
+.env.local
+.env.development
+.env.production
