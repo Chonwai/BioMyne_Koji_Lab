@@ -1,0 +1,15 @@
+loop_id: koji-phase1-delivery-loop
+done_when:
+  - version_plan_exists_and_matches_phase1_strategy
+  - repo_baseline_artifacts_exist
+  - sql_env_skills_ops_observability_artifacts_exist
+  - no_known_critical_or_high_repo_findings_remain
+  - trace_and_state_artifacts_are_updated
+fail_when:
+  - implementation_requires_unverified_runtime_fabrication
+  - repo_artifacts_conflict_with_engineering_spec
+  - critical_security_or_data_integrity_issue_remains
+escalate_when:
+  - unsupported_hermes_runtime_detail_is_required
+  - architecture_must_shift_to_phase2_scope
+  - quality_gate_cannot_reach_threshold_with_bounded_repairs

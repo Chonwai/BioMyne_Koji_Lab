@@ -1,0 +1,14 @@
+profile_name: biotech-worker
+description: Biotech intelligence collection worker for BioMyne Koji Phase 1
+schedule:
+  enabled: false
+  cadence: daily
+runtime:
+  primary_model: ${OLLAMA_MODEL_TAG}
+  cloud_fallback_enabled: ${ENABLE_CLOUD_FALLBACK}
+storage:
+  supabase_url: ${SUPABASE_URL}
+delivery:
+  channel: ${DELIVERY_CHANNEL}
+observability:
+  langfuse_url: ${LANGFUSE_BASE_URL}

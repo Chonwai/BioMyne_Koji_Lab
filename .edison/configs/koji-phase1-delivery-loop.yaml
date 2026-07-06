@@ -1,0 +1,34 @@
+loop_id: koji-phase1-delivery-loop
+trigger: manual
+scope: BioMyne Koji Phase 1 repo baseline delivery
+quality_mode: strict
+pass_threshold: 93
+write_policy:
+  allowed_paths:
+    - README.md
+    - .env.example
+    - docs/**
+    - hermes/**
+    - ops/**
+    - sql/**
+    - observability/**
+    - .edison/**
+budget:
+  max_iterations: 4
+  max_same_error_repeats: 2
+  max_wall_time: 180m
+  max_tokens: 260000
+human_gates:
+  - architecture_shift_required
+  - unsupported_hermes_runtime_assumption
+  - unresolved_pm_conflict
+stop_policy:
+  escalate_on:
+    - critical_review_finding
+    - unresolved_scope_conflict
+    - budget_exhausted
+  handoff_chain:
+    - edison-version-plan-writer
+    - edison-document-review-audit
+    - edison-tech-lead-dev-workflow
+    - edison-code-review-audit

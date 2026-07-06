@@ -1,0 +1,22 @@
+sources:
+  - name: STAT News
+    url: https://www.statnews.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: BioPharma Dive
+    url: https://www.biopharmadive.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: Nature Biotechnology
+    url: https://www.nature.com/nbt/
+    domain: biotech
+    source_type: journal
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: article_listing
