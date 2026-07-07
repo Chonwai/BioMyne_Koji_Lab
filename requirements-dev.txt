@@ -1,1 +1,2 @@
 PyYAML>=6.0
+langfuse>=2,<3

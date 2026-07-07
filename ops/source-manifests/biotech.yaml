@@ -20,3 +20,17 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: article_listing
+  - name: arXiv Quantitative Biology
+    url: https://arxiv.org/archive/q-bio
+    domain: biotech
+    source_type: preprint
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: rss_feed
+  - name: bioRxiv
+    url: https://www.biorxiv.org/
+    domain: biotech
+    source_type: preprint
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: rss_feed

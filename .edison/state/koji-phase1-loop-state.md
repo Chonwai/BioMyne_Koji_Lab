@@ -6,7 +6,6 @@
 - current_stage: `loop closeout`
 - open_items:
   - replace scaffold-level Hermes artifacts with real runtime-tested implementation during actual engineering execution
-  - verify SQL files in real Supabase/PostgreSQL environment
 - blocked_items:
   - none
 - done_items:
@@ -17,3 +16,5 @@
   - Langfuse compose created
   - controller config, contract, trace, and state created
   - repo assumptions documented
+  - manual pipeline persistence validated against real Supabase tables (`articles`, `article_entities`, `delivery_logs`)
+  - minimal Langfuse run trace validated against local Langfuse v2 dashboard
