@@ -1,0 +1,35 @@
+loop_id: dashboard-spec-v1
+version: 1.0
+
+done_when:
+  - condition: "Research report covers ≥5 evidence-backed dashboard feature recommendations"
+    evidence_required:
+      proof: "Step-1 research output contains ≥5 sections with external references"
+  - condition: "Spec document covers all 7 planned dashboard pages with full component breakdown"
+    evidence_required:
+      proof: "Spec doc contains Overview, Feed, Pipeline, Sources, Entities, Analytics, Settings sections"
+  - condition: "Drizzle ORM schema + query patterns documented for all 6 Supabase tables"
+    evidence_required:
+      proof: "Spec doc contains Drizzle schema definitions for sources, crawl_runs, articles, entities, article_entities, delivery_logs"
+  - condition: "Entity relationship visualization approach documented with component choice"
+    evidence_required:
+      proof: "Spec doc specifies viz library and interaction model for entity co-occurrence"
+  - condition: "Manual sync trigger design documented (API route + UI)"
+    evidence_required:
+      proof: "Spec doc contains /api/sync endpoint spec + UI trigger component design"
+  - condition: "Review score ≥ 95 (merciless threshold)"
+    evidence_required:
+      proof: "edison-document-review-audit produces final score ≥ 95 with zero Critical findings"
+
+fail_when:
+  - condition: "Review score < 85 after 3 iterations"
+    action: escalate_to_human
+  - condition: "Research step returns fewer than 3 external references"
+    action: rerun_research_with_broader_scope
+  - condition: "Spec doc missing Drizzle ORM section entirely"
+    action: rerun_spec_step
+
+escalate_when:
+  - condition: "circuit_breaker_active"
+  - condition: "budget > 90% consumed before step-3 completes"
+  - condition: "human gate triggered twice without resolution"

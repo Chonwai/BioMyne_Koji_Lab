@@ -1,0 +1,29 @@
+loop_id: dashboard-build-v1
+version: 1.0
+
+done_when:
+  - condition: "Koji route tree exists and all 7 dashboard pages are registered"
+    evidence_required:
+      proof: "Next.js build output includes /dashboard/koji/{overview,feed,pipeline,sources,entities,analytics,settings}"
+  - condition: "Build completes successfully with TypeScript passing"
+    evidence_required:
+      proof: "npm run build exits successfully in biomyne-koji-dashboard"
+  - condition: "Live runtime validation confirms overview, feed, sources, settings, and entities render real Supabase data"
+    evidence_required:
+      proof: "Playwright spot-checks show populated page text and live counts"
+  - condition: "Manual sync APIs and source/article mutation APIs exist"
+    evidence_required:
+      proof: "App routes include /api/pipeline/* and /api/koji/* handlers"
+  - condition: "Engineering spec reflects the implemented runtime decisions"
+    evidence_required:
+      proof: "dashboard-engineering-spec.md updated for same-machine deployment, raw_markdown-first UI, and preprint source type"
+
+fail_when:
+  - condition: "Build cannot pass after bounded local repair"
+    action: escalate_to_human
+  - condition: "Dashboard pages render only template shells with no real data"
+    action: escalate_to_human
+
+escalate_when:
+  - condition: "same-machine runtime cannot access pipeline env or script path"
+  - condition: "live Supabase data shape diverges beyond bounded repair scope"

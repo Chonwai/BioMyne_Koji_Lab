@@ -1,0 +1,29 @@
+loop_id: dashboard-hardening-v1
+version: 1.0
+
+done_when:
+  - condition: "Koji route group has loading and error boundaries"
+    evidence_required:
+      proof: "dashboard/koji/loading.tsx and dashboard/koji/error.tsx exist and render meaningful UI"
+  - condition: "UI-triggered manual sync is validated end-to-end"
+    evidence_required:
+      proof: "Settings page Start Sync Now triggers a new crawl run and UI updates are observed"
+  - condition: "Build remains successful after hardening changes"
+    evidence_required:
+      proof: "npm run build exits successfully in biomyne-koji-dashboard"
+  - condition: "Key Koji pages remain runtime-validated after hardening"
+    evidence_required:
+      proof: "Playwright checks confirm overview/feed/sources/settings/entities still render live data"
+  - condition: "Residual runtime warning status is improved or explicitly documented"
+    evidence_required:
+      proof: "Turbopack warning is either eliminated or retained with a precise tradeoff note in state/trace/final report"
+
+fail_when:
+  - condition: "manual sync cannot be triggered from UI"
+    action: escalate_to_human
+  - condition: "hardening breaks build or live data rendering"
+    action: escalate_to_human
+
+escalate_when:
+  - condition: "warning removal requires abandoning same-machine sibling env fallback"
+  - condition: "pipeline trigger behavior cannot be validated within safe local scope"

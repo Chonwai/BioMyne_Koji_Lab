@@ -34,3 +34,45 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: rss_feed
+  - name: Fierce Biotech
+    url: https://www.fiercebiotech.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: GEN – Genetic Engineering & Biotechnology News
+    url: https://www.genengnews.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: Endpoints News
+    url: https://endpoints.news/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: BioCentury
+    url: https://www.biocentury.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links
+  - name: Science
+    url: https://www.science.org/
+    domain: biotech
+    source_type: journal
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: rss_feed
+  - name: SynBioBeta
+    url: https://www.synbiobeta.com/
+    domain: biotech
+    source_type: news
+    enabled: true
+    crawl_frequency: daily
+    extraction_mode: homepage_links

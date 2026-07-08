@@ -1,0 +1,64 @@
+loop_id: dashboard-build-v1
+loop_type: one-feature-build
+quality_mode: strict
+pass_threshold: 95
+description: >
+  Implement the BioMyne Koji Admin Dashboard on top of the existing Next.js template,
+  covering Sprint 1-3 scope with live Supabase data, same-machine pipeline control,
+  and entity relationship visualization.
+
+trigger:
+  type: manual
+  initiated_by: founder
+  context: "Approved after dashboard engineering spec review"
+
+scope:
+  primary_repo: BiomyneKoji/biomyne-koji-dashboard
+  supporting_repo: BiomyneKoji/biomyne-koji
+  slices:
+    - Drizzle-ready data access layer with Supabase REST fallback
+    - Koji route tree and sidebar integration
+    - Overview, Feed, Pipeline, Sources, Entities, Analytics, Settings pages
+    - Pipeline trigger/progress API routes
+    - Source CRUD and article status mutations
+
+budget:
+  max_tokens: 260000
+  max_iterations: 3
+  max_wall_time: 6h
+
+write_policy:
+  allowed_paths:
+    - BiomyneKoji/biomyne-koji-dashboard/**
+    - BiomyneKoji/biomyne-koji/docs/**
+    - .edison/**
+  forbidden_paths:
+    - BiomyneKoji/biomyne-koji/.env
+    - BiomyneKoji/biomyne-koji/sql/**
+
+dispatch:
+  steps:
+    - id: implement-dashboard
+      skill: edison-tech-lead-dev-workflow
+      required: true
+      purpose: "Implement the approved dashboard slice end-to-end"
+    - id: review-dashboard
+      skill: edison-code-review-audit
+      required: false
+      when: "independent review requested after implementation"
+      purpose: "Optional external audit after maker self-audit"
+
+human_gates:
+  - after_step: implement-dashboard
+    condition: "build fails repeatedly or runtime architecture diverges from same-machine deployment"
+    action: "Escalate to founder with blocker note"
+  - after_step: implement-dashboard
+    condition: "implementation and validation complete"
+    action: "Present delivery summary and residual risks"
+
+escalation:
+  destination: founder
+  trigger_conditions:
+    - repeated_fail_x3
+    - budget_exhausted
+    - circuit_breaker_active

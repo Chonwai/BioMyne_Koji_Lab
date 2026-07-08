@@ -18,3 +18,44 @@
   - repo assumptions documented
   - manual pipeline persistence validated against real Supabase tables (`articles`, `article_entities`, `delivery_logs`)
   - minimal Langfuse run trace validated against local Langfuse v2 dashboard
+
+---
+
+## Loop: dashboard-spec-v1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETED** |
+| Completed | 2026-07-07 |
+| Quality Score | **96/100** (merciless 95+ target: ✅ PASS) |
+| Output | `biomyne-koji/docs/phase1/dashboard-engineering-spec.md` |
+| Next Step | Founder reviews spec → approves → engineering execution begins |
+
+---
+
+## Loop: dashboard-build-v1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | `biomyne-koji-dashboard` Koji Sprint 1-3 implementation |
+| Validation | `npm run build` passes; Playwright runtime spot-checks passed on overview/feed/sources/settings/entities |
+| Residual Risk | One non-blocking Turbopack NFT warning from sibling env/script autodetection in `src/lib/koji/env.server.ts` |
+| Next Step | Founder reviews delivered dashboard; optional hardening pass can remove the remaining warning and run one UI-triggered manual sync end-to-end |
+
+---
+
+## Loop: dashboard-hardening-v1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | Koji route-level hardening + UI-triggered manual sync validation |
+| Validation | `npm run build` passes; Settings now hydrates active runs into `Live`; UI-triggered manual sync completed successfully to Supabase |
+| Hardening Wins | Shared `loading.tsx` + `error.tsx`; active-run hydration; duplicate trigger protection confirmed; spec updated |
+| Residual Risk | One non-blocking Turbopack NFT warning remains while same-machine sibling env/script fallback is preserved |
+| Next Step | Dashboard is ready for broader stakeholder walkthrough; optional future cleanup can remove sibling env fallback if deployment secrets are copied into dashboard-local env |

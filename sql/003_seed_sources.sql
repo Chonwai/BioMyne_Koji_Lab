@@ -27,3 +27,39 @@ select 'bioRxiv', 'https://www.biorxiv.org/', 'biotech', 'preprint', true, 'dail
 where not exists (
   select 1 from sources where url = 'https://www.biorxiv.org/'
 );
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'Fierce Biotech', 'https://www.fiercebiotech.com/', 'biotech', 'news', true, 'daily', 'homepage_links'
+where not exists (
+  select 1 from sources where url = 'https://www.fiercebiotech.com/'
+);
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'GEN – Genetic Engineering & Biotechnology News', 'https://www.genengnews.com/', 'biotech', 'news', true, 'daily', 'homepage_links'
+where not exists (
+  select 1 from sources where url = 'https://www.genengnews.com/'
+);
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'Endpoints News', 'https://endpoints.news/', 'biotech', 'news', true, 'daily', 'homepage_links'
+where not exists (
+  select 1 from sources where url = 'https://endpoints.news/'
+);
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'BioCentury', 'https://www.biocentury.com/', 'biotech', 'news', true, 'daily', 'homepage_links'
+where not exists (
+  select 1 from sources where url = 'https://www.biocentury.com/'
+);
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'Science', 'https://www.science.org/', 'biotech', 'journal', true, 'daily', 'rss_feed'
+where not exists (
+  select 1 from sources where url = 'https://www.science.org/'
+);
+
+insert into sources (name, url, domain, source_type, enabled, crawl_frequency, extraction_mode)
+select 'SynBioBeta', 'https://www.synbiobeta.com/', 'biotech', 'news', true, 'daily', 'homepage_links'
+where not exists (
+  select 1 from sources where url = 'https://www.synbiobeta.com/'
+);

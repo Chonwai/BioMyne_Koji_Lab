@@ -21,7 +21,7 @@ def main() -> None:
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 128000,
+        "max_tokens": 4096,
         "temperature": 0.3,
     }
 

@@ -1,0 +1,58 @@
+loop_id: dashboard-hardening-v1
+loop_type: one-feature-build
+quality_mode: strict
+pass_threshold: 95
+description: >
+  Harden the shipped Koji dashboard with route-level loading/error boundaries,
+  UI polish, warning reduction where feasible, and UI-triggered manual sync
+  end-to-end validation.
+
+trigger:
+  type: manual
+  initiated_by: founder
+  context: "Dashboard Sprint 1-3 shipped; proceed with hardening and real UI sync verification"
+
+scope:
+  primary_repo: BiomyneKoji/biomyne-koji-dashboard
+  supporting_repo: BiomyneKoji/biomyne-koji
+  slices:
+    - Route-level loading and error boundaries for Koji pages
+    - Strict runtime validation of manual sync from Settings UI
+    - Mobile and UI polish on Koji surfaces only
+    - Reduce or document the remaining Turbopack NFT warning
+
+budget:
+  max_tokens: 180000
+  max_iterations: 3
+  max_wall_time: 4h
+
+write_policy:
+  allowed_paths:
+    - BiomyneKoji/biomyne-koji-dashboard/**
+    - BiomyneKoji/biomyne-koji/docs/**
+    - .edison/**
+  forbidden_paths:
+    - BiomyneKoji/biomyne-koji/.env
+    - BiomyneKoji/biomyne-koji/sql/**
+
+dispatch:
+  steps:
+    - id: harden-dashboard
+      skill: edison-tech-lead-dev-workflow
+      required: true
+      purpose: "Implement and validate the hardening slice"
+
+human_gates:
+  - after_step: harden-dashboard
+    condition: "manual sync fails end-to-end or runtime warning requires architectural tradeoff"
+    action: "Escalate with blocker note and recommendation"
+  - after_step: harden-dashboard
+    condition: "hardening and validation complete"
+    action: "Present final validation outcome and residual risks"
+
+escalation:
+  destination: founder
+  trigger_conditions:
+    - repeated_fail_x3
+    - budget_exhausted
+    - circuit_breaker_active

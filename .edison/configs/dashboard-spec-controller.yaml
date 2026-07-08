@@ -1,0 +1,86 @@
+loop_id: dashboard-spec-v1
+loop_type: spec-to-sprint-contract
+quality_mode: merciless
+pass_threshold: 95
+description: >
+  Research, design, and produce a production-ready engineering spec for the
+  BioMyne Koji Admin Dashboard (Phase 1 data layer + Drizzle ORM + entity viz).
+
+trigger:
+  type: manual
+  initiated_by: founder
+  context: "Phase 1 pipeline complete; Supabase has live data; Next.js dashboard template provisioned"
+
+scope:
+  primary_repo: BiomyneKoji/biomyne-koji-dashboard
+  supporting_repo: BiomyneKoji/biomyne-koji
+  tech_stack:
+    - Next.js 16 App Router
+    - Shadcn/UI + Tailwind CSS v4
+    - Drizzle ORM + Supabase Postgres
+    - Recharts
+    - TanStack Table v8
+    - Zustand v5
+    - Zod v4
+
+budget:
+  max_tokens: 200000
+  max_iterations: 4
+  max_wall_time: 4h
+  quality_mode_multiplier: 2x
+
+write_policy:
+  allowed_paths:
+    - BiomyneKoji/biomyne-koji-dashboard/**
+    - BiomyneKoji/biomyne-koji/docs/**
+    - .edison/**
+  forbidden_paths:
+    - BiomyneKoji/biomyne-koji/sql/**  # no schema changes without review
+    - BiomyneKoji/biomyne-koji/.env
+
+dispatch:
+  steps:
+    - id: step-1-research
+      skill: jarvis-deep-research-orchestrator
+      agent: jarvis-deep-research
+      required: true
+      purpose: "External evidence on intelligence dashboard design, Drizzle+Supabase patterns, entity viz"
+
+    - id: step-2-spec
+      skill: edison-version-plan-writer
+      required: true
+      purpose: "Produce the full dashboard engineering spec document"
+      depends_on: step-1-research
+
+    - id: step-3-review
+      skill: edison-document-review-audit
+      required: true
+      purpose: "Strict quality gate — must reach 95+"
+      depends_on: step-2-spec
+
+    - id: step-4-repair
+      skill: edison-version-plan-writer
+      required: false
+      when: "step-3-review verdict is REPAIRABLE"
+      purpose: "Address reviewer findings and regenerate spec"
+      depends_on: step-3-review
+
+optional_jarvis_assists:
+  - assist: concept-explainer
+    when: "Drizzle ORM Phase 2 integration patterns need clarification"
+
+human_gates:
+  - after_step: step-3-review
+    condition: "review score < 95 AND iterations >= 2"
+    action: "Pause loop and present findings to founder for direction"
+
+  - after_step: step-3-review
+    condition: "review score >= 95"
+    action: "Present final spec for founder approval before development begins"
+
+escalation:
+  destination: founder
+  trigger_conditions:
+    - repeated_fail_x3
+    - budget_exhausted
+    - circuit_breaker_active
