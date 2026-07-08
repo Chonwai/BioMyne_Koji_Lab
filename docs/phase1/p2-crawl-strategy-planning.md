@@ -57,12 +57,12 @@ flowchart TD
 
 > 下表是 **planning envelope**，不是批准級財務預測。現階段唯一較穩的 baseline 是目前雲端 credits 大約落在 `~4,830 / month` 的量級。P2A 的直接 Firecrawl credits 收益主要來自 `map` 減量與 URL 變體去重；`content_hash` 主要節省的是 **LLM token / analysis 成本**，不是既有單篇 scrape credits。
 
-| 情境 | Map Calls/月 | Scrape/月 | 對 Firecrawl Credits 的方向性影響 | 主要收益 | 信心 |
-| --- | :---: | :---: | --- | --- | :---: |
-| **現狀**（P0/P1 後） | 330 | ~4,500 | baseline | 已有 exact URL dedupe | 中 |
-| **P2A**（前提：完成 RSS/sitemap surface audit） | ~44–220 | ~4,300–4,500 | **小幅下降**，不是劇烈下降 | discovery 去雜訊、map 減量、URL 變體去重、為 refresh lane 建 state | 中低 |
-| **P2B**（+ refresh lane + 分類頁輪巡） | ~44–220 | ~4,400–5,300 | **持平到上升** | freshness / revision capture / category signal 提升 | 低 |
-| **P2C**（+ budget modes + 完整 throttle） | policy-dependent | policy-dependent | **可控，但以 coverage / freshness 交換** | 成本上限治理，而不是天然省錢 | 中 |
+| 情境                                            |   Map Calls/月   |    Scrape/月     | 對 Firecrawl Credits 的方向性影響        | 主要收益                                                           | 信心 |
+| ----------------------------------------------- | :--------------: | :--------------: | ---------------------------------------- | ------------------------------------------------------------------ | :--: |
+| **現狀**（P0/P1 後）                            |       330        |      ~4,500      | baseline                                 | 已有 exact URL dedupe                                              |  中  |
+| **P2A**（前提：完成 RSS/sitemap surface audit） |     ~44–220      |   ~4,300–4,500   | **小幅下降**，不是劇烈下降               | discovery 去雜訊、map 減量、URL 變體去重、為 refresh lane 建 state | 中低 |
+| **P2B**（+ refresh lane + 分類頁輪巡）          |     ~44–220      |   ~4,400–5,300   | **持平到上升**                           | freshness / revision capture / category signal 提升                |  低  |
+| **P2C**（+ budget modes + 完整 throttle）       | policy-dependent | policy-dependent | **可控，但以 coverage / freshness 交換** | 成本上限治理，而不是天然省錢                                       |  中  |
 
 > 補充：若只看 LLM 與分析成本，`content_hash + analysis_fingerprint` 在 refresh lane 啟用後的節省潛力通常會比 Firecrawl credits 節省更大。
 
@@ -131,12 +131,12 @@ flowchart TD
 
 **P2A0 建議執行規則**：
 
-| 項目 | 建議 |
-| --- | --- |
-| Owner | PM / research owner + engineering owner 共同完成 |
-| 時間盒 | 2–3 個工作天 |
-| 初始 scope | 先做 5 個 pilot sources，不要求 11 個來源一次完成 |
-| 必交 artifact | 每個 pilot source 一行記錄：`primary surface`、`fallback surface`、`sample URL`、`freshness signal`、`known failure mode` |
+| 項目            | 建議                                                                                                                                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Owner           | PM / research owner + engineering owner 共同完成                                                                                                                                                                                             |
+| 時間盒          | 2–3 個工作天                                                                                                                                                                                                                                 |
+| 初始 scope      | 先做 5 個 pilot sources，不要求 11 個來源一次完成                                                                                                                                                                                            |
+| 必交 artifact   | 每個 pilot source 一行記錄：`primary surface`、`fallback surface`、`sample URL`、`freshness signal`、`known failure mode`                                                                                                                    |
 | Go / No-Go 門檻 | 至少 80% 的 pilot sources 必須各自找到 1 個可用 primary surface，且每個 source 都有明確 fallback；另外 pilot 中每一種 source family（新聞媒體 / 學術期刊 / preprint）都至少要有 1 個通過案例；若未達標，P2A 不進入實作，先回到 planning 修正 |
 
 **P2A0 完成的判定標準**：不是「所有來源都完美」，而是「pilot 範圍內已能明確回答每個來源先走 RSS、sitemap、category，還是只能暫時保留 map fallback」。
@@ -240,11 +240,11 @@ flowchart TD
 
 **Source family normalization policy（先定規則，避免實作漂移）**：
 
-| Source family | Trailing slash | Query params | Host / scheme | 備註 |
-| --- | --- | --- | --- | --- |
-| 新聞媒體文章 URL | 以 publisher 現況為準，不主動加 slash | 移除 tracking params | lowercase host / default port removal | 重點是消除 `utm_*`, `fbclid`, `gclid`, `ref` |
-| DOI / journal article URL | 不主動改 trailing slash | 一般無 query，若有 tracking 一樣移除 | lowercase host / default port removal | 避免碰 path semantics |
-| preprint content URL | 不主動改 trailing slash | 一般無 query，若有 tracking 一樣移除 | lowercase host / default port removal | 對 `/content/10.1101/...`、`/abs/...` 保守處理 |
+| Source family             | Trailing slash                        | Query params                         | Host / scheme                         | 備註                                           |
+| ------------------------- | ------------------------------------- | ------------------------------------ | ------------------------------------- | ---------------------------------------------- |
+| 新聞媒體文章 URL          | 以 publisher 現況為準，不主動加 slash | 移除 tracking params                 | lowercase host / default port removal | 重點是消除 `utm_*`, `fbclid`, `gclid`, `ref`   |
+| DOI / journal article URL | 不主動改 trailing slash               | 一般無 query，若有 tracking 一樣移除 | lowercase host / default port removal | 避免碰 path semantics                          |
+| preprint content URL      | 不主動改 trailing slash               | 一般無 query，若有 tracking 一樣移除 | lowercase host / default port removal | 對 `/content/10.1101/...`、`/abs/...` 保守處理 |
 
 #### 2.1.4 Per-Source Cursor State（基礎設施）
 
@@ -798,7 +798,9 @@ CREATE INDEX idx_entities_canonical_name ON entities(canonical_name, entity_type
 在 P2A 實作啟動前，請確認以下問題：
 
 1. **哪些 3-5 個來源作為 P2A pilot set？** 建議：STAT News（RSS 可靠）、Nature Biotechnology（已有 sitemap 基礎）、bioRxiv（preprint refresh 需求明確）、Fierce Biotech（RSS 可靠）、GEN（RSS 可靠）
-  - 補充：pilot set 應至少覆蓋 1 個 RSS-reliable source、1 個 sitemap-first source、1 個 preprint refresh-prone source、1 個 paywall 或 drift-prone source，避免 pilot 過度偏向 easy cases
+
+- 補充：pilot set 應至少覆蓋 1 個 RSS-reliable source、1 個 sitemap-first source、1 個 preprint refresh-prone source、1 個 paywall 或 drift-prone source，避免 pilot 過度偏向 easy cases
+
 2. **P2A schema migration 是否接受？** 需要新增 `source_discovery_state` 表、以及 `articles` 表新增 7 個欄位。這是否在 Phase 1 Supabase 方案中可行？
 3. **哪些來源允許進入 refresh lane？** 建議僅限 preprint（bioRxiv、arXiv）和學術期刊（Nature Biotech、Science），新聞媒體初期不啟用 refresh
 4. **每月 Firecrawl credit 預算上限是多少？** 這決定 conserve/critical 模式的觸發閾值。Standard plan 100K credits 的 30% = 30K 作為 conserve 線是否合理？

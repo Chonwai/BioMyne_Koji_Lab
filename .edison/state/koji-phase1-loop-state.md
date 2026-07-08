@@ -101,13 +101,13 @@
 
 ## Loop: firecrawl-self-host-research-v1
 
-| Field | Value |
-| --- | --- |
-| Status | **COMPLETED** |
-| Completed | 2026-07-08 |
-| Quality Result | **PASS (95+ target met)** |
-| Output | `docs/phase1/firecrawl-self-host-decision-memo.md` |
-| Validation | Official Firecrawl self-host, open-source-vs-cloud, pricing, docker-compose, helm, queue-status, and monitoring docs cross-checked; independent review found no remaining blocking decision-quality issues |
-| Research Wins | confirmed self-host is officially supported but not cloud-parity; confirmed no Fire-engine in self-host; confirmed current self-host limitation around Supabase configuration; mapped official stack (`api`, `playwright-service`, `redis`, `rabbitmq`, `nuq-postgres`, workers); documented cloud-first vs hybrid vs full self-host decision path |
-| Residual Risk | Self-host economics still depend on future source mix, proxy needs, and operational appetite; no PoC has been run yet |
-| Next Step | Founder reviews `docs/phase1/firecrawl-self-host-decision-memo.md`; if interest remains, next safe step is provider-abstraction planning, not immediate infrastructure build-out |
+| Field          | Value                                                                                                                                                                                                                                                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status         | **COMPLETED**                                                                                                                                                                                                                                                                                                                                      |
+| Completed      | 2026-07-08                                                                                                                                                                                                                                                                                                                                         |
+| Quality Result | **PASS (95+ target met)**                                                                                                                                                                                                                                                                                                                          |
+| Output         | `docs/phase1/firecrawl-self-host-decision-memo.md`                                                                                                                                                                                                                                                                                                 |
+| Validation     | Official Firecrawl self-host, open-source-vs-cloud, pricing, docker-compose, helm, queue-status, and monitoring docs cross-checked; independent review found no remaining blocking decision-quality issues                                                                                                                                         |
+| Research Wins  | confirmed self-host is officially supported but not cloud-parity; confirmed no Fire-engine in self-host; confirmed current self-host limitation around Supabase configuration; mapped official stack (`api`, `playwright-service`, `redis`, `rabbitmq`, `nuq-postgres`, workers); documented cloud-first vs hybrid vs full self-host decision path |
+| Residual Risk  | Self-host economics still depend on future source mix, proxy needs, and operational appetite; no PoC has been run yet                                                                                                                                                                                                                              |
+| Next Step      | Founder reviews `docs/phase1/firecrawl-self-host-decision-memo.md`; if interest remains, next safe step is provider-abstraction planning, not immediate infrastructure build-out                                                                                                                                                                   |
