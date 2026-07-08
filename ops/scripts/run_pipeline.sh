@@ -334,7 +334,7 @@ while IFS= read -r line; do
   SOURCE_ENTITYS=0
   SOURCE_ANALYSIS_ERRORS=0
 
-  while IFS=$'\t' read -r ARTICLE_URL TITLE_HINT SCORE_HINT PUBLISHED_AT_HINT DISCOVERY_METHOD_HINT PROCESSING_LANE EXISTING_ARTICLE_ID EXISTING_CONTENT_HASH; do
+  while IFS=$'\037' read -r ARTICLE_URL TITLE_HINT SCORE_HINT PUBLISHED_AT_HINT DISCOVERY_METHOD_HINT PROCESSING_LANE EXISTING_ARTICLE_ID EXISTING_CONTENT_HASH; do
     echo -e "    ${YELLOW}→${NC} Scraping article: ${ARTICLE_URL}"
 
     ARTICLE_TMP=$(mktemp "$SCRAPED_DIR/.article_md_XXXXXX")
@@ -378,7 +378,7 @@ while IFS= read -r line; do
 
     echo -e "    ${YELLOW}→${NC} Analyzing article with Qwen 3.6 (timeout=${LLM_TIMEOUT}s)..."
     set +e
-    ANALYSIS_OUT=$(SRC_NAME="$SRC_NAME" SRC_URL="$SRC_URL" ARTICLE_URL="$ARTICLE_URL" TITLE_HINT="$TITLE_HINT" ARTICLE_PUBLISHED_AT="$PUBLISHED_AT_HINT" DISCOVERY_METHOD="$DISCOVERY_METHOD_HINT" EXISTING_ARTICLE_ID="$EXISTING_ARTICLE_ID" PROCESSING_LANE="$PROCESSING_LANE" ANALYSIS_PROMPT_VERSION="$ANALYSIS_PROMPT_VERSION" HERMES_URL="$HERMES_URL" HERMES_KEY="$HERMES_KEY" MODEL="$MODEL" LLM_MAX_TOKENS="$LLM_MAX_TOKENS" LLM_TIMEOUT="$LLM_TIMEOUT" python3 "$SCRIPT_DIR/_analyze_article.py" "$ARTICLE_TMP")
+    ANALYSIS_OUT=$(SRC_NAME="$SRC_NAME" SRC_URL="$SRC_URL" ARTICLE_URL="$ARTICLE_URL" TITLE_HINT="$TITLE_HINT" ARTICLE_PUBLISHED_AT="$PUBLISHED_AT_HINT" DISCOVERY_METHOD="$DISCOVERY_METHOD_HINT" EXISTING_ARTICLE_ID="$EXISTING_ARTICLE_ID" PROCESSING_LANE="$PROCESSING_LANE" ANALYSIS_PROMPT_VERSION="$ANALYSIS_PROMPT_VERSION" HERMES_URL="$HERMES_URL" HERMES_KEY="$HERMES_KEY" MODEL="$MODEL" LLM_MAX_TOKENS="$LLM_MAX_TOKENS" LLM_TIMEOUT="$LLM_TIMEOUT" OLLAMA_NUM_CTX="$OLLAMA_NUM_CTX" python3 "$SCRIPT_DIR/_analyze_article.py" "$ARTICLE_TMP")
     ANALYSIS_EXIT=$?
     set -e
     rm -f "$ARTICLE_TMP"
@@ -394,16 +394,19 @@ while IFS= read -r line; do
   done < <(
     echo "$DISCOVERY_JSON" | python3 -c 'import sys, json
 d = json.load(sys.stdin)
+sep = "\x1f"
+def clean(value):
+    return str(value or "").replace(sep, " ").replace("\n", " ").replace("\r", " ")
 for item in d.get("candidates", []):
-    url = item.get("url", "")
-    title = (item.get("title") or "").replace("\t", " ").replace("\n", " ")
+    url = clean(item.get("url", ""))
+    title = clean(item.get("title", ""))
     score = item.get("score", 0)
-    published_at = item.get("published_at", "") or ""
-    method = item.get("discovery_method", "map") or "map"
-    lane = item.get("processing_lane", "new") or "new"
-    existing_id = item.get("existing_article_id", "") or ""
-    existing_hash = item.get("existing_content_hash", "") or ""
-    print("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".format(url, title, score, published_at, method, lane, existing_id, existing_hash))'
+    published_at = clean(item.get("published_at", ""))
+    method = clean(item.get("discovery_method", "map") or "map")
+    lane = clean(item.get("processing_lane", "new") or "new")
+    existing_id = clean(item.get("existing_article_id", ""))
+    existing_hash = clean(item.get("existing_content_hash", ""))
+    print(sep.join([url, title, str(score), published_at, method, lane, existing_id, existing_hash]))'
   )
 
   ARTICLE_COUNT=$(wc -l < "$ANALYSIS_JSONL" | tr -d ' ')

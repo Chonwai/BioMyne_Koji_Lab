@@ -17,12 +17,14 @@ import sys
 def main() -> None:
     prompt = sys.stdin.read()
     model = os.environ.get("OLLAMA_MODEL_TAG", "qwen3.6:35b-mlx")
+    num_ctx = int(os.environ.get("OLLAMA_NUM_CTX", "32768"))
 
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": 4096,
         "temperature": 0.3,
+        "num_ctx": num_ctx,
     }
 
     json.dump(payload, sys.stdout)

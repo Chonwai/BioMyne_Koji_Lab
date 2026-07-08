@@ -113,6 +113,7 @@ def main(argv: list[str]) -> int:
     hermes_key = os.environ.get("HERMES_KEY", "koji-phase1-local")
     max_tokens = int(os.environ.get("LLM_MAX_TOKENS", "4096"))
     timeout = int(os.environ.get("LLM_TIMEOUT", "180"))
+    num_ctx = int(os.environ.get("OLLAMA_NUM_CTX", "32768"))
     summary_min_chars = int(os.environ.get("SUMMARY_MIN_CHARS", "220"))
     summary_min_sentences = int(os.environ.get("SUMMARY_MIN_SENTENCES", "4"))
     article_published_at = os.environ.get("ARTICLE_PUBLISHED_AT", "").strip()
@@ -143,6 +144,7 @@ def main(argv: list[str]) -> int:
             }],
             "max_tokens": max_tokens,
             "temperature": 0.3,
+            "num_ctx": num_ctx,
         }
         req = urllib.request.Request(
             f"{hermes_url}/v1/chat/completions",
