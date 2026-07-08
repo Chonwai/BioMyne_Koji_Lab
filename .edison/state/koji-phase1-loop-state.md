@@ -59,3 +59,18 @@
 | Hardening Wins | Shared `loading.tsx` + `error.tsx`; active-run hydration; duplicate trigger protection confirmed; spec updated |
 | Residual Risk | One non-blocking Turbopack NFT warning remains while same-machine sibling env/script fallback is preserved |
 | Next Step | Dashboard is ready for broader stakeholder walkthrough; optional future cleanup can remove sibling env fallback if deployment secrets are copied into dashboard-local env |
+
+---
+
+## Loop: dashboard-stakeholder-polish-v1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | Stakeholder-facing sidebar/header polish + dashboard-local env configuration |
+| Validation | `npm run build` passes with `.env.local` loaded; Turbopack warning cleared |
+| Hardening Wins | Koji-only navigation, reduced template noise, dashboard-local `.env.local` + `.env.local.example`, `env.server.ts` moved to `process.env` only |
+| Residual Risk | None at build-warning level; remaining work is presentation refinement only |
+| Next Step | Dashboard is ready for stakeholder walkthrough and broader internal use |

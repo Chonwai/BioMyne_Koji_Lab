@@ -26,7 +26,7 @@ Phase 1 pipeline is fully operational: `bash ops/scripts/run_pipeline.sh` ingest
 - Manual sync trigger with SSE progress streaming
 - Cytoscape.js entity relationship visualization
 - Zustand stores for UI state
-- Same-machine runtime fallback: if `DATABASE_URL` is absent, the dashboard may safely read sibling pipeline env files and use Supabase REST on the server
+- Dashboard-local runtime configuration: if `DATABASE_URL` is absent, the dashboard uses its own `.env.local` Supabase and pipeline settings while continuing to run in REST mode on the server
 - Full implementation order and acceptance criteria
 
 **What this spec explicitly does NOT include:**
@@ -198,6 +198,8 @@ DATABASE_URL=postgres://postgres.[project-ref]:[password]@aws-0-[region].pooler.
 # Supabase anon key for client-side operations (optional Phase 1)
 NEXT_PUBLIC_SUPABASE_URL=https://[project-ref].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
+SUPABASE_SERVICE_ROLE_KEY=[service-role-key]
+PIPELINE_SCRIPT_PATH=/absolute/path/to/biomyne-koji/ops/scripts/run_pipeline.sh
 ```
 
 **Critical:** Must use Transaction Pooler (port **6543**), not Direct Connection (5432), for Next.js App Router server components.
@@ -1127,6 +1129,18 @@ Required behavior:
 
 This behavior was validated during the 2026-07-08 hardening pass.
 
+### 7.5 Dashboard-Local Environment Rule
+
+The current recommended runtime setup is no longer sibling env autodetection.
+
+Required behavior:
+
+- dashboard secrets live in `biomyne-koji-dashboard/.env.local`
+- `env.server.ts` reads from `process.env` only
+- same-machine deployment is preserved through `PIPELINE_SCRIPT_PATH`, not by reading the pipeline repo's env file at runtime
+
+This change eliminated the previous Turbopack NFT warning tied to sibling env/script tracing.
+
     if (res.status === 409) {
       // Already running — just subscribe to progress
       set({ status: 'running' })
@@ -1352,7 +1366,7 @@ The implementation has already passed these post-build checks:
 - `npm run build` passes after hardening changes
 - Settings page manual sync was validated end-to-end from dashboard UI to Supabase persistence
 - active-run hydration was validated: an existing `in_progress` crawl run correctly bootstrapped the client into `Live` tracking mode and disabled duplicate triggering
-- the remaining Turbopack NFT warning is non-blocking and tied to the deliberate same-machine sibling env/script fallback design
+- the previous Turbopack NFT warning was eliminated by moving runtime secrets into dashboard-local `.env.local`
 
 ---
 
@@ -1400,4 +1414,4 @@ Current implementation status as of 2026-07-08:
 - route-level loading skeletons: implemented
 - route-level error boundary: implemented
 - UI-triggered manual sync: validated through a successful `crawl_runs` row (`932da5bb-2645-49a9-90e0-ec712451726d`) with `status=success`, `article_count=6`, `error_count=0`
-- residual warning: one non-blocking Turbopack NFT trace warning remains while same-machine sibling env/script fallback is preserved
+- runtime warning status: cleared after moving to dashboard-local env configuration
