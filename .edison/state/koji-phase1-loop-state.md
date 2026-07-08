@@ -3,9 +3,10 @@
 - loop_id: `koji-phase1-delivery-loop`
 - status: `completed_with_known_limit`
 - quality_mode: `strict`
-- current_stage: `loop closeout`
+- current_stage: `crawler strategy hardening closeout`
 - open_items:
   - replace scaffold-level Hermes artifacts with real runtime-tested implementation during actual engineering execution
+  - approve `docs/phase1/p2-crawl-strategy-planning.md` before starting incremental crawl development
 - blocked_items:
   - none
 - done_items:
@@ -18,6 +19,10 @@
   - repo assumptions documented
   - manual pipeline persistence validated against real Supabase tables (`articles`, `article_entities`, `delivery_logs`)
   - minimal Langfuse run trace validated against local Langfuse v2 dashboard
+  - crawler discovery breadth widened across the 11 curated sources with higher default per-source article caps and tunable map breadth
+  - per-source article cap overrides added for priority sources
+  - Nature Biotechnology discovery repaired with supplemental recent article sitemap ingestion
+  - P2 incremental crawl planning memo drafted for approval before implementation
 
 ---
 
@@ -74,3 +79,18 @@
 | Hardening Wins | Koji-only navigation, reduced template noise, dashboard-local `.env.local` + `.env.local.example`, `env.server.ts` moved to `process.env` only |
 | Residual Risk  | None at build-warning level; remaining work is presentation refinement only                                                                    |
 | Next Step      | Dashboard is ready for stakeholder walkthrough and broader internal use                                                                        |
+
+---
+
+## Loop: crawler-strategy-hardening-v1
+
+| Field | Value |
+| --- | --- |
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | `ops/scripts/run_pipeline.sh`, `ops/scripts/_discover_article_urls.py`, `docs/phase1/p2-crawl-strategy-planning.md` |
+| Validation | `bash -n` passed; `py_compile` passed; override parser validated (`STAT=20`, `Science=10`, default fallback `15`); representative discovery checks proved broader homepage candidates and Nature supplemental sitemap URL generation |
+| Hardening Wins | default per-source cap raised from `3` to `15`; per-source overrides added; Firecrawl map breadth tunables added; date-score bias reduced; Nature supplemental sitemap strategy added; Firecrawl cost warnings documented |
+| Residual Risk | Firecrawl / source network rate limits can still make live discovery validation noisy during manual runs; P2 planning is not implemented yet |
+| Next Step | Founder / engineering owner reviews `docs/phase1/p2-crawl-strategy-planning.md` and approves whether to start P2A incremental discovery work |

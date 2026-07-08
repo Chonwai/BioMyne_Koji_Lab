@@ -15,6 +15,8 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import date
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Sequence
 
@@ -82,6 +84,7 @@ SOURCE_RULES: Dict[str, SourceRule] = {
     ),
     "Nature Biotechnology": SourceRule(
         include_keywords=("/articles/",),
+        include_regexes=(r"/articles/s\d{5}-\d{3}-\d{5}-[\w-]+$",),
     ),
     "Fierce Biotech": SourceRule(
         include_keywords=("/biotech/", "/research/"),
@@ -171,6 +174,78 @@ def firecrawl_map(url: str, search: Optional[str], sitemap: str, limit: int) -> 
     return [item for item in links if isinstance(item, dict) and item.get("url")]
 
 
+def load_xml_sitemap(url: str) -> List[dict]:
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "BioMyne-Koji/1.0 (+https://www.biomyne.com)",
+        },
+        method="GET",
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        body = resp.read()
+
+    root = ET.fromstring(body)
+    namespace_match = re.match(r"\{(.+)\}", root.tag)
+    namespace = namespace_match.group(1) if namespace_match else ""
+    loc_tag = f"{{{namespace}}}loc" if namespace else "loc"
+
+    links: List[dict] = []
+    for loc in root.iter(loc_tag):
+        if not loc.text:
+            continue
+        links.append({"url": loc.text.strip(), "title": "", "description": ""})
+    return links
+
+
+def env_int(name: str, default: int, minimum: int = 1) -> int:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return max(default, minimum)
+    try:
+        value = int(raw)
+    except ValueError:
+        print(
+            f"[discover] Invalid integer for {name}={raw!r}; falling back to {default}",
+            file=sys.stderr,
+        )
+        value = default
+    return max(value, minimum)
+
+
+def recent_nature_article_sitemaps() -> List[str]:
+    months_back = env_int("NATURE_SUPPLEMENTAL_SITEMAP_MONTHS", 4)
+
+    current = date.today().replace(day=1)
+    urls: List[str] = []
+    for offset in range(months_back):
+        year = current.year
+        month = current.month - offset
+        while month <= 0:
+            month += 12
+            year -= 1
+        urls.append(f"https://www.nature.com/nbt/sitemap/{year}/{month:02d}/articles.xml")
+    return urls
+
+
+def configured_map_limit(limit: int) -> int:
+    multiplier = env_int("DISCOVERY_MAP_LIMIT_MULTIPLIER", 20)
+    minimum = env_int("DISCOVERY_MAP_MIN_LIMIT", 80)
+    return max(limit * multiplier, minimum)
+
+
+def candidate_score_threshold() -> int:
+    return env_int("DISCOVERY_MIN_CANDIDATE_SCORE", 4)
+
+
+def date_score_bonus() -> int:
+    return env_int("DISCOVERY_DATE_SCORE_BONUS", 4)
+
+
+def rss_strict_bonus() -> int:
+    return env_int("DISCOVERY_RSS_STRICT_BONUS", 6)
+
+
 def article_exists(url: str) -> bool:
     supabase_url = os.environ.get("SUPABASE_URL", "")
     supabase_key = os.environ.get("SUPABASE_KEY") or os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or ""
@@ -205,7 +280,7 @@ def score_link(url: str, title: str, description: str, rule: SourceRule, mode: s
     text = f"{title} {description}".strip()
 
     if any(pattern.search(url) for pattern in DATE_PATTERNS):
-        score += 8
+        score += date_score_bonus()
     if any(keyword in lower_url for keyword in ARTICLE_KEYWORDS):
         score += 5
     if any(keyword.lower() in lower_url for keyword in rule.include_keywords):
@@ -216,7 +291,7 @@ def score_link(url: str, title: str, description: str, rule: SourceRule, mode: s
     if mode == "article_listing" and "/articles/" in lower_url:
         score += 4
     if mode == "rss_feed" and ("/abs/" in lower_url or "/doi/" in lower_url or "/content/10.1101/" in lower_url):
-        score += 6
+        score += rss_strict_bonus()
     if mode == "rss_feed":
         strict_match = any(keyword.lower() in lower_url for keyword in rule.include_keywords) or any(
             re.search(pattern, url, re.IGNORECASE) for pattern in rule.include_regexes
@@ -248,10 +323,25 @@ def recency_key(url: str) -> tuple:
 def discover(source_name: str, source_url: str, extraction_mode: str, limit: int) -> List[dict]:
     rule = SOURCE_RULES.get(source_name, SourceRule())
     discovery_url = rule.discovery_url or source_url
-    raw_links = firecrawl_map(discovery_url, rule.map_search, rule.sitemap, max(limit * 8, 40))
+    raw_links = firecrawl_map(discovery_url, rule.map_search, rule.sitemap, configured_map_limit(limit))
+
+    supplemental_sitemaps: List[str] = []
+    if source_name == "Nature Biotechnology":
+        supplemental_sitemaps.extend(recent_nature_article_sitemaps())
+
+    for sitemap_url in supplemental_sitemaps:
+        try:
+            raw_links.extend(load_xml_sitemap(sitemap_url))
+        except Exception as exc:
+            print(
+                f"[discover] Supplemental sitemap load failed for {source_name}: {sitemap_url} ({exc})",
+                file=sys.stderr,
+            )
+            continue
 
     candidates = []
     seen = set()
+    threshold = candidate_score_threshold()
     for item in raw_links:
         url = item.get("url", "").strip()
         if not url or url in seen:
@@ -261,7 +351,7 @@ def discover(source_name: str, source_url: str, extraction_mode: str, limit: int
         title = (item.get("title") or "").strip()
         description = (item.get("description") or "").strip()
         score = score_link(url, title, description, rule, extraction_mode)
-        if score < 5:
+        if score < threshold:
             continue
         if article_exists(url):
             continue

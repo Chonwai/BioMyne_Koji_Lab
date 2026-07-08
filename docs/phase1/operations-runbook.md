@@ -47,3 +47,27 @@ limit 10;
 2. soft-mark invalid article rows
 3. preserve trace and logs for audit
 4. do not hard-delete evidence during Phase 1
+
+## 7. Tune Crawl Breadth Safely
+
+When coverage is too shallow, tune discovery breadth in this order:
+
+1. increase `MAX_ARTICLES_PER_SOURCE` for all sources
+2. add `MAX_ARTICLES_PER_SOURCE_OVERRIDES` for priority sources such as `STAT News` or `Nature Biotechnology`
+3. widen Firecrawl map breadth with `DISCOVERY_MAP_LIMIT_MULTIPLIER` / `DISCOVERY_MAP_MIN_LIMIT`
+4. only then lower `DISCOVERY_MIN_CANDIDATE_SCORE` or `DISCOVERY_DATE_SCORE_BONUS`
+
+Recommended starting point:
+
+```bash
+MAX_ARTICLES_PER_SOURCE=15
+MAX_ARTICLES_PER_SOURCE_OVERRIDES="STAT News=20,Nature Biotechnology=18,Science=10"
+DISCOVERY_MAP_LIMIT_MULTIPLIER=20
+DISCOVERY_MAP_MIN_LIMIT=80
+DISCOVERY_MIN_CANDIDATE_SCORE=4
+DISCOVERY_DATE_SCORE_BONUS=4
+```
+
+If Firecrawl credits tighten, reduce map breadth before reducing the per-source article cap for the highest-value sources.
+
+Do not leave `DISCOVERY_MAP_LIMIT_MULTIPLIER=20` untouched without watching credit usage. At 11 sources, broad map expansion can materially increase Firecrawl consumption per run.

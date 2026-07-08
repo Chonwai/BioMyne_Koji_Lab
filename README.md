@@ -58,3 +58,17 @@ If a task naturally expands toward dashboarding, GraphDB, or a second runtime la
 6. Validate source manifest
 7. Run one manual end-to-end loop
 8. Enable scheduled runs only after smoke checks pass
+
+## Crawl Strategy Knobs
+
+The manual pipeline now supports repo-local crawl tuning without code changes:
+
+- `MAX_ARTICLES_PER_SOURCE`: default candidate cap per source (default `15`)
+- `MAX_ARTICLES_PER_SOURCE_OVERRIDES`: comma-separated per-source overrides, for example `STAT News=20,Nature Biotechnology=18`
+- `DISCOVERY_MAP_LIMIT_MULTIPLIER` and `DISCOVERY_MAP_MIN_LIMIT`: widen Firecrawl `/v2/map` discovery breadth before ranking
+- `DISCOVERY_MIN_CANDIDATE_SCORE`: lower or tighten the candidate score cutoff
+- `DISCOVERY_DATE_SCORE_BONUS`: controls how strongly fresh URL date patterns dominate ranking
+
+This keeps Phase 1 local and simple while allowing broader article discovery across the 11 curated sources.
+
+Use these knobs carefully: broader discovery can raise Firecrawl credit burn quickly, especially when `DISCOVERY_MAP_LIMIT_MULTIPLIER` is set aggressively across all 11 sources.

@@ -24,7 +24,8 @@ FIRECRAWL_KEY="${FIRECRAWL_KEY:-}"
 SUPABASE_URL="${SUPABASE_URL:-}"
 SUPABASE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
 MODEL="${OLLAMA_MODEL_TAG:-qwen3.6:35b-mlx}"
-MAX_ARTICLES_PER_SOURCE="${MAX_ARTICLES_PER_SOURCE:-3}"
+MAX_ARTICLES_PER_SOURCE="${MAX_ARTICLES_PER_SOURCE:-15}"
+MAX_ARTICLES_PER_SOURCE_OVERRIDES="${MAX_ARTICLES_PER_SOURCE_OVERRIDES:-}"
 MIN_WORDS_FOR_LLM="${MIN_WORDS_FOR_LLM:-300}"
 LLM_TIMEOUT="${LLM_TIMEOUT:-180}"
 LLM_MAX_TOKENS="${LLM_MAX_TOKENS:-4096}"
@@ -38,6 +39,48 @@ FINALIZED=0
 
 # ── Colors ──
 BOLD='\033[1m'; CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
+
+articles_limit_for_source() {
+  local source_name="$1"
+  local default_limit="$MAX_ARTICLES_PER_SOURCE"
+
+  if [ -z "$MAX_ARTICLES_PER_SOURCE_OVERRIDES" ]; then
+    printf '%s\n' "$default_limit"
+    return
+  fi
+
+  local override
+  override=$(SOURCE_NAME="$source_name" DEFAULT_LIMIT="$default_limit" MAX_ARTICLES_PER_SOURCE_OVERRIDES="$MAX_ARTICLES_PER_SOURCE_OVERRIDES" python3 <<'PY'
+import re
+import os
+
+source_name = os.environ["SOURCE_NAME"].strip().lower()
+default_limit = os.environ["DEFAULT_LIMIT"]
+raw = os.environ.get("MAX_ARTICLES_PER_SOURCE_OVERRIDES", "").strip()
+
+if not raw:
+    print(default_limit)
+    raise SystemExit(0)
+
+for entry in raw.split(','):
+    if '=' not in entry:
+        continue
+    key, value = entry.split('=', 1)
+    normalized_key = re.sub(r'[^a-z0-9]+', '', key.lower())
+    normalized_source = re.sub(r'[^a-z0-9]+', '', source_name)
+    if normalized_key == normalized_source and value.strip().isdigit():
+        print(value.strip())
+        raise SystemExit(0)
+
+print(default_limit)
+PY
+)
+
+  if [ -z "$override" ]; then
+    override="$default_limit"
+  fi
+  printf '%s\n' "$override"
+}
 
 supa() {
   # Supabase REST helper: supa GET /rest/v1/sources?select=name
@@ -171,12 +214,13 @@ while IFS= read -r line; do
   SRC_NAME=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['name'])" 2>/dev/null)
   SRC_URL=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['url'])" 2>/dev/null)
   EXTRACTION_MODE=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('extraction_mode','homepage_links'))" 2>/dev/null)
+  SOURCE_LIMIT=$(articles_limit_for_source "$SRC_NAME")
   
-  echo -e "\n  ${YELLOW}→${NC} Discovering articles for ${BOLD}$SRC_NAME${NC} ($SRC_URL)..."
+  echo -e "\n  ${YELLOW}→${NC} Discovering articles for ${BOLD}$SRC_NAME${NC} ($SRC_URL) [limit=$SOURCE_LIMIT]..."
 
   set +e
   DISCOVERY_JSON=$(SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_KEY" FIRECRAWL_KEY="$FIRECRAWL_KEY" \
-    python3 "$SCRIPT_DIR/_discover_article_urls.py" "$SRC_NAME" "$SRC_URL" "$EXTRACTION_MODE" "$MAX_ARTICLES_PER_SOURCE")
+    python3 "$SCRIPT_DIR/_discover_article_urls.py" "$SRC_NAME" "$SRC_URL" "$EXTRACTION_MODE" "$SOURCE_LIMIT")
   DISCOVERY_EXIT=$?
   set -e
 
