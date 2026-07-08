@@ -1,0 +1,29 @@
+loop_id: dashboard-stakeholder-polish-v1
+version: 1.0
+
+done_when:
+  - condition: "Sidebar and top navigation no longer expose template-only noise"
+    evidence_required:
+      proof: "Stakeholder-facing sidebar shows Koji-only navigation and header no longer shows template marketing or unrelated controls"
+  - condition: "Dashboard uses local env configuration instead of sibling env autodetection"
+    evidence_required:
+      proof: "env.server.ts reads from process.env only; dashboard-local .env.local.example exists; dashboard-local .env.local is provisioned for runtime"
+  - condition: "Build remains successful after polish"
+    evidence_required:
+      proof: "npm run build exits successfully in biomyne-koji-dashboard"
+  - condition: "Remaining Turbopack warning is eliminated or narrowed with a precise residual note"
+    evidence_required:
+      proof: "Build output either has no warning or the final report explains exactly why it remains"
+  - condition: "Runtime still validates on key Koji pages"
+    evidence_required:
+      proof: "Playwright spot-checks confirm overview, feed, settings, and sources still render live data"
+
+fail_when:
+  - condition: "Stakeholder polish regresses runtime behavior or data rendering"
+    action: escalate_to_human
+  - condition: "Dashboard-local env cleanup breaks manual sync"
+    action: escalate_to_human
+
+escalate_when:
+  - condition: "warning removal depends on a broader deployment architecture change"
+  - condition: "local env provisioning cannot be completed safely"

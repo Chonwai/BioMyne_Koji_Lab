@@ -1,0 +1,58 @@
+loop_id: dashboard-stakeholder-polish-v1
+loop_type: one-feature-build
+quality_mode: strict
+pass_threshold: 95
+description: >
+  Convert the Koji dashboard from a template-derived internal build into a cleaner
+  stakeholder-facing surface, and replace sibling env autodetection with
+  dashboard-local env configuration.
+
+trigger:
+  type: manual
+  initiated_by: founder
+  context: "Post-hardening polish and env cleanup"
+
+scope:
+  primary_repo: BiomyneKoji/biomyne-koji-dashboard
+  supporting_repo: BiomyneKoji/biomyne-koji
+  slices:
+    - stakeholder-facing navigation and header polish
+    - removal of template marketing / placeholder identity noise
+    - dashboard-local env configuration
+    - elimination or reevaluation of the remaining Turbopack warning
+
+budget:
+  max_tokens: 160000
+  max_iterations: 3
+  max_wall_time: 4h
+
+write_policy:
+  allowed_paths:
+    - BiomyneKoji/biomyne-koji-dashboard/**
+    - BiomyneKoji/biomyne-koji/docs/**
+    - .edison/**
+  forbidden_paths:
+    - BiomyneKoji/biomyne-koji/.env
+    - BiomyneKoji/biomyne-koji/sql/**
+
+human_gates:
+  - after_step: stakeholder-polish
+    condition: "warning removal requires abandoning local env or runtime behavior regresses"
+    action: "Escalate with tradeoff summary"
+  - after_step: stakeholder-polish
+    condition: "polish and env cleanup complete"
+    action: "Present stakeholder-ready summary"
+
+dispatch:
+  steps:
+    - id: stakeholder-polish
+      skill: edison-tech-lead-dev-workflow
+      required: true
+      purpose: "Polish the dashboard presentation and local env configuration"
+
+escalation:
+  destination: founder
+  trigger_conditions:
+    - repeated_fail_x3
+    - budget_exhausted
+    - circuit_breaker_active
