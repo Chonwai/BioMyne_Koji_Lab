@@ -2,15 +2,15 @@
 
 ## Document Status
 
-| Field | Value |
-|-------|-------|
-| Status | Draft for Engineering Execution |
-| Phase | Phase 1 Data Layer + Dashboard MVP |
-| Based on | Phase 1 pipeline (operational) + Deep Research Report 2026-07-07 |
-| Quality Target | 95+ |
-| Last updated | 2026-07-07 |
-| Intended reader | Full-stack engineer / AI engineer |
-| Research basis | 40+ sources, all high-confidence |
+| Field           | Value                                                            |
+| --------------- | ---------------------------------------------------------------- |
+| Status          | Draft for Engineering Execution                                  |
+| Phase           | Phase 1 Data Layer + Dashboard MVP                               |
+| Based on        | Phase 1 pipeline (operational) + Deep Research Report 2026-07-07 |
+| Quality Target  | 95+                                                              |
+| Last updated    | 2026-07-07                                                       |
+| Intended reader | Full-stack engineer / AI engineer                                |
+| Research basis  | 40+ sources, all high-confidence                                 |
 
 ---
 
@@ -21,6 +21,7 @@ Phase 1 pipeline is fully operational: `bash ops/scripts/run_pipeline.sh` ingest
 **The dashboard is NOT a Phase 2 feature.** It surfaces Phase 1 data with minimal additional infrastructure — no new backend services, no schema changes, only a typed data access layer (Drizzle ORM) and a Next.js frontend consuming the existing Supabase tables.
 
 **What this spec covers:**
+
 - Drizzle ORM setup and schema aligned to existing Supabase tables
 - 7 dashboard pages scoped to Phase 1 data only
 - Manual sync trigger with SSE progress streaming
@@ -30,6 +31,7 @@ Phase 1 pipeline is fully operational: `bash ops/scripts/run_pipeline.sh` ingest
 - Full implementation order and acceptance criteria
 
 **What this spec explicitly does NOT include:**
+
 - Any Supabase schema changes (tables are frozen from Phase 1)
 - Authentication (single-operator Phase 1, add later)
 - GraphRAG or Neo4j (deferred per Phase 1 architecture decision)
@@ -40,6 +42,7 @@ Phase 1 pipeline is fully operational: `bash ops/scripts/run_pipeline.sh` ingest
 ## 2. Problem Statement
 
 Phase 1 intelligence data exists in Supabase but is only accessible via raw SQL console or terminal pipeline output. The operations team has no way to:
+
 - Browse the intelligence feed in a human-readable format
 - Monitor pipeline health without querying the database directly
 - Manage sources without SQL
@@ -54,15 +57,15 @@ This dashboard closes all five gaps using existing data.
 
 ### 3.1 In Scope
 
-| Page | Purpose | Scope |
-|------|---------|-------|
-| Overview | KPI cards + today's highlights | Phase 1 data only |
-| Intelligence Feed | Article browsing, filtering, detail view | Phase 1 data only |
-| Pipeline Monitor | Crawl run history + health charts | Phase 1 data only |
-| Sources Manager | CRUD for sources (enable/disable/add/edit) | Drizzle mutations |
-| Entity Explorer | Entity list + Cytoscape.js co-occurrence graph | Phase 1 data only |
-| Analytics | Trend charts, priority distribution, topic breakdown | Phase 1 data only |
-| Settings | Manual sync trigger + SSE progress display | Calls `run_pipeline.sh` |
+| Page              | Purpose                                              | Scope                   |
+| ----------------- | ---------------------------------------------------- | ----------------------- |
+| Overview          | KPI cards + today's highlights                       | Phase 1 data only       |
+| Intelligence Feed | Article browsing, filtering, detail view             | Phase 1 data only       |
+| Pipeline Monitor  | Crawl run history + health charts                    | Phase 1 data only       |
+| Sources Manager   | CRUD for sources (enable/disable/add/edit)           | Drizzle mutations       |
+| Entity Explorer   | Entity list + Cytoscape.js co-occurrence graph       | Phase 1 data only       |
+| Analytics         | Trend charts, priority distribution, topic breakdown | Phase 1 data only       |
+| Settings          | Manual sync trigger + SSE progress display           | Calls `run_pipeline.sh` |
 
 ### 3.2 Out of Scope
 
@@ -79,18 +82,18 @@ This dashboard closes all five gaps using existing data.
 
 ### 4.1 Tech Stack
 
-| Layer | Technology | Version | Status |
-|-------|-----------|---------|--------|
-| Framework | Next.js App Router | 16.x | Existing template |
-| UI | Shadcn/UI + Tailwind CSS | v4 | Existing template |
-| Charts | Recharts | 3.8.x | Existing template |
-| Tables | TanStack Table | v8.21 | Existing template |
-| State | Zustand | v5 | Existing template |
-| Forms/Validation | react-hook-form + Zod | v7 / v4 | Existing template |
-| ORM | Drizzle ORM | **0.41.x** (v0.x API — not v1.0) | **New — must install** |
-| DB Client | postgres (postgres-js) | 3.x | **New — must install** |
-| Entity Viz | Cytoscape.js + react-cytoscapejs | Latest | **New — must install** |
-| SSE | Native Next.js ReadableStream | Built-in | No new dep |
+| Layer            | Technology                       | Version                          | Status                 |
+| ---------------- | -------------------------------- | -------------------------------- | ---------------------- |
+| Framework        | Next.js App Router               | 16.x                             | Existing template      |
+| UI               | Shadcn/UI + Tailwind CSS         | v4                               | Existing template      |
+| Charts           | Recharts                         | 3.8.x                            | Existing template      |
+| Tables           | TanStack Table                   | v8.21                            | Existing template      |
+| State            | Zustand                          | v5                               | Existing template      |
+| Forms/Validation | react-hook-form + Zod            | v7 / v4                          | Existing template      |
+| ORM              | Drizzle ORM                      | **0.41.x** (v0.x API — not v1.0) | **New — must install** |
+| DB Client        | postgres (postgres-js)           | 3.x                              | **New — must install** |
+| Entity Viz       | Cytoscape.js + react-cytoscapejs | Latest                           | **New — must install** |
+| SSE              | Native Next.js ReadableStream    | Built-in                         | No new dep             |
 
 ### 4.2 Architecture Diagram
 
@@ -181,6 +184,7 @@ pnpm add -D drizzle-kit
 ```
 
 Add to `package.json` scripts:
+
 ```json
 "db:generate": "drizzle-kit generate",
 "db:migrate": "drizzle-kit migrate",
@@ -191,6 +195,7 @@ Add to `package.json` scripts:
 ### 5.2 Environment Variables
 
 Add to `.env.local` (dashboard repo):
+
 ```env
 # Supabase Transaction Pooler (port 6543) — for Next.js App Router / Serverless
 DATABASE_URL=postgres://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
@@ -208,18 +213,18 @@ PIPELINE_SCRIPT_PATH=/absolute/path/to/biomyne-koji/ops/scripts/run_pipeline.sh
 
 ```typescript
 // src/lib/db/client.ts
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import * as schema from './schema'
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
 
 // Transaction pooler: prepare must be false (pgBouncer limitation)
 const client = postgres(process.env.DATABASE_URL!, {
-  prepare: false,  // ⚠️ Required — Transaction mode doesn't support named prepared statements
-  max: 1,          // Serverless: single connection per lambda
-})
+  prepare: false, // ⚠️ Required — Transaction mode doesn't support named prepared statements
+  max: 1, // Serverless: single connection per lambda
+});
 
-export const db = drizzle(client, { schema })
-export type DB = typeof db
+export const db = drizzle(client, { schema });
+export type DB = typeof db;
 ```
 
 ### 5.4 Schema Definition
@@ -227,86 +232,103 @@ export type DB = typeof db
 ```typescript
 // src/lib/db/schema.ts
 import {
-  pgTable, uuid, text, timestamp, integer, boolean,
-  jsonb, real, unique,
-} from 'drizzle-orm/pg-core'
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  integer,
+  boolean,
+  jsonb,
+  real,
+  unique,
+} from "drizzle-orm/pg-core";
 
 // ─── Sources ──────────────────────────────────────────────
-export const sources = pgTable('sources', {
-  id:              uuid('id').defaultRandom().primaryKey(),
-  name:            text('name').notNull(),
-  url:             text('url').notNull(),
-  domain:          text('domain'),
-  sourceType:      text('source_type'),
-  enabled:         boolean('enabled').default(true),
-  crawlFrequency:  text('crawl_frequency').default('daily'),
-  extractionMode:  text('extraction_mode'),
-  createdAt:       timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt:       timestamp('updated_at', { withTimezone: true }).defaultNow(),
-})
+export const sources = pgTable("sources", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  domain: text("domain"),
+  sourceType: text("source_type"),
+  enabled: boolean("enabled").default(true),
+  crawlFrequency: text("crawl_frequency").default("daily"),
+  extractionMode: text("extraction_mode"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
 
 // ─── Crawl Runs ───────────────────────────────────────────
-export const crawlRuns = pgTable('crawl_runs', {
-  id:           uuid('id').defaultRandom().primaryKey(),
-  runType:      text('run_type').notNull(),
-  startedAt:    timestamp('started_at', { withTimezone: true }).notNull(),
-  completedAt:  timestamp('completed_at', { withTimezone: true }),
-  status:       text('status').notNull(), // 'running' | 'completed' | 'partial_success' | 'failed'
-  sourceCount:  integer('source_count').default(0),
-  articleCount: integer('article_count').default(0),
-  errorCount:   integer('error_count').default(0),
-  notes:        text('notes'),
-})
+export const crawlRuns = pgTable("crawl_runs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  runType: text("run_type").notNull(),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  status: text("status").notNull(), // 'running' | 'completed' | 'partial_success' | 'failed'
+  sourceCount: integer("source_count").default(0),
+  articleCount: integer("article_count").default(0),
+  errorCount: integer("error_count").default(0),
+  notes: text("notes"),
+});
 
 // ─── Articles ─────────────────────────────────────────────
-export const articles = pgTable('articles', {
-  id:             uuid('id').defaultRandom().primaryKey(),
-  sourceId:       uuid('source_id').references(() => sources.id),
-  crawlRunId:     uuid('crawl_run_id').references(() => crawlRuns.id),
-  url:            text('url').notNull(),
-  title:          text('title'),
-  publishedAt:    timestamp('published_at', { withTimezone: true }),
-  rawMarkdown:    text('raw_markdown'),
-  summary:        text('summary'),
-  topicTags:      jsonb('topic_tags').$type<string[]>().default([]),
-  priorityLevel:  text('priority_level').notNull(), // 'low' | 'medium' | 'high'
-  confidenceScore: real('confidence_score'),
-  status:         text('status').notNull(), // 'processed' | 'failed' | 'needs_review'
-  analysisNotes:  text('analysis_notes'),
-  createdAt:      timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt:      timestamp('updated_at', { withTimezone: true }).defaultNow(),
-})
+export const articles = pgTable("articles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  sourceId: uuid("source_id").references(() => sources.id),
+  crawlRunId: uuid("crawl_run_id").references(() => crawlRuns.id),
+  url: text("url").notNull(),
+  title: text("title"),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+  rawMarkdown: text("raw_markdown"),
+  summary: text("summary"),
+  topicTags: jsonb("topic_tags").$type<string[]>().default([]),
+  priorityLevel: text("priority_level").notNull(), // 'low' | 'medium' | 'high'
+  confidenceScore: real("confidence_score"),
+  status: text("status").notNull(), // 'processed' | 'failed' | 'needs_review'
+  analysisNotes: text("analysis_notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
 
 // ─── Entities ─────────────────────────────────────────────
-export const entities = pgTable('entities', {
-  id:            uuid('id').defaultRandom().primaryKey(),
-  name:          text('name').notNull(),
-  entityType:    text('entity_type').notNull(), // 'company' | 'researcher' | 'drug' | 'compound' | 'institution' | 'regulator'
-  canonicalName: text('canonical_name'),
-  createdAt:     timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt:     timestamp('updated_at', { withTimezone: true }).defaultNow(),
-}, (t) => [unique().on(t.name, t.entityType)])
+export const entities = pgTable(
+  "entities",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").notNull(),
+    entityType: text("entity_type").notNull(), // 'company' | 'researcher' | 'drug' | 'compound' | 'institution' | 'regulator'
+    canonicalName: text("canonical_name"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [unique().on(t.name, t.entityType)],
+);
 
 // ─── Article Entities (Junction) ──────────────────────────
-export const articleEntities = pgTable('article_entities', {
-  id:              uuid('id').defaultRandom().primaryKey(),
-  articleId:       uuid('article_id').notNull().references(() => articles.id, { onDelete: 'cascade' }),
-  entityId:        uuid('entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
-  roleInArticle:   text('role_in_article'),
-  mentionCount:    integer('mention_count').default(1),
-  confidenceScore: real('confidence_score'),
-})
+export const articleEntities = pgTable("article_entities", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  articleId: uuid("article_id")
+    .notNull()
+    .references(() => articles.id, { onDelete: "cascade" }),
+  entityId: uuid("entity_id")
+    .notNull()
+    .references(() => entities.id, { onDelete: "cascade" }),
+  roleInArticle: text("role_in_article"),
+  mentionCount: integer("mention_count").default(1),
+  confidenceScore: real("confidence_score"),
+});
 
 // ─── Delivery Logs ────────────────────────────────────────
-export const deliveryLogs = pgTable('delivery_logs', {
-  id:             uuid('id').defaultRandom().primaryKey(),
-  crawlRunId:     uuid('crawl_run_id').notNull().references(() => crawlRuns.id),
-  channelType:    text('channel_type').notNull(),
-  destination:    text('destination').notNull(),
-  deliveredAt:    timestamp('delivered_at', { withTimezone: true }),
-  status:         text('status').notNull(),
-  messagePreview: text('message_preview'),
-})
+export const deliveryLogs = pgTable("delivery_logs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  crawlRunId: uuid("crawl_run_id")
+    .notNull()
+    .references(() => crawlRuns.id),
+  channelType: text("channel_type").notNull(),
+  destination: text("destination").notNull(),
+  deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+  status: text("status").notNull(),
+  messagePreview: text("message_preview"),
+});
 ```
 
 ### 5.5 Relations
@@ -315,55 +337,81 @@ export const deliveryLogs = pgTable('delivery_logs', {
 
 ```typescript
 // src/lib/db/relations.ts
-import { relations } from 'drizzle-orm'  // v0.x API — correct for drizzle-orm ^0.41
-import { sources, crawlRuns, articles, entities, articleEntities, deliveryLogs } from './schema'
+import { relations } from "drizzle-orm"; // v0.x API — correct for drizzle-orm ^0.41
+import {
+  sources,
+  crawlRuns,
+  articles,
+  entities,
+  articleEntities,
+  deliveryLogs,
+} from "./schema";
 
 export const sourcesRelations = relations(sources, ({ many }) => ({
   articles: many(articles),
-}))
+}));
 
 export const crawlRunsRelations = relations(crawlRuns, ({ many }) => ({
   articles: many(articles),
   deliveryLogs: many(deliveryLogs),
-}))
+}));
 
 export const articlesRelations = relations(articles, ({ one, many }) => ({
-  source: one(sources, { fields: [articles.sourceId], references: [sources.id] }),
-  crawlRun: one(crawlRuns, { fields: [articles.crawlRunId], references: [crawlRuns.id] }),
+  source: one(sources, {
+    fields: [articles.sourceId],
+    references: [sources.id],
+  }),
+  crawlRun: one(crawlRuns, {
+    fields: [articles.crawlRunId],
+    references: [crawlRuns.id],
+  }),
   articleEntities: many(articleEntities),
-}))
+}));
 
-export const articleEntitiesRelations = relations(articleEntities, ({ one }) => ({
-  article: one(articles, { fields: [articleEntities.articleId], references: [articles.id] }),
-  entity: one(entities, { fields: [articleEntities.entityId], references: [entities.id] }),
-}))
+export const articleEntitiesRelations = relations(
+  articleEntities,
+  ({ one }) => ({
+    article: one(articles, {
+      fields: [articleEntities.articleId],
+      references: [articles.id],
+    }),
+    entity: one(entities, {
+      fields: [articleEntities.entityId],
+      references: [entities.id],
+    }),
+  }),
+);
 
 export const entitiesRelations = relations(entities, ({ many }) => ({
   articleEntities: many(articleEntities),
-}))
+}));
 
 export const deliveryLogsRelations = relations(deliveryLogs, ({ one }) => ({
-  crawlRun: one(crawlRuns, { fields: [deliveryLogs.crawlRunId], references: [crawlRuns.id] }),
-}))
+  crawlRun: one(crawlRuns, {
+    fields: [deliveryLogs.crawlRunId],
+    references: [crawlRuns.id],
+  }),
+}));
 ```
 
 ### 5.6 Drizzle Config
 
 ```typescript
 // drizzle.config.ts (root of dashboard repo)
-import { defineConfig } from 'drizzle-kit'
+import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: './src/lib/db/schema.ts',
-  out:    './src/lib/db/migrations',
-  dialect: 'postgresql',
+  schema: "./src/lib/db/schema.ts",
+  out: "./src/lib/db/migrations",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
-})
+});
 ```
 
 **Migration strategy:** BioMyne already has hand-crafted SQL migrations in `biomyne-koji/sql/`. Do NOT run `drizzle-kit push` (it overwrites schema). For Phase 1 dashboard:
+
 1. Run `npx drizzle-kit introspect` once to verify schema alignment
 2. Dashboard makes zero schema changes; Drizzle is read-write for `sources` only, read-only for all other tables
 3. If future schema changes needed: `npx drizzle-kit generate` → review → `npx drizzle-kit migrate`
@@ -380,13 +428,13 @@ export default defineConfig({
 
 #### KPI Cards (5)
 
-| Card | Metric | Data Source | Update |
-|------|--------|-------------|--------|
-| Today's Articles | COUNT articles WHERE published_at >= today | `articles` | On load |
-| High-Priority | COUNT articles WHERE priority_level = 'high' + today | `articles` | On load |
-| M&A / Funding Signals | COUNT articles WHERE topic_tags @> '["M&A"]' OR '["funding"]' | `articles` | On load |
-| Active Sources | COUNT sources WHERE enabled = true / total | `sources` | On load |
-| Needs Review | COUNT articles WHERE status = 'needs_review' | `articles` | On load |
+| Card                  | Metric                                                        | Data Source | Update  |
+| --------------------- | ------------------------------------------------------------- | ----------- | ------- |
+| Today's Articles      | COUNT articles WHERE published_at >= today                    | `articles`  | On load |
+| High-Priority         | COUNT articles WHERE priority_level = 'high' + today          | `articles`  | On load |
+| M&A / Funding Signals | COUNT articles WHERE topic_tags @> '["M&A"]' OR '["funding"]' | `articles`  | On load |
+| Active Sources        | COUNT sources WHERE enabled = true / total                    | `sources`   | On load |
+| Needs Review          | COUNT articles WHERE status = 'needs_review'                  | `articles`  | On load |
 
 Each card includes: primary number, delta vs yesterday, trend indicator (↑↓→).
 
@@ -408,37 +456,58 @@ Each card includes: primary number, delta vs yesterday, trend indicator (↑↓�
 
 ```typescript
 // src/lib/db/queries/analytics.ts
-import { db } from '@/lib/db/client'
-import { articles, sources } from '@/lib/db/schema'
-import { and, count, eq, gte, lt, sql } from 'drizzle-orm'
+import { db } from "@/lib/db/client";
+import { articles, sources } from "@/lib/db/schema";
+import { and, count, eq, gte, lt, sql } from "drizzle-orm";
 
 export async function getOverviewKPIs() {
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-  const yesterdayStart = new Date(todayStart)
-  yesterdayStart.setDate(yesterdayStart.getDate() - 1)
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
 
-  const [today, yesterday, [{ enabledCount }], [{ reviewCount }]] = await Promise.all([
-    db.select({
-      total: count(),
-      high: count(sql`CASE WHEN ${articles.priorityLevel} = 'high' THEN 1 END`),
-      mAndA: count(sql`CASE WHEN ${articles.topicTags}::text ILIKE '%M&A%' OR ${articles.topicTags}::text ILIKE '%funding%' THEN 1 END`),
-    }).from(articles).where(gte(articles.createdAt, todayStart)),
+  const [today, yesterday, [{ enabledCount }], [{ reviewCount }]] =
+    await Promise.all([
+      db
+        .select({
+          total: count(),
+          high: count(
+            sql`CASE WHEN ${articles.priorityLevel} = 'high' THEN 1 END`,
+          ),
+          mAndA: count(
+            sql`CASE WHEN ${articles.topicTags}::text ILIKE '%M&A%' OR ${articles.topicTags}::text ILIKE '%funding%' THEN 1 END`,
+          ),
+        })
+        .from(articles)
+        .where(gte(articles.createdAt, todayStart)),
 
-    db.select({ total: count() }).from(articles)
-      .where(and(gte(articles.createdAt, yesterdayStart), lt(articles.createdAt, todayStart))),
+      db
+        .select({ total: count() })
+        .from(articles)
+        .where(
+          and(
+            gte(articles.createdAt, yesterdayStart),
+            lt(articles.createdAt, todayStart),
+          ),
+        ),
 
-    db.select({ enabledCount: count() }).from(sources).where(eq(sources.enabled, true)),
+      db
+        .select({ enabledCount: count() })
+        .from(sources)
+        .where(eq(sources.enabled, true)),
 
-    db.select({ reviewCount: count() }).from(articles).where(eq(articles.status, 'needs_review')),
-  ])
+      db
+        .select({ reviewCount: count() })
+        .from(articles)
+        .where(eq(articles.status, "needs_review")),
+    ]);
 
   return {
     today: today[0],
     yesterday: yesterday[0],
     activeSources: { enabled: enabledCount },
     needsReview: { count: reviewCount },
-  }
+  };
 }
 ```
 
@@ -452,32 +521,33 @@ export async function getOverviewKPIs() {
 
 #### Filter Bar Components
 
-| Filter | Type | Zustand Key |
-|--------|------|-------------|
-| Date Range | `date-range-picker.tsx` (existing) | `dateRange` |
-| Priority | Multi-select (Shadcn `<Select>`) | `priorities` |
-| Source | Multi-select dropdown | `sourceIds` |
-| Topic Tag | Text input + badge list | `topicTags` |
-| Status | Toggle group (processed / needs_review / failed) | `status` |
-| Search | Debounced text input | `searchText` |
+| Filter     | Type                                             | Zustand Key  |
+| ---------- | ------------------------------------------------ | ------------ |
+| Date Range | `date-range-picker.tsx` (existing)               | `dateRange`  |
+| Priority   | Multi-select (Shadcn `<Select>`)                 | `priorities` |
+| Source     | Multi-select dropdown                            | `sourceIds`  |
+| Topic Tag  | Text input + badge list                          | `topicTags`  |
+| Status     | Toggle group (processed / needs_review / failed) | `status`     |
+| Search     | Debounced text input                             | `searchText` |
 
 All filters stored in `useFeedFilterStore` (Zustand). Filter state applied client-side via TanStack Table `getFilteredRowModel()` for small datasets, server-side for large.
 
 #### Article Table Columns
 
-| Column | Content | Width | Sortable |
-|--------|---------|-------|---------|
-| Priority | Badge (high=red, medium=amber, low=grey) | 80px | Yes |
-| Title | Text, click to open detail modal | Flex | Yes |
-| Source | Source name pill | 120px | Yes |
-| Topic Tags | Top 2 tags as small badges | 160px | No |
-| Published | Relative time (e.g. "2h ago") | 100px | Yes |
-| Status | Badge (processed / needs_review / failed) | 100px | Yes |
-| Actions | "View" button | 80px | No |
+| Column     | Content                                   | Width | Sortable |
+| ---------- | ----------------------------------------- | ----- | -------- |
+| Priority   | Badge (high=red, medium=amber, low=grey)  | 80px  | Yes      |
+| Title      | Text, click to open detail modal          | Flex  | Yes      |
+| Source     | Source name pill                          | 120px | Yes      |
+| Topic Tags | Top 2 tags as small badges                | 160px | No       |
+| Published  | Relative time (e.g. "2h ago")             | 100px | Yes      |
+| Status     | Badge (processed / needs_review / failed) | 100px | Yes      |
+| Actions    | "View" button                             | 80px  | No       |
 
 #### Article Detail Modal
 
 Triggered by clicking row or "View" button. Shadcn `<Dialog>` containing:
+
 - Title + Source + Published timestamp
 - AI Summary (full text, styled with `<Prose>`)
 - Topic tags as colored badges
@@ -490,20 +560,21 @@ Triggered by clicking row or "View" button. Shadcn `<Dialog>` containing:
 
 ```typescript
 // src/app/(main)/dashboard/koji/feed/_actions/update-status.ts
-'use server'
-import { db } from '@/lib/db/client'
-import { articles } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+"use server";
+import { db } from "@/lib/db/client";
+import { articles } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function updateArticleStatus(
   articleId: string,
-  status: 'processed' | 'needs_review'
+  status: "processed" | "needs_review",
 ) {
-  await db.update(articles)
+  await db
+    .update(articles)
     .set({ status, updatedAt: new Date() })
-    .where(eq(articles.id, articleId))
-  revalidatePath('/dashboard/koji/feed')
+    .where(eq(articles.id, articleId));
+  revalidatePath("/dashboard/koji/feed");
 }
 ```
 
@@ -517,16 +588,17 @@ export async function updateArticleStatus(
 
 #### Health KPIs (4 cards)
 
-| Card | Metric |
-|------|--------|
-| Last Run Status | Status badge + timestamp + duration |
-| 7-Day Success Rate | COUNT(success) / COUNT(*) × 100 |
-| Avg Articles / Run | AVG(article_count) last 7 runs |
-| Total Errors (7d) | SUM(error_count) last 7 days |
+| Card               | Metric                              |
+| ------------------ | ----------------------------------- |
+| Last Run Status    | Status badge + timestamp + duration |
+| 7-Day Success Rate | COUNT(success) / COUNT(\*) × 100    |
+| Avg Articles / Run | AVG(article_count) last 7 runs      |
+| Total Errors (7d)  | SUM(error_count) last 7 days        |
 
 #### 7-Day Trend Chart
 
 Recharts `<AreaChart>`:
+
 - X: date (last 7 days)
 - Y1: article_count (stacked area, blue)
 - Y2: error_count (stacked area, red)
@@ -545,29 +617,33 @@ Red row highlight if `status = 'failed'`, amber if `status = 'partial_success'`.
 
 ```typescript
 // src/lib/db/queries/crawl-runs.ts
-import { db } from '@/lib/db/client'
-import { crawlRuns } from '@/lib/db/schema'
-import { asc, desc, gte } from 'drizzle-orm'
-import { subDays } from 'date-fns'  // already in stack
+import { db } from "@/lib/db/client";
+import { crawlRuns } from "@/lib/db/schema";
+import { asc, desc, gte } from "drizzle-orm";
+import { subDays } from "date-fns"; // already in stack
 
 export async function getRecentCrawlRuns(limit = 20, offset = 0) {
-  return db.select().from(crawlRuns)
+  return db
+    .select()
+    .from(crawlRuns)
     .orderBy(desc(crawlRuns.startedAt))
     .limit(limit)
-    .offset(offset)
+    .offset(offset);
 }
 
 export async function getPipelineHealthKPIs() {
-  const sevenDaysAgo = subDays(new Date(), 7)
-  return db.select({
-    status:       crawlRuns.status,
-    articleCount: crawlRuns.articleCount,
-    errorCount:   crawlRuns.errorCount,
-    startedAt:    crawlRuns.startedAt,
-    completedAt:  crawlRuns.completedAt,
-  }).from(crawlRuns)
+  const sevenDaysAgo = subDays(new Date(), 7);
+  return db
+    .select({
+      status: crawlRuns.status,
+      articleCount: crawlRuns.articleCount,
+      errorCount: crawlRuns.errorCount,
+      startedAt: crawlRuns.startedAt,
+      completedAt: crawlRuns.completedAt,
+    })
+    .from(crawlRuns)
     .where(gte(crawlRuns.startedAt, sevenDaysAgo))
-    .orderBy(asc(crawlRuns.startedAt))
+    .orderBy(asc(crawlRuns.startedAt));
 }
 ```
 
@@ -581,40 +657,47 @@ export async function getPipelineHealthKPIs() {
 
 #### Sources Table Columns
 
-| Column | Content | Editable |
-|--------|---------|---------|
-| Enabled | Shadcn `<Switch>` toggle (optimistic update) | Yes |
-| Name | Text | Yes (inline) |
-| URL | Link (truncated) | Yes (inline) |
-| Domain | Text badge | Yes |
-| Type | Select (news/blog/journal/company) | Yes |
-| Frequency | Select (daily/weekly) | Yes |
-| Extraction Mode | Text | Yes |
-| Actions | Edit / Delete buttons | — |
+| Column          | Content                                      | Editable     |
+| --------------- | -------------------------------------------- | ------------ |
+| Enabled         | Shadcn `<Switch>` toggle (optimistic update) | Yes          |
+| Name            | Text                                         | Yes (inline) |
+| URL             | Link (truncated)                             | Yes (inline) |
+| Domain          | Text badge                                   | Yes          |
+| Type            | Select (news/blog/journal/company)           | Yes          |
+| Frequency       | Select (daily/weekly)                        | Yes          |
+| Extraction Mode | Text                                         | Yes          |
+| Actions         | Edit / Delete buttons                        | —            |
 
 #### CRUD Operations
 
 All implemented as Server Actions:
 
 **Toggle Enable:**
+
 ```typescript
-'use server'
+"use server";
 export async function toggleSourceEnabled(id: string, enabled: boolean) {
-  await db.update(sources).set({ enabled, updatedAt: new Date() }).where(eq(sources.id, id))
-  revalidatePath('/dashboard/koji/sources')
+  await db
+    .update(sources)
+    .set({ enabled, updatedAt: new Date() })
+    .where(eq(sources.id, id));
+  revalidatePath("/dashboard/koji/sources");
 }
 ```
 
 **Add Source (Dialog form):**
+
 - Shadcn `<Dialog>` with react-hook-form + Zod validation
 - Fields: name, url, domain, source_type, crawl_frequency, extraction_mode, enabled
 - Validation: URL must be unique, all required fields present
 - On submit: Server Action → `db.insert(sources).values(...)` → `revalidatePath`
 
 **Edit Source (same Dialog, pre-filled):**
+
 - Server Action → `db.update(sources).set({...}).where(eq(sources.id, id))`
 
 **Delete Source (with confirmation):**
+
 - Shadcn `<AlertDialog>` for confirmation
 - Server Action → `db.delete(sources).where(eq(sources.id, id))`
 - Guard: refuse if source has articles (foreign key protection)
@@ -624,14 +707,14 @@ export async function toggleSourceEnabled(id: string, enabled: boolean) {
 ```typescript
 // src/lib/db/queries/sources.ts
 export const SourceFormSchema = z.object({
-  name:           z.string().min(1, 'Name required').max(100),
-  url:            z.url('Must be a valid URL'),
-  domain:         z.string().min(1, 'Domain required'),
-  sourceType:     z.enum(['news', 'blog', 'journal', 'company', 'preprint']),
-  crawlFrequency: z.enum(['daily', 'weekly']).default('daily'),
+  name: z.string().min(1, "Name required").max(100),
+  url: z.url("Must be a valid URL"),
+  domain: z.string().min(1, "Domain required"),
+  sourceType: z.enum(["news", "blog", "journal", "company", "preprint"]),
+  crawlFrequency: z.enum(["daily", "weekly"]).default("daily"),
   extractionMode: z.string().optional(),
-  enabled:        z.boolean().default(true),
-})
+  enabled: z.boolean().default(true),
+});
 ```
 
 ---
@@ -655,6 +738,7 @@ Clicking a row → populates Entity Detail Panel on the right.
 #### View 2: Entity Network Graph (Cytoscape.js)
 
 **Installation:**
+
 ```bash
 pnpm add cytoscape react-cytoscapejs cytoscape-cola
 pnpm add -D @types/cytoscape
@@ -668,52 +752,62 @@ Entities are co-occurrence linked when two entities appear in the same article. 
 // src/lib/db/queries/entities.ts
 export async function getEntityGraphData() {
   // Get all article-entity pairs
-  const pairs = await db.select({
-    articleId: articleEntities.articleId,
-    entityId:  articleEntities.entityId,
-    entityName: entities.name,
-    entityType: entities.entityType,
-    mentionCount: articleEntities.mentionCount,
-  }).from(articleEntities)
-    .innerJoin(entities, eq(articleEntities.entityId, entities.id))
+  const pairs = await db
+    .select({
+      articleId: articleEntities.articleId,
+      entityId: articleEntities.entityId,
+      entityName: entities.name,
+      entityType: entities.entityType,
+      mentionCount: articleEntities.mentionCount,
+    })
+    .from(articleEntities)
+    .innerJoin(entities, eq(articleEntities.entityId, entities.id));
 
   // Build co-occurrence edges in memory
-  const articleToEntities = new Map<string, typeof pairs>()
+  const articleToEntities = new Map<string, typeof pairs>();
   for (const pair of pairs) {
-    const existing = articleToEntities.get(pair.articleId) ?? []
-    articleToEntities.set(pair.articleId, [...existing, pair])
+    const existing = articleToEntities.get(pair.articleId) ?? [];
+    articleToEntities.set(pair.articleId, [...existing, pair]);
   }
 
-  const edgeWeights = new Map<string, number>()
+  const edgeWeights = new Map<string, number>();
   for (const entities of articleToEntities.values()) {
     for (let i = 0; i < entities.length; i++) {
       for (let j = i + 1; j < entities.length; j++) {
-        const key = [entities[i].entityId, entities[j].entityId].sort().join('|')
-        edgeWeights.set(key, (edgeWeights.get(key) ?? 0) + 1)
+        const key = [entities[i].entityId, entities[j].entityId]
+          .sort()
+          .join("|");
+        edgeWeights.set(key, (edgeWeights.get(key) ?? 0) + 1);
       }
     }
   }
 
   // Aggregate node mention counts
-  const nodeMentions = new Map<string, { name: string; type: string; count: number }>()
+  const nodeMentions = new Map<
+    string,
+    { name: string; type: string; count: number }
+  >();
   for (const pair of pairs) {
-    const existing = nodeMentions.get(pair.entityId)
+    const existing = nodeMentions.get(pair.entityId);
     nodeMentions.set(pair.entityId, {
       name: pair.entityName,
       type: pair.entityType,
       count: (existing?.count ?? 0) + pair.mentionCount,
-    })
+    });
   }
 
   return {
     nodes: Array.from(nodeMentions.entries()).map(([id, data]) => ({
-      id, label: data.name, type: data.type, weight: data.count,
+      id,
+      label: data.name,
+      type: data.type,
+      weight: data.count,
     })),
     edges: Array.from(edgeWeights.entries()).map(([key, weight]) => {
-      const [source, target] = key.split('|')
-      return { source, target, weight }
+      const [source, target] = key.split("|");
+      return { source, target, weight };
     }),
-  }
+  };
 }
 ```
 
@@ -846,6 +940,7 @@ export function EntityGraph({ nodes, edges, onEntityClick, filterType }: EntityG
 #### Entity Detail Panel (right side sheet)
 
 Shadcn `<Sheet>` sliding from right on entity click:
+
 - Entity name + type badge + canonical name
 - Total mention count
 - Entity type description
@@ -903,6 +998,7 @@ Cell size proportional to count
 ```
 
 Server-side aggregation needed (jsonb_array_elements):
+
 ```sql
 SELECT tag::text, COUNT(*) as count
 FROM articles, jsonb_array_elements_text(topic_tags) AS tag
@@ -952,6 +1048,7 @@ Data joins `crawl_runs` and `articles` grouped by source.
 #### Section 2: System Information
 
 Read-only display:
+
 - Total articles in database
 - Total entities
 - Active sources count / total
@@ -970,58 +1067,64 @@ Read-only display:
 
 ```typescript
 // src/app/api/pipeline/trigger/route.ts
-import { NextResponse } from 'next/server'
-import { after } from 'next/server'  // ← Required for deferred work in Next.js 15+
-import { exec } from 'node:child_process'
-import { promisify } from 'node:util'
-import path from 'node:path'
-import { db } from '@/lib/db/client'
-import { crawlRuns } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { NextResponse } from "next/server";
+import { after } from "next/server"; // ← Required for deferred work in Next.js 15+
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
+import path from "node:path";
+import { db } from "@/lib/db/client";
+import { crawlRuns } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
-const execAsync = promisify(exec)
+const execAsync = promisify(exec);
 
 // Validate and resolve script path at startup — not at request time
-const SCRIPT_PATH = process.env.PIPELINE_SCRIPT_PATH
+const SCRIPT_PATH = process.env.PIPELINE_SCRIPT_PATH;
 if (!SCRIPT_PATH) {
-  console.error('[pipeline] PIPELINE_SCRIPT_PATH is not set — manual sync will be disabled')
+  console.error(
+    "[pipeline] PIPELINE_SCRIPT_PATH is not set — manual sync will be disabled",
+  );
 }
 
 export async function POST() {
   if (!SCRIPT_PATH) {
     return NextResponse.json(
-      { error: 'Pipeline script path not configured on server' },
-      { status: 503 }
-    )
+      { error: "Pipeline script path not configured on server" },
+      { status: 503 },
+    );
   }
 
   // 1. Check for active run (duplicate prevention via DB state lock)
-  const active = await db.select({ id: crawlRuns.id })
+  const active = await db
+    .select({ id: crawlRuns.id })
     .from(crawlRuns)
-    .where(eq(crawlRuns.status, 'running'))
-    .limit(1)
+    .where(eq(crawlRuns.status, "running"))
+    .limit(1);
 
   if (active.length > 0) {
     return NextResponse.json(
-      { error: 'Pipeline already running', runId: active[0].id },
-      { status: 409 }
-    )
+      { error: "Pipeline already running", runId: active[0].id },
+      { status: 409 },
+    );
   }
 
   // 2. Use after() to defer execution until after response is sent
   // This keeps the deferred work alive even if the runtime would otherwise shut down
   after(
     execAsync(`bash ${path.resolve(SCRIPT_PATH)}`)
-      .then(() => console.log('[pipeline] manual run completed'))
-      .catch((err: Error) => console.error('[pipeline] manual run failed:', err.message))
-  )
+      .then(() => console.log("[pipeline] manual run completed"))
+      .catch((err: Error) =>
+        console.error("[pipeline] manual run failed:", err.message),
+      ),
+  );
 
   // 3. Return immediately — client subscribes to progress via SSE
-  return NextResponse.json({ status: 'triggered' })
+  return NextResponse.json({ status: "triggered" });
 }
 ```
 
 **Environment variable required:**
+
 ```env
 PIPELINE_SCRIPT_PATH=/absolute/path/to/biomyne-koji/ops/scripts/run_pipeline.sh
 ```
@@ -1030,64 +1133,70 @@ PIPELINE_SCRIPT_PATH=/absolute/path/to/biomyne-koji/ops/scripts/run_pipeline.sh
 
 ```typescript
 // src/app/api/pipeline/progress/route.ts
-import { db } from '@/lib/db/client'
-import { crawlRuns } from '@/lib/db/schema'
-import { desc, eq } from 'drizzle-orm'
+import { db } from "@/lib/db/client";
+import { crawlRuns } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function GET() {
-  const encoder = new TextEncoder()
-  let aborted = false
+  const encoder = new TextEncoder();
+  let aborted = false;
 
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: object) => {
-        if (!aborted) controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
-      }
+        if (!aborted)
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify(data)}\n\n`),
+          );
+      };
 
       // Keep-alive ping every 20s (prevents proxy timeout)
       const keepAlive = setInterval(() => {
-        if (!aborted) controller.enqueue(encoder.encode(': ping\n\n'))
-      }, 20_000)
+        if (!aborted) controller.enqueue(encoder.encode(": ping\n\n"));
+      }, 20_000);
 
       // Poll latest crawl_run every 2 seconds
-      let maxPolls = 300 // 10 minute max
+      let maxPolls = 300; // 10 minute max
       while (!aborted && maxPolls-- > 0) {
-        const [latest] = await db.select()
+        const [latest] = await db
+          .select()
           .from(crawlRuns)
           .orderBy(desc(crawlRuns.startedAt))
-          .limit(1)
+          .limit(1);
 
         send({
-          status:       latest?.status ?? 'unknown',
+          status: latest?.status ?? "unknown",
           articleCount: latest?.articleCount ?? 0,
-          errorCount:   latest?.errorCount ?? 0,
-          startedAt:    latest?.startedAt,
-        })
+          errorCount: latest?.errorCount ?? 0,
+          startedAt: latest?.startedAt,
+        });
 
-        if (latest?.status && latest.status !== 'running') {
-          clearInterval(keepAlive)
-          controller.close()
-          return
+        if (latest?.status && latest.status !== "running") {
+          clearInterval(keepAlive);
+          controller.close();
+          return;
         }
-        await sleep(2000)
+        await sleep(2000);
       }
 
-      clearInterval(keepAlive)
-      controller.close()
+      clearInterval(keepAlive);
+      controller.close();
     },
-    cancel() { aborted = true },
-  })
+    cancel() {
+      aborted = true;
+    },
+  });
 
   return new Response(stream, {
     headers: {
-      'Content-Type':  'text/event-stream',
-      'Cache-Control': 'no-cache, no-transform',
-      'Connection':    'keep-alive',
-      'X-Accel-Buffering': 'no',  // Nginx buffering disable
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no", // Nginx buffering disable
     },
-  })
+  });
 }
 ```
 
@@ -1188,50 +1297,55 @@ This change eliminated the previous Turbopack NFT warning tied to sibling env/sc
 
 ```typescript
 // src/stores/feed-filter-store.ts
-import { create } from 'zustand'
-import { subDays } from 'date-fns'
+import { create } from "zustand";
+import { subDays } from "date-fns";
 
-interface DateRange { from: Date; to: Date }
+interface DateRange {
+  from: Date;
+  to: Date;
+}
 
 interface FeedFilterState {
-  dateRange: DateRange
-  priorities: Array<'low' | 'medium' | 'high'>
-  sourceIds: string[]
-  topicTags: string[]
-  statuses: Array<'processed' | 'needs_review' | 'failed'>
-  searchText: string
-  setDateRange: (range: DateRange) => void
-  togglePriority: (p: 'low' | 'medium' | 'high') => void
-  toggleSource: (id: string) => void
-  setSearchText: (text: string) => void
-  reset: () => void
+  dateRange: DateRange;
+  priorities: Array<"low" | "medium" | "high">;
+  sourceIds: string[];
+  topicTags: string[];
+  statuses: Array<"processed" | "needs_review" | "failed">;
+  searchText: string;
+  setDateRange: (range: DateRange) => void;
+  togglePriority: (p: "low" | "medium" | "high") => void;
+  toggleSource: (id: string) => void;
+  setSearchText: (text: string) => void;
+  reset: () => void;
 }
 
 const DEFAULT_FILTERS = {
   dateRange: { from: subDays(new Date(), 7), to: new Date() },
-  priorities: ['low', 'medium', 'high'] as const,
+  priorities: ["low", "medium", "high"] as const,
   sourceIds: [],
   topicTags: [],
-  statuses: ['processed', 'needs_review', 'failed'] as const,
-  searchText: '',
-}
+  statuses: ["processed", "needs_review", "failed"] as const,
+  searchText: "",
+};
 
 export const useFeedFilterStore = create<FeedFilterState>((set) => ({
   ...DEFAULT_FILTERS,
   setDateRange: (range) => set({ dateRange: range }),
-  togglePriority: (p) => set((s) => ({
-    priorities: s.priorities.includes(p)
-      ? s.priorities.filter(x => x !== p)
-      : [...s.priorities, p],
-  })),
-  toggleSource: (id) => set((s) => ({
-    sourceIds: s.sourceIds.includes(id)
-      ? s.sourceIds.filter(x => x !== id)
-      : [...s.sourceIds, id],
-  })),
+  togglePriority: (p) =>
+    set((s) => ({
+      priorities: s.priorities.includes(p)
+        ? s.priorities.filter((x) => x !== p)
+        : [...s.priorities, p],
+    })),
+  toggleSource: (id) =>
+    set((s) => ({
+      sourceIds: s.sourceIds.includes(id)
+        ? s.sourceIds.filter((x) => x !== id)
+        : [...s.sourceIds, id],
+    })),
   setSearchText: (searchText) => set({ searchText }),
   reset: () => set(DEFAULT_FILTERS),
-}))
+}));
 ```
 
 ---
@@ -1258,8 +1372,9 @@ Update `src/navigation/sidebar/sidebar-items.ts` to replace generic template ite
 ```
 
 App name update in `src/config/app-config.ts`:
+
 ```typescript
-name: "Koji Intelligence"
+name: "Koji Intelligence";
 ```
 
 ---
@@ -1372,25 +1487,25 @@ The implementation has already passed these post-build checks:
 
 ## 12. Open Questions (Require Owner Decision Before Phase 5)
 
-| Question | Default Recommendation | Owner |
-|----------|----------------------|-------|
-| Is Supabase Realtime enabled? If yes, can replace SSE polling with Realtime subscription | Phase 1 shipped with SSE polling; Realtime remains an optional upgrade | Engineering owner |
-| What is `PIPELINE_SCRIPT_PATH` in dashboard deployment environment? | Same-machine Mac Studio deployment may auto-detect sibling `../biomyne-koji/ops/scripts/run_pipeline.sh` | Engineering owner |
-| Should the dashboard be deployed to Vercel or same Mac Studio as pipeline? | **Answered:** Mac Studio localhost, same host as pipeline | Engineering/Ops owner |
-| Should `raw_markdown` column be displayed in article detail, or only `summary`? | **Answered:** show `raw_markdown` first, with summary as a secondary tab | Product owner |
+| Question                                                                                 | Default Recommendation                                                                                   | Owner                 |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------- |
+| Is Supabase Realtime enabled? If yes, can replace SSE polling with Realtime subscription | Phase 1 shipped with SSE polling; Realtime remains an optional upgrade                                   | Engineering owner     |
+| What is `PIPELINE_SCRIPT_PATH` in dashboard deployment environment?                      | Same-machine Mac Studio deployment may auto-detect sibling `../biomyne-koji/ops/scripts/run_pipeline.sh` | Engineering owner     |
+| Should the dashboard be deployed to Vercel or same Mac Studio as pipeline?               | **Answered:** Mac Studio localhost, same host as pipeline                                                | Engineering/Ops owner |
+| Should `raw_markdown` column be displayed in article detail, or only `summary`?          | **Answered:** show `raw_markdown` first, with summary as a secondary tab                                 | Product owner         |
 
 ---
 
 ## 13. Risks and Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Cytoscape.js SSR error (window undefined) | Use `dynamic(() => import(...), { ssr: false })` |
-| Transaction Pooler `prepare: false` forgotten | Include in client.ts with comment; add to PR checklist |
-| `run_pipeline.sh` path differs in deployment | Require `PIPELINE_SCRIPT_PATH` env var, fail fast if missing |
-| Entity graph too slow with many nodes | Start with 200-node limit; add count guard before rendering |
-| Sources delete with FK children | Handle DB FK constraint error in Server Action, show user-friendly message |
-| JSONB `topic_tags` query performance | Add GIN index on `topic_tags` if tag filtering is slow (minor Supabase console task) |
+| Risk                                          | Mitigation                                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Cytoscape.js SSR error (window undefined)     | Use `dynamic(() => import(...), { ssr: false })`                                     |
+| Transaction Pooler `prepare: false` forgotten | Include in client.ts with comment; add to PR checklist                               |
+| `run_pipeline.sh` path differs in deployment  | Require `PIPELINE_SCRIPT_PATH` env var, fail fast if missing                         |
+| Entity graph too slow with many nodes         | Start with 200-node limit; add count guard before rendering                          |
+| Sources delete with FK children               | Handle DB FK constraint error in Server Action, show user-friendly message           |
+| JSONB `topic_tags` query performance          | Add GIN index on `topic_tags` if tag filtering is slow (minor Supabase console task) |
 
 ---
 
