@@ -1,0 +1,79 @@
+loop_id: p2b-delivery-v1
+loop_type: one-feature-build
+quality_mode: strict
+pass_threshold: 95
+description: >
+  Deliver P2B for the BioMyne Koji crawler stack end-to-end: author the approved
+  P2B version plan, implement refresh-lane and category-target runtime slices,
+  persist raw_markdown, improve summary quality, and close with multi-round
+  validation plus independent review.
+
+trigger:
+  type: manual
+  initiated_by: founder
+  context: "P2A validated live; founder requested one-shot P2B planning + implementation delivery"
+
+scope:
+  primary_repo: BiomyneKoji/biomyne-koji
+  supporting_repo: BiomyneKoji/biomyne-koji-dashboard
+  slices:
+    - P2B version plan with schema, pipeline, rollout, and validation criteria
+    - Refresh-lane discovery and re-scrape decision policy
+    - Category-target schema and discovery routing foundation
+    - Raw markdown persistence into articles.raw_markdown
+    - Richer article summaries with dashboard preview adjustments
+    - Entity merge utility for canonical-name consolidation
+
+budget:
+  max_tokens: 320000
+  max_iterations: 4
+  max_wall_time: 8h
+
+write_policy:
+  allowed_paths:
+    - docs/**
+    - ops/**
+    - sql/**
+    - .edison/**
+    - ../biomyne-koji-dashboard/src/**
+  forbidden_paths:
+    - .env
+    - ../biomyne-koji-dashboard/.env.local
+
+dispatch:
+  steps:
+    - id: write-p2b-plan
+      skill: edison-version-plan-writer
+      required: true
+      purpose: "Write the implementation-grade P2B version plan before code changes"
+    - id: review-p2b-plan
+      skill: edison-document-review-audit
+      required: true
+      purpose: "Audit the P2B plan and force bounded repair before implementation"
+    - id: implement-p2b
+      skill: edison-tech-lead-dev-workflow
+      required: true
+      purpose: "Implement the approved P2B slices plus raw_markdown and summary improvements"
+    - id: review-p2b-code
+      skill: edison-code-review-audit
+      required: true
+      purpose: "Run independent code review and bounded local repair until 95+ quality gate is met"
+
+human_gates:
+  - after_step: write-p2b-plan
+    condition: "plan scope expands beyond P2B into P2C budget governance or self-host architecture"
+    action: "Escalate to founder with narrowed execution recommendation"
+  - after_step: implement-p2b
+    condition: "database migration or live validation reveals data-integrity risk"
+    action: "Escalate to founder with blocker note and rollback-safe patch summary"
+  - after_step: review-p2b-code
+    condition: "plan review score or code review score cannot reach 95 within bounded repairs"
+    action: "Escalate to founder with findings and residual-risk inventory"
+
+escalation:
+  destination: founder
+  trigger_conditions:
+    - repeated_fail_x3
+    - budget_exhausted
+    - circuit_breaker_active
+    - critical_data_integrity_risk

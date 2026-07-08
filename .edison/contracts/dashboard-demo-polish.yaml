@@ -1,0 +1,28 @@
+loop_id: dashboard-demo-polish-v1
+version: 1.0
+
+done_when:
+  - condition: "Koji chrome no longer shows template-only action labels in the primary stakeholder path"
+    evidence_required:
+      proof: "Overview/settings runtime text no longer shows generic Quick Create / Inbox affordances"
+  - condition: "Entity related-article references expose direct links to the originating source URLs"
+    evidence_required:
+      proof: "Entity detail panel renders article cards with clickable source/open-link actions"
+  - condition: "Build remains successful after demo polish"
+    evidence_required:
+      proof: "npm run build exits successfully in biomyne-koji-dashboard"
+  - condition: "Runtime spot-check confirms stakeholder-facing copy and entity links on Koji pages"
+    evidence_required:
+      proof: "Playwright spot-check on overview/entities confirms updated copy and deep-link affordances"
+  - condition: "Engineering spec and loop artifacts reflect the new demo-polish behavior"
+    evidence_required:
+      proof: "dashboard-engineering-spec.md, TRACE.md, and state file mention reference deep links and demo polish changes"
+
+fail_when:
+  - condition: "Demo polish breaks runtime rendering or build"
+    action: escalate_to_human
+  - condition: "Reference deep-linking cannot be implemented with existing article data"
+    action: escalate_to_human
+
+escalate_when:
+  - condition: "Stakeholder polish requires broader IA redesign beyond bounded scope"

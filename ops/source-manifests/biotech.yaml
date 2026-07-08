@@ -6,6 +6,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://www.statnews.com/feed/
   - name: BioPharma Dive
     url: https://www.biopharmadive.com/
     domain: biotech
@@ -13,6 +16,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://www.biopharmadive.com/feeds/news/
   - name: Nature Biotechnology
     url: https://www.nature.com/nbt/
     domain: biotech
@@ -20,6 +26,8 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: article_listing
+    primary_discovery_surface: sitemap
+    fallback_discovery_surface: map
   - name: arXiv Quantitative Biology
     url: https://arxiv.org/archive/q-bio
     domain: biotech
@@ -27,6 +35,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: rss_feed
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://rss.arxiv.org/rss/q-bio
   - name: bioRxiv
     url: https://www.biorxiv.org/
     domain: biotech
@@ -34,6 +45,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: rss_feed
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://connect.biorxiv.org/relate/feed/biorxiv.xml
   - name: Fierce Biotech
     url: https://www.fiercebiotech.com/
     domain: biotech
@@ -41,6 +55,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://www.fiercebiotech.com/rss/xml
   - name: GEN – Genetic Engineering & Biotechnology News
     url: https://www.genengnews.com/
     domain: biotech
@@ -48,6 +65,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://www.genengnews.com/feed/
   - name: Endpoints News
     url: https://endpoints.news/
     domain: biotech
@@ -55,6 +75,8 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: map
+    fallback_discovery_surface: map
   - name: BioCentury
     url: https://www.biocentury.com/
     domain: biotech
@@ -62,6 +84,8 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: map
+    fallback_discovery_surface: map
   - name: Science
     url: https://www.science.org/
     domain: biotech
@@ -69,6 +93,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: rss_feed
+    primary_discovery_surface: rss
+    fallback_discovery_surface: map
+    feed_url: https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science
   - name: SynBioBeta
     url: https://www.synbiobeta.com/
     domain: biotech
@@ -76,3 +103,5 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
+    primary_discovery_surface: map
+    fallback_discovery_surface: map

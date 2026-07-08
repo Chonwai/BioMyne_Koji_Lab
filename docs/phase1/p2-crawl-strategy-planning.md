@@ -1,9 +1,9 @@
 # BioMyne Koji P2 爬蟲策略深度規劃書
 
-> **版本**：v2.0（深度研究版）
+> **版本**：v2.1（P2A 實作完成，進度追蹤更新）
 > **日期**：2026-07-08
-> **狀態**：等候 Founder / Engineering Owner 批准後啟動 P2A 實作
-> **範疇**：P2 規劃與共識建立，不含程式碼實作
+> **狀態**：P2A 實作完成 + 端到端驗證通過，進入 P2A 穩定觀察期
+> **範疇**：P2 規劃與共識建立 + P2A 核心實作
 > **品質模式**：strict（93+）
 > **研究方法**：Jarvis Deep Research 雙通道獨立研究 + Firecrawl 官方文檔交叉驗證 + 現有 repo 程式碼分析
 > **輸出語言**：繁體中文
@@ -808,7 +808,76 @@ CREATE INDEX idx_entities_canonical_name ON entities(canonical_name, entity_type
 
 ---
 
-## 12. 參考來源
+## 12. P2 實作進度追蹤
+
+> **最後更新**：2026-07-08 15:30 UTC+8
+
+### P2A：增量發現與去重基礎設施 ✅ **COMPLETED**（2026-07-08）
+
+| 子項目 | 狀態 | 說明 |
+|--------|------|------|
+| P2A0：Discovery Surface Audit | ✅ | 11 sources 全部分配 primary/fallback（rss/sitemap/map），見 `p2a-discovery-surface-audit.md` |
+| `source_discovery_state` 表 | ✅ | Schema + migration（`sql/004_p2a_incremental_discovery.sql`），已部署到 live Supabase |
+| `normalized_url`（URL RFC 3986） | ✅ | `_pipeline_normalization.py` normalize_url() + write 階段自動計算，已端到端驗證（live DB 寫入成功） |
+| `content_hash`（SHA-256） | ✅ | `hash_markdown()` + analyze 階段內嵌 fingerprint，live DB 欄位已填充 |
+| `discovery_method` 記錄 | ✅ | RSS/sitemap/map 三種 surface 分類記錄，live DB 已填充（e.g., `rss`） |
+| `analysis_fingerprint` | ✅ | 包含 prompt_template_version + model + temperature + content_hash，live DB 已填充 |
+| Entity canonicalization | ✅ | `canonicalize_entity_name()` 去除 Inc/Corp/LLC 等後綴，live DB `canonical_name` 欄位已填充 |
+| Firecrawl credit capture | ✅ | `_fetch_firecrawl_credit_usage.py` 正常回傳（e.g., 752/1000 credits），管線前後對比機制就緒 |
+| 端到端驗證（STAT News） | ✅ | 6 articles + 16 entity links 寫入成功，所有 P2A 新欄位正常填充 |
+| `source_discovery_state` cursor 更新 | ✅ | RSS cursor 正確記錄 `last_cursor_published_at: 2026-07-07T16:44:36Z`，cooldown=null，error_count=0 |
+
+**P2A 部署注意事項**：
+- Migration `sql/004_p2a_incremental_discovery.sql` 已在 live Supabase 執行（`source_discovery_state` 表 + articles 新欄位）
+- `_write_pipeline_output.py` 內建 legacy fallback：若新欄位寫入失敗（e.g., migration 未部署），自動回退到 legacy 欄位集
+- `_discover_article_urls.py` 的 `article_exists()` 先查 `normalized_url`，再 fallback 到 `url`
+
+---
+
+### P2B：Refresh Lane（差異偵測）🟡 **IMPLEMENTED IN REPO / PENDING DEPLOYMENT**
+
+| 子項目 | 狀態 | 依賴 |
+|--------|------|------|
+| Refresh window 策略設計 | ✅ repo 已實作 | `sql/005_p2b_refresh_and_category_targets.sql` 為 `sources` 新增 `refresh_enabled`, `refresh_window_days`, `refresh_cadence_hours`, `refresh_priority` |
+| `content_hash` diff 偵測 | ✅ repo 已實作 | unchanged refresh 直接 skip LLM；changed refresh 才重建分析 |
+| Per-source refresh policy（日/週/雙週） | ✅ repo 已實作 | preprint / journal / news / BioCentury 已有初始預設策略 |
+| Category target schema + seed | ✅ repo 已實作 | `source_category_targets` table + 10 個高信號 seed targets |
+| Category page HTML parsing | ✅ repo 已實作 | `_discover_article_urls.py` 已支援 target-level `last_seen_url` stop condition 與 `next` pagination |
+| Raw markdown persistence | ✅ repo 已實作 | `articles.raw_markdown` 在 new / refresh changed / refresh unchanged 三條 lane 都會寫入 |
+| Summary quality uplift | ✅ repo 已實作 | `_analyze_article.py` 已升級為 4-6 句 executive summary + summary floor retry |
+| Dashboard preview tuning | ✅ repo 已實作 | feed card preview 已從過短截斷提升到 240 chars |
+| Entity merge utility | ✅ repo 已實作 | `_merge_canonical_entities.py` 已完成，預設 dry-run |
+| Live migration deployment | 🟡 pending | 需把 `sql/005_p2b_refresh_and_category_targets.sql` 套到 live Supabase |
+| Category target live spot-check | 🟡 pending | 需在 migration 部署後抽查 2-3 個來源的 `last_checked_at` / `last_seen_url` 更新 |
+
+**P2B 當前 deployment gate**：
+1. 套用 `sql/005_p2b_refresh_and_category_targets.sql` 到 live Supabase
+2. 對 2-3 個來源做 category target live spot-check
+3. 以 live source rows 驗證 refresh candidate classification 與 scrape volume 沒有超出預期
+
+---
+
+### P2C：Category Page 與地圖深度 🔮 **FUTURE** — 需 P2B 完成後評估
+
+| 子項目 | 狀態 | 依賴 |
+|--------|------|------|
+| Category page URL pattern 研究 | 🔮 | 需識別出具 category page 架構的 source（e.g., Nature Biotechnology topics） |
+| `/v2/map` search 策略優化 | 🔮 | 基於 P2B refresh 數據調整 map search term + 廣度參數 |
+| 來源擴展評估（新增來源） | 🔮 | 依賴 P2A/P2B 建立的 capacity model（credits/day + LLM tokens/day） |
+
+---
+
+### 整體指標
+
+| 指標 | 當前值 | 目標 |
+|------|--------|------|
+| 已部署 sources | 11/11 | 11 |
+| Discovery surface 覆蓋 | RSS:8, Sitemap:1, Map:2 | — |
+| `source_discovery_state` 填充率 | 至少 1/11（STAT verified） | 11/11 |
+| Firecrawl 剩餘 credits | 752/1000（2026-07-08） | >500/月 |
+| Pipeline 成功率（STAT 驗證） | 6/6 articles, 16/16 entities | ≥95% |
+
+## 13. 參考來源
 
 本研究基於以下可驗證來源：
 

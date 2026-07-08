@@ -946,6 +946,7 @@ Shadcn `<Sheet>` sliding from right on entity click:
 - Entity type description
 - Related articles list (last 10, sorted by mention_count DESC)
   - Each: title, source, published date, priority badge
+  - Each related-article card should expose the original article URL so internal users can verify the source directly
   - Clicking article → opens article modal
 
 ---
@@ -1291,6 +1292,30 @@ This change eliminated the previous Turbopack NFT warning tied to sibling env/sc
 }))
 ```
 
+### 7.4 Active Run Hydration Rule
+
+The Settings page must also handle the case where an operator opens the dashboard while a manual run is already in progress.
+
+Required behavior:
+
+- if the latest `crawl_runs` row is already `in_progress` or `running`, the client sync store must auto-hydrate into live tracking mode on page load
+- the `Start Sync Now` button must be disabled while that active run is being tracked
+- SSE progress tracking should resume from the active run instead of falsely showing `idle`
+
+This behavior was validated during the 2026-07-08 hardening pass.
+
+### 7.5 Dashboard-Local Environment Rule
+
+The current recommended runtime setup is no longer sibling env autodetection.
+
+Required behavior:
+
+- dashboard secrets live in `biomyne-koji-dashboard/.env.local`
+- `env.server.ts` reads from `process.env` only
+- same-machine deployment is preserved through `PIPELINE_SCRIPT_PATH`, not by reading the pipeline repo's env file at runtime
+
+This change eliminated the previous Turbopack NFT warning tied to sibling env/script tracing.
+
 ---
 
 ## 8. Feed Filter Zustand Store
@@ -1483,6 +1508,14 @@ The implementation has already passed these post-build checks:
 - active-run hydration was validated: an existing `in_progress` crawl run correctly bootstrapped the client into `Live` tracking mode and disabled duplicate triggering
 - the previous Turbopack NFT warning was eliminated by moving runtime secrets into dashboard-local `.env.local`
 
+### Validation Note — 2026-07-08 Stakeholder Demo Polish Pass
+
+The implementation has also passed these stakeholder-facing demo checks:
+
+- top-of-sidebar template actions were replaced with Koji-specific shortcuts (`Open Feed`, `Operations`)
+- command palette framing is now Koji-specific rather than generic admin-template wording
+- entity detail related-article cards now include direct links to the original source URLs for leadership/source verification
+
 ---
 
 ## 12. Open Questions (Require Owner Decision Before Phase 5)
@@ -1530,3 +1563,4 @@ Current implementation status as of 2026-07-08:
 - route-level error boundary: implemented
 - UI-triggered manual sync: validated through a successful `crawl_runs` row (`932da5bb-2645-49a9-90e0-ec712451726d`) with `status=success`, `article_count=6`, `error_count=0`
 - runtime warning status: cleared after moving to dashboard-local env configuration
+- stakeholder demo polish: Koji-specific shortcuts and entity source deep links are implemented

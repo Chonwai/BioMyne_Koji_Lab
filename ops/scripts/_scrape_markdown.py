@@ -10,6 +10,11 @@ import time
 import urllib.error
 import urllib.request
 
+try:
+    from _pipeline_normalization import hash_markdown
+except ModuleNotFoundError:
+    from ops.scripts._pipeline_normalization import hash_markdown
+
 
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
@@ -43,7 +48,12 @@ def main(argv: list[str]) -> int:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 data = json.loads(resp.read())
             markdown = data.get("data", {}).get("markdown", "")
-            print(json.dumps({"success": bool(data.get("success")), "markdown": markdown, "word_count": len(markdown.split())}))
+            print(json.dumps({
+                "success": bool(data.get("success")),
+                "markdown": markdown,
+                "word_count": len(markdown.split()),
+                "content_hash": hash_markdown(markdown),
+            }))
             return 0
         except urllib.error.HTTPError as exc:
             body = exc.read().decode("utf-8", errors="ignore") if exc.fp else ""
@@ -57,7 +67,13 @@ def main(argv: list[str]) -> int:
                 break
             time.sleep(2 ** attempt)
 
-    print(json.dumps({"error": last_error or "Unknown Firecrawl scrape failure", "success": False, "markdown": "", "word_count": 0}))
+    print(json.dumps({
+        "error": last_error or "Unknown Firecrawl scrape failure",
+        "success": False,
+        "markdown": "",
+        "word_count": 0,
+        "content_hash": None,
+    }))
     return 1
 
 

@@ -1,0 +1,35 @@
+loop_id: p2b-delivery-v1
+version: 1.0
+
+done_when:
+  - condition: "P2B version plan exists and defines refresh lane, category targets, raw markdown persistence, summary quality, migrations, rollout, and validation scope"
+    evidence_required:
+      proof: "docs/phase1/p2b-refresh-and-category-delivery-plan.md exists with implementation-level detail"
+  - condition: "P2B schema changes exist for category targets and refresh policy support"
+    evidence_required:
+      proof: "new SQL migration adds source_category_targets and any required source_discovery_state / article metadata updates"
+  - condition: "Pipeline runtime persists raw_markdown, produces richer summaries, and supports bounded refresh/category discovery behavior"
+    evidence_required:
+      proof: "ops/scripts changes validated by focused compile/runtime checks and fixture or live-path verification"
+  - condition: "Dashboard preview no longer collapses the improved summaries into overly short snippets"
+    evidence_required:
+      proof: "biomyne-koji-dashboard feed UI uses a less destructive summary preview limit"
+  - condition: "Plan review and code review both reach 95 or above after bounded repair"
+    evidence_required:
+      proof: "TRACE.md and state file record final self-review / audit scores >=95"
+  - condition: "Trace and state artifacts capture outputs, validations, scores, and residual risks"
+    evidence_required:
+      proof: ".edison/traces/TRACE.md and .edison/state/koji-phase1-loop-state.md updated for p2b-delivery-v1"
+
+fail_when:
+  - condition: "Refresh-lane logic can insert duplicate or stale records in a way that threatens article integrity"
+    action: escalate_to_human
+  - condition: "Raw markdown persistence or summary changes cannot be validated after bounded local repair"
+    action: escalate_to_human
+  - condition: "Review score remains below 95 after bounded repair rounds"
+    action: escalate_to_human
+
+escalate_when:
+  - condition: "required runtime proof depends on unavailable production-only credentials or destructive operations"
+  - condition: "P2B implementation requires provider abstraction or self-host architecture shifts that belong to later phases"
+  - condition: "live migration risk exceeds bounded same-request repair scope"

@@ -3,10 +3,12 @@
 - loop_id: `koji-phase1-delivery-loop`
 - status: `completed_with_known_limit`
 - quality_mode: `strict`
-- current_stage: `self-host firecrawl research closeout`
+- current_stage: `P2B implementation closeout`
 - open_items:
   - replace scaffold-level Hermes artifacts with real runtime-tested implementation during actual engineering execution
-  - approve `docs/phase1/p2-crawl-strategy-planning.md` (cloud-first P2 plan) and answer its approval questions before starting P2A implementation
+  - apply `sql/005_p2b_refresh_and_category_targets.sql` to the real Supabase instance before enabling category-target routing in production
+  - run 2-3 category-target live spot-checks after `sql/005` deployment to validate `last_checked_at` / `last_seen_url` updates
+  - decide whether to execute `_merge_canonical_entities.py --apply` after reviewing the current dry-run output (3 duplicate canonical groups)
   - review `docs/phase1/firecrawl-self-host-decision-memo.md` before opening any self-host or hybrid PoC work
 - blocked_items:
   - none
@@ -25,6 +27,38 @@
   - Nature Biotechnology discovery repaired with supplemental recent article sitemap ingestion
   - P2 incremental crawl planning memo drafted for approval before implementation
   - self-host Firecrawl feasibility research completed with official-doc cross-check and decision memo drafted
+  - P2A core implementation slice completed: cursor-first source manifest surfaces, normalized URL plumbing, content-hash metadata, entity canonicalization, credit-usage capture, and discovery surface audit artifact
+  - P2B repo implementation slice completed: refresh-lane discovery classification, category-target schema + HTML parsing, raw_markdown persistence, longer executive summaries, dashboard preview uplift, and entity merge dry-run utility
+
+---
+
+## Loop: p2a-implementation-v1
+
+| Field | Value |
+| --- | --- |
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | `sql/004_p2a_incremental_discovery.sql`, `ops/scripts/_discover_article_urls.py`, `ops/scripts/_write_pipeline_output.py`, `ops/scripts/_analyze_article.py`, `ops/scripts/run_pipeline.sh`, `ops/source-manifests/biotech.yaml`, `docs/phase1/p2a-discovery-surface-audit.md` |
+| Validation | `py_compile` passed; `bash -n` passed; manifest validation passed; pilot discovery confirmed `STAT -> rss`, `Nature -> sitemap`, `Science -> rss`, `Endpoints -> map`; narrow real-Supabase duplicate-path check passed (`articles_duplicate=1`, `entity_links_success=5`) |
+| Hardening Wins | Added `source_discovery_state` migration and article metadata columns; wired manifest-driven RSS/sitemap surfaces; normalized URL dedupe foundation; content hash + analysis fingerprint emission; entity canonicalization; Firecrawl credit usage capture; P2A0 surface audit completed for all 11 configured sources |
+| Residual Risk | None at the P2A schema-deployment layer; `sql/004_p2a_incremental_discovery.sql` is already live, but later phases still depend on broader runtime observation data |
+| Next Step | Use the deployed P2A foundation to validate and roll out P2B refresh-lane/category-target work |
+
+---
+
+## Loop: p2b-delivery-v1
+
+| Field | Value |
+| --- | --- |
+| Status | **COMPLETED_WITH_DEPLOY_GATE** |
+| Completed | 2026-07-08 |
+| Quality Result | **SELF PASS (95+/100 target met)** |
+| Output | `docs/phase1/p2b-refresh-and-category-delivery-plan.md`, `sql/005_p2b_refresh_and_category_targets.sql`, `ops/scripts/_discover_article_urls.py`, `ops/scripts/_scrape_markdown.py`, `ops/scripts/_analyze_article.py`, `ops/scripts/_write_pipeline_output.py`, `ops/scripts/_merge_canonical_entities.py`, `ops/scripts/run_pipeline.sh`, `biomyne-koji-dashboard/src/app/(main)/dashboard/koji/feed/_components/feed-dashboard.tsx` |
+| Validation | `py_compile` passed for all touched Python helpers; `bash -n` passed; fixture checks validated refresh eligibility + category pagination parsing; live narrow refresh PATCH validation returned `articles_refreshed_unchanged=1`; sample analysis produced `raw_markdown=true`, `summary_chars=859`, `summary_sentences=4`; entity merge dry-run returned 3 duplicate canonical groups |
+| Hardening Wins | Raw markdown now persists across new/refresh lanes; summary prompt upgraded to 4-6 sentence executive summary with retry floor; refresh lane no longer re-runs LLM when content hash is unchanged; category discovery now has DB-backed target config and HTML pagination support; refresh write-path now fails closed if entity-link clearing fails; category parser now has a per-page link cap; same-hash refresh races are downgraded to unchanged refresh |
+| Residual Risk | `sql/005_p2b_refresh_and_category_targets.sql` has not yet been deployed to live Supabase, so category-target live runtime and source-level refresh defaults have not been exercised against production rows; entity merge utility has only been dry-run, not applied |
+| Next Step | Apply `sql/005_p2b_refresh_and_category_targets.sql`, run category-target live spot-checks on 2-3 sources, then decide whether to execute `_merge_canonical_entities.py --apply` |
 
 ---
 
@@ -81,6 +115,21 @@
 | Hardening Wins | Koji-only navigation, reduced template noise, dashboard-local `.env.local` + `.env.local.example`, `env.server.ts` moved to `process.env` only |
 | Residual Risk  | None at build-warning level; remaining work is presentation refinement only                                                                    |
 | Next Step      | Dashboard is ready for stakeholder walkthrough and broader internal use                                                                        |
+
+---
+
+## Loop: dashboard-demo-polish-v1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETED** |
+| Completed | 2026-07-08 |
+| Quality Result | **PASS (95+ target met)** |
+| Output | Koji demo-surface polish + entity reference deep-linking |
+| Validation | `npm run build` passes; Playwright confirmed Koji-specific quick actions and working original-source links in the entity sheet |
+| Hardening Wins | Removed remaining template action noise, localized command palette framing to Koji, and exposed direct outbound article links from entity-related references |
+| Residual Risk | None at the demo-surface layer; remaining work is optional narrative / presentation refinement only |
+| Next Step | Dashboard is ready for founder and internal stakeholder demos with verifiable source traceability |
 
 ---
 
