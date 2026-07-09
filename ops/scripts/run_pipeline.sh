@@ -345,6 +345,8 @@ while IFS= read -r line; do
 
     echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print(d.get("markdown", ""), end="")' > "$ARTICLE_TMP" 2>/dev/null || true
     SCRAPED_CONTENT_HASH=$(echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print(d.get("content_hash", "") or "")' 2>/dev/null)
+    SCRAPE_PAYWALL_DETECTED=$(echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print(str(d.get("paywall_detected", False)).lower())' 2>/dev/null)
+    SCRAPE_PAYWALL_SIGNAL=$(echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print((d.get("paywall_signal") or "").replace("\n", " ").replace("\r", " "), end="")' 2>/dev/null)
 
     if [ "$SCRAPE_EXIT" -ne 0 ] || [ ! -s "$ARTICLE_TMP" ]; then
       echo -e "    ${RED}✗${NC} Failed to scrape article content for $SRC_NAME: $SCRAPE_JSON"
@@ -358,6 +360,14 @@ while IFS= read -r line; do
       echo -e "    ${GREEN}✓${NC} Refresh hash unchanged; skipping LLM analysis"
       REFRESH_JSON=$(SRC_ID="$SRC_ID" RUN_ID="$RUN_ID" EXISTING_ARTICLE_ID="$EXISTING_ARTICLE_ID" PROCESSING_LANE="$PROCESSING_LANE" SKIP_ANALYSIS=true CONTENT_UNCHANGED=true ARTICLE_URL="$ARTICLE_URL" TITLE_HINT="$TITLE_HINT" ARTICLE_PUBLISHED_AT="$PUBLISHED_AT_HINT" DISCOVERY_METHOD="$DISCOVERY_METHOD_HINT" CONTENT_HASH="$SCRAPED_CONTENT_HASH" ANALYSIS_NOTES="Refresh scrape detected no content change; reused prior analysis." ANALYSIS_PROMPT_VERSION="$ANALYSIS_PROMPT_VERSION" build_article_record_from_markdown "$ARTICLE_TMP")
       printf '%s\n' "$REFRESH_JSON" >> "$ANALYSIS_JSONL"
+      rm -f "$ARTICLE_TMP"
+      continue
+    fi
+
+    if [ "$SCRAPE_PAYWALL_DETECTED" = "true" ]; then
+      echo -e "    ${YELLOW}⚠${NC} Paywall/subscriber gate detected (${SCRAPE_PAYWALL_SIGNAL:-unknown}). Persisting teaser/raw markdown without LLM analysis."
+      SUMMARY_HINT="Teaser-only content captured. Full article appears gated by paywall/subscriber access (${SCRAPE_PAYWALL_SIGNAL:-unknown}), so this record should be treated as limited-access intelligence rather than a fully scraped article." FALLBACK_JSON=$(SRC_ID="$SRC_ID" RUN_ID="$RUN_ID" EXISTING_ARTICLE_ID="$EXISTING_ARTICLE_ID" PROCESSING_LANE="$PROCESSING_LANE" SKIP_ANALYSIS=true CONTENT_UNCHANGED=false ARTICLE_URL="$ARTICLE_URL" TITLE_HINT="$TITLE_HINT" ARTICLE_PUBLISHED_AT="$PUBLISHED_AT_HINT" DISCOVERY_METHOD="$DISCOVERY_METHOD_HINT" CONTENT_HASH="$SCRAPED_CONTENT_HASH" ANALYSIS_NOTES="Skipped LLM analysis because paywall/subscriber gate was detected ($SCRAPE_PAYWALL_SIGNAL)." ANALYSIS_PROMPT_VERSION="$ANALYSIS_PROMPT_VERSION" build_article_record_from_markdown "$ARTICLE_TMP")
+      printf '%s\n' "$FALLBACK_JSON" >> "$ANALYSIS_JSONL"
       rm -f "$ARTICLE_TMP"
       continue
     fi

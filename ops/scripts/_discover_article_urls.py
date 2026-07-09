@@ -51,6 +51,7 @@ NON_ARTICLE_PATTERNS = (
     r"/staff(?:/|$)",
     r"/tag(?:/|$)",
     r"/category(?:/|$)",
+    r"/categories(?:/|$)",
     r"/topics?(?:/|$)",
     r"/events?(?:/|$)",
     r"/jobs?(?:/|$)",
@@ -86,6 +87,9 @@ class SourceRule:
     include_keywords: Sequence[str] = ()
     include_regexes: Sequence[str] = ()
     exclude_regexes: Sequence[str] = ()
+    non_article_exceptions: Sequence[str] = ()
+    disable_category_stop_on_last_seen: bool = False
+    coarse_feed_timestamps: bool = False
 
 
 SOURCE_RULES: Dict[str, SourceRule] = {
@@ -103,17 +107,26 @@ SOURCE_RULES: Dict[str, SourceRule] = {
         include_keywords=("/biotech/", "/research/"),
     ),
     "GEN – Genetic Engineering & Biotechnology News": SourceRule(
-        include_keywords=("/news/", "/topics/"),
+        include_keywords=("/news/",),
+        include_regexes=(r"/topics/[^/]+/.+",),
         exclude_regexes=(r"/topics/[^/]+/$",),
+        non_article_exceptions=(r"/topics/[^/]+/.+",),
     ),
     "Endpoints News": SourceRule(
         include_keywords=("/202", "/news/", "/biotech/", "/pharma/"),
+        include_regexes=(r"^https?://(?:www\.)?endpoints\.news/(?:sp/)?[a-z0-9][^?#]+$",),
+        exclude_regexes=(
+            r"endpoints\.news/(?:news|rss|feed|channel|about|events?|author|tag|category)(?:/|$)",
+            r"endpoints\.news/topic-hub/",
+            r"endpoints\.news/.+/page/\d+(?:/|$)",
+        ),
     ),
     "BioCentury": SourceRule(
         include_keywords=("/article/", "/biopharma/", "/business/"),
     ),
     "SynBioBeta": SourceRule(
         include_keywords=("/read/", "/article/"),
+        exclude_regexes=(r"^https?://(?:www\.)?synbiobeta\.com/?$",),
     ),
     "arXiv Quantitative Biology": SourceRule(
         discovery_url="https://arxiv.org/list/q-bio/new",
@@ -121,12 +134,14 @@ SOURCE_RULES: Dict[str, SourceRule] = {
         sitemap="skip",
         include_keywords=("/abs/",),
         exclude_regexes=(r"/archive/", r"/list/"),
+        coarse_feed_timestamps=True,
     ),
     "bioRxiv": SourceRule(
         discovery_url="https://www.biorxiv.org/content/early/recent",
-        map_search="content/10.1101",
+        map_search="content/10.",
         sitemap="skip",
-        include_regexes=(r"/content/10\.1101/",),
+        include_regexes=(r"/content/10\.\d{4,9}/",),
+        disable_category_stop_on_last_seen=True,
     ),
     "Science": SourceRule(
         discovery_url="https://www.science.org/toc/science/current",
@@ -174,24 +189,59 @@ class AnchorParser(HTMLParser):
         self._current_rel = ""
 
 
+RETRYABLE_HTTP_CODES = {408, 409, 425, 429, 500, 502, 503, 504}
+
+
+def fetch_url_bytes(url: str, timeout_seconds: int = 30) -> bytes:
+    attempts = env_int("DISCOVERY_HTTP_RETRY_ATTEMPTS", 4)
+    timeout_budget = env_int("DISCOVERY_HTTP_TIMEOUT_SECONDS", timeout_seconds)
+    last_error: Exception | None = None
+
+    for attempt in range(attempts):
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "BioMyne-Koji/1.0 (+https://www.biomyne.com)",
+                "Connection": "close",
+            },
+            method="GET",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_budget) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as exc:
+            last_error = exc
+            if exc.code not in RETRYABLE_HTTP_CODES or attempt == attempts - 1:
+                raise
+        except Exception as exc:
+            last_error = exc
+            if attempt == attempts - 1:
+                raise
+        time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"HTTP fetch failed: {last_error}")
+
+
 def firecrawl_map(url: str, search: Optional[str], sitemap: str, limit: int) -> List[dict]:
     token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
     if not token:
         raise RuntimeError("FIRECRAWL_KEY or FIRECRAWL_API_KEY is required")
 
+    timeout_ms = env_int("DISCOVERY_MAP_TIMEOUT_MS", 90000)
+    retry_attempts = env_int("DISCOVERY_MAP_RETRY_ATTEMPTS", 5)
     payload = {
         "url": url,
         "sitemap": sitemap,
         "includeSubdomains": False,
         "ignoreQueryParameters": True,
         "limit": limit,
-        "timeout": 60000,
+        "timeout": timeout_ms,
     }
     if search:
         payload["search"] = search
 
     last_error = None
-    for attempt in range(3):
+    for attempt in range(retry_attempts):
         req = urllib.request.Request(
             "https://api.firecrawl.dev/v2/map",
             data=json.dumps(payload).encode("utf-8"),
@@ -202,17 +252,17 @@ def firecrawl_map(url: str, search: Optional[str], sitemap: str, limit: int) -> 
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=70) as resp:
+            with urllib.request.urlopen(req, timeout=max(70, (timeout_ms // 1000) + 20)) as resp:
                 data = json.loads(resp.read())
             break
         except urllib.error.HTTPError as exc:
             last_error = exc
-            if exc.code not in (408, 409, 425, 429, 500, 502, 503, 504) or attempt == 2:
+            if exc.code not in RETRYABLE_HTTP_CODES or attempt == retry_attempts - 1:
                 raise
             time.sleep(2 ** attempt)
         except Exception as exc:
             last_error = exc
-            if attempt == 2:
+            if attempt == retry_attempts - 1:
                 raise
             time.sleep(2 ** attempt)
     else:
@@ -421,15 +471,7 @@ def mark_surface_success(surface: str, payload: dict) -> None:
 
 
 def load_xml_sitemap(url: str) -> List[dict]:
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "BioMyne-Koji/1.0 (+https://www.biomyne.com)",
-        },
-        method="GET",
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        body = resp.read()
+    body = fetch_url_bytes(url, timeout_seconds=30)
 
     root = ET.fromstring(body)
     namespace_match = re.match(r"\{(.+)\}", root.tag)
@@ -475,15 +517,7 @@ def load_xml_sitemap(url: str) -> List[dict]:
 
 
 def fetch_feed_entries(feed_url: str) -> List[dict]:
-    req = urllib.request.Request(
-        feed_url,
-        headers={
-            "User-Agent": "BioMyne-Koji/1.0 (+https://www.biomyne.com)",
-        },
-        method="GET",
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        body = resp.read()
+    body = fetch_url_bytes(feed_url, timeout_seconds=30)
 
     root = ET.fromstring(body)
     entries: List[dict] = []
@@ -526,20 +560,45 @@ def fetch_feed_entries(feed_url: str) -> List[dict]:
                 }
             )
 
+    if local_name(root.tag).lower() == "rdf":
+        for item in root:
+            if local_name(item.tag).lower() != "item":
+                continue
+            url = child_text(item, ["link"])
+            if not url:
+                continue
+            entries.append(
+                {
+                    "url": url,
+                    "title": child_text(item, ["title"]),
+                    "description": child_text(item, ["description", "encoded"]),
+                    "published_at": iso_datetime(child_text(item, ["pubDate", "updated", "date"])),
+                    "discovery_method": "rss",
+                }
+            )
+
     return entries
 
 
 def feed_candidates(feed_url: str, limit: int, state: dict, rule: SourceRule, extraction_mode: str) -> List[dict]:
     entries = fetch_feed_entries(feed_url)
     last_cursor = parse_datetime(str(state.get("last_cursor_published_at") or ""))
+    last_cursor_url = normalize_url(str(state.get("last_cursor_url") or "").strip()) if state.get("last_cursor_url") else ""
     candidates = []
     for item in entries:
         url = item.get("url", "").strip()
         if not url:
             continue
         published_at = parse_datetime(str(item.get("published_at") or ""))
-        if last_cursor and published_at and published_at <= last_cursor:
-            continue
+        normalized_url = normalize_url(url)
+        if last_cursor and published_at:
+            if published_at < last_cursor:
+                continue
+            if published_at == last_cursor:
+                if not rule.coarse_feed_timestamps:
+                    continue
+                if last_cursor_url and normalized_url == last_cursor_url:
+                    continue
         score = score_link(url, item.get("title", ""), item.get("description", ""), rule, extraction_mode) + 4
         if score < candidate_score_threshold():
             continue
@@ -666,13 +725,7 @@ def normalize_host(url: str) -> str:
 
 
 def fetch_html(url: str) -> str:
-    req = urllib.request.Request(
-        url,
-        headers={"User-Agent": "BioMyne-Koji/1.0 (+https://www.biomyne.com)"},
-        method="GET",
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return resp.read().decode("utf-8", errors="ignore")
+    return fetch_url_bytes(url, timeout_seconds=30).decode("utf-8", errors="ignore")
 
 
 def infer_published_at_from_url(url: str) -> Optional[str]:
@@ -771,16 +824,20 @@ def category_page_candidates(
     rule: SourceRule,
     extraction_mode: str,
     targets: List[dict],
-) -> List[dict]:
+    force_targets: bool = False,
+) -> Optional[List[dict]]:
     if not targets:
-        return []
+        return None
 
     per_target_limit = max(category_target_min_limit(), limit * 3)
     collected: List[dict] = []
+    attempted_targets = 0
+    failed_targets = 0
 
     for target in targets:
-        if not target_due(target):
+        if not force_targets and not target_due(target):
             continue
+        attempted_targets += 1
 
         target_id = str(target.get("id") or "")
         current_url = str(target.get("url") or "").strip()
@@ -788,6 +845,7 @@ def category_page_candidates(
             continue
 
         last_seen_url = normalize_url(str(target.get("last_seen_url") or "").strip()) if target.get("last_seen_url") else ""
+        stop_on_last_seen = not rule.disable_category_stop_on_last_seen
         target_candidates: List[dict] = []
         newest_url = None
 
@@ -805,7 +863,7 @@ def category_page_candidates(
                     absolute_url = normalize_url(urllib.parse.urljoin(current_url, href))
                     if not absolute_url or not same_domain(absolute_url, source_url):
                         continue
-                    if last_seen_url and absolute_url == last_seen_url:
+                    if stop_on_last_seen and last_seen_url and absolute_url == last_seen_url:
                         stop_reached = True
                         break
 
@@ -855,7 +913,13 @@ def category_page_candidates(
                     "detected_at": now_iso(),
                 },
             )
+            failed_targets += 1
             print(f"[discover] Category target failed for {source_name}: {current_url} ({exc})", file=sys.stderr)
+
+    if attempted_targets == 0:
+        return None
+    if failed_targets == attempted_targets and not collected:
+        raise RuntimeError(f"All category targets failed for {source_name}")
 
     collected.sort(key=lambda item: (-item["score"], item.get("published_at") or "", item.get("url", "")), reverse=True)
     return collected[:limit]
@@ -939,6 +1003,8 @@ def should_refresh_article(existing_article: dict) -> bool:
 
 
 def is_non_article(url: str, rule: SourceRule) -> bool:
+    if any(re.search(pattern, url, re.IGNORECASE) for pattern in rule.non_article_exceptions):
+        return False
     patterns = tuple(NON_ARTICLE_PATTERNS) + tuple(rule.exclude_regexes)
     return any(re.search(pattern, url, re.IGNORECASE) for pattern in patterns)
 
@@ -1020,7 +1086,18 @@ def discover(source_name: str, source_url: str, extraction_mode: str, limit: int
             elif surface == "sitemap":
                 candidates = sitemap_candidates(source_name, limit, state, rule, extraction_mode)
             elif surface == "category_page":
-                candidates = category_page_candidates(source_name, source_url, limit, rule, extraction_mode, category_targets)
+                category_candidates = category_page_candidates(
+                    source_name,
+                    source_url,
+                    limit,
+                    rule,
+                    extraction_mode,
+                    category_targets,
+                    force_targets=(surface == primary_surface),
+                )
+                if category_candidates is None:
+                    continue
+                candidates = category_candidates
             else:
                 discovery_url = rule.discovery_url or source_url
                 raw_links = firecrawl_map(discovery_url, rule.map_search, rule.sitemap, configured_map_limit(limit))
@@ -1093,8 +1170,11 @@ def discover(source_name: str, source_url: str, extraction_mode: str, limit: int
     filtered_candidates.sort(key=lambda item: (-item["score"], item.get("published_at") or "", -recency_key(item["url"])[0], -recency_key(item["url"])[1], -recency_key(item["url"])[2], item["url"]))
 
     state_patch: dict = {}
-    if used_surface == "rss" and latest_published_at:
-        state_patch["last_cursor_published_at"] = latest_published_at
+    if used_surface == "rss":
+        if latest_published_at:
+            state_patch["last_cursor_published_at"] = latest_published_at
+        if filtered_candidates:
+            state_patch["last_cursor_url"] = filtered_candidates[0]["url"]
     if used_surface == "map":
         state_patch["last_map_at"] = now_iso()
     if used_surface == "sitemap":

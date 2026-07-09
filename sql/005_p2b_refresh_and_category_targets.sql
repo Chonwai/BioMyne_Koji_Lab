@@ -114,6 +114,12 @@ where name = 'bioRxiv'
     select 1 from source_category_targets where source_id = sources.id and url = 'https://www.biorxiv.org/content/early/recent'
   );
 
+update source_category_targets
+set check_frequency_hours = 12,
+    updated_at = now()
+where source_id in (select id from sources where name = 'bioRxiv')
+  and url = 'https://www.biorxiv.org/content/early/recent';
+
 insert into source_category_targets (source_id, name, url, priority, enabled, check_frequency_hours)
 select id, 'Fierce Biotech', 'https://www.fiercebiotech.com/biotech', 'medium', true, 24
 from sources
@@ -139,12 +145,20 @@ where name = 'Endpoints News'
   );
 
 insert into source_category_targets (source_id, name, url, priority, enabled, check_frequency_hours)
-select id, 'BioCentury Biopharma', 'https://www.biocentury.com/biopharma', 'medium', true, 48
+select id, 'BioCentury Realtime Feed', 'https://www.biocentury.com/analysis/articles', 'medium', true, 24
 from sources
 where name = 'BioCentury'
   and not exists (
-    select 1 from source_category_targets where source_id = sources.id and url = 'https://www.biocentury.com/biopharma'
+    select 1 from source_category_targets where source_id = sources.id and url = 'https://www.biocentury.com/analysis/articles'
   );
+
+update source_category_targets
+set name = 'BioCentury Realtime Feed',
+    url = 'https://www.biocentury.com/analysis/articles',
+    check_frequency_hours = 24,
+    updated_at = now()
+where source_id in (select id from sources where name = 'BioCentury')
+  and url = 'https://www.biocentury.com/biopharma';
 
 insert into source_category_targets (source_id, name, url, priority, enabled, check_frequency_hours)
 select id, 'Science Current TOC', 'https://www.science.org/toc/science/current', 'high', true, 24
@@ -155,9 +169,18 @@ where name = 'Science'
   );
 
 insert into source_category_targets (source_id, name, url, priority, enabled, check_frequency_hours)
-select id, 'SynBioBeta Read', 'https://www.synbiobeta.com/read', 'medium', true, 24
+select id, 'SynBioBeta Industry News', 'https://www.synbiobeta.com/synthetic-bio-news', 'high', true, 12
 from sources
 where name = 'SynBioBeta'
   and not exists (
-    select 1 from source_category_targets where source_id = sources.id and url = 'https://www.synbiobeta.com/read'
+    select 1 from source_category_targets where source_id = sources.id and url = 'https://www.synbiobeta.com/synthetic-bio-news'
   );
+
+update source_category_targets
+set name = 'SynBioBeta Industry News',
+    url = 'https://www.synbiobeta.com/synthetic-bio-news',
+    priority = 'high',
+    check_frequency_hours = 12,
+    updated_at = now()
+where source_id in (select id from sources where name = 'SynBioBeta')
+  and url = 'https://www.synbiobeta.com/read';

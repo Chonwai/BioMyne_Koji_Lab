@@ -45,7 +45,7 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: rss_feed
-    primary_discovery_surface: rss
+    primary_discovery_surface: category_page
     fallback_discovery_surface: map
     feed_url: https://connect.biorxiv.org/relate/feed/biorxiv.xml
   - name: Fierce Biotech
@@ -84,8 +84,9 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
-    primary_discovery_surface: map
+    primary_discovery_surface: rss
     fallback_discovery_surface: map
+    feed_url: https://www.biocentury.com/rss/BioCentury.xml
   - name: Science
     url: https://www.science.org/
     domain: biotech
@@ -103,5 +104,5 @@ sources:
     enabled: true
     crawl_frequency: daily
     extraction_mode: homepage_links
-    primary_discovery_surface: map
+    primary_discovery_surface: category_page
     fallback_discovery_surface: map

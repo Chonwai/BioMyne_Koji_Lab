@@ -3,13 +3,14 @@
 - loop_id: `koji-phase1-delivery-loop`
 - status: `completed_with_known_limit`
 - quality_mode: `strict`
-- current_stage: `P2B implementation closeout`
+- current_stage: `source discovery and scrape resilience hardening closeout`
 - open_items:
   - replace scaffold-level Hermes artifacts with real runtime-tested implementation during actual engineering execution
   - apply `sql/005_p2b_refresh_and_category_targets.sql` to the real Supabase instance before enabling category-target routing in production
   - run 2-3 category-target live spot-checks after `sql/005` deployment to validate `last_checked_at` / `last_seen_url` updates
   - decide whether to execute `_merge_canonical_entities.py --apply` after reviewing the current dry-run output (3 duplicate canonical groups)
   - review `docs/phase1/firecrawl-self-host-decision-memo.md` before opening any self-host or hybrid PoC work
+  - if higher fidelity on paywalled publishers is required, design a separate access-aware ingestion policy instead of treating teaser captures as a bug
 - blocked_items:
   - none
 - done_items:
@@ -29,6 +30,8 @@
   - self-host Firecrawl feasibility research completed with official-doc cross-check and decision memo drafted
   - P2A core implementation slice completed: cursor-first source manifest surfaces, normalized URL plumbing, content-hash metadata, entity canonicalization, credit-usage capture, and discovery surface audit artifact
   - P2B repo implementation slice completed: refresh-lane discovery classification, category-target schema + HTML parsing, raw_markdown persistence, longer executive summaries, dashboard preview uplift, and entity merge dry-run utility
+  - 2026-07-09 source-discovery hotfix completed: Science RSS 1.0/RDF parsing added, bioRxiv DOI matching widened, GEN `/topics/...` article paths no longer over-filtered, Endpoints root-slug articles recovered via map scoring, category-page primary surfaces can now execute every tick, and BioCentury feed-first routing validated
+  - 2026-07-09 strict hardening completed: Firecrawl scrape timeout budget now scales up for scholarly pages, transient discovery GET/map calls retry more aggressively, Endpoints/BioCentury paywall teasers are explicitly detected and persisted as limited-access records without LLM analysis, Endpoints topic-hub aggregation pages are excluded, and arXiv coarse feed timestamps now rely on `last_cursor_url` to avoid same-bucket misses
 
 ---
 

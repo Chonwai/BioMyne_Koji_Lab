@@ -1,0 +1,900 @@
+[Skip to main content](https://www.nature.com/articles/s41587-026-03199-w#content)
+
+Thank you for visiting nature.com. You are using a browser version with limited support for CSS. To obtain
+the best experience, we recommend you use a more up to date browser (or turn off compatibility mode in
+Internet Explorer). In the meantime, to ensure continued support, we are displaying the site without styles
+and JavaScript.
+
+### Subjects
+
+- [Functional genomics](https://www.nature.com/subjects/functional-genomics)
+- [Induced pluripotent stem cells](https://www.nature.com/subjects/induced-pluripotent-stem-cells)
+
+## Abstract
+
+Comprehensively mapping the relationship between genotype and phenotype offers essential insights into how a cell’s state arises from its genetic components. Toward this goal, we generated an expressed genome-scale CRISPRi perturbation cell atlas in KOLF2.1J human induced pluripotent stem cells, mapping transcriptional phenotypes associated with 11,692 perturbed genes across >2.5 million single cells. Using correlations among perturbed phenotypes, we created a cell map of the pluripotent state, demonstrating rich recapitulation of functionally related protein complexes. We then explored the atlas to uncover metabolic factor ZBTB41 and pluripotency regulator RNF7, validating their functions through metabolic tracing, immunofluorescence and protein–protein interaction assays. Lastly, we leveraged the atlas to generate a genome-scale screen of A-to-I RNA-editing modulators assayed through direct transcriptome-wide RNA editing, uncovering and mechanistically validating DBR1 as a potent regulator. Taken together, our data provide a comprehensive resource for interrogating the regulatory networks governing pluripotency, which is accessible at [https://y-doctor.github.io/KOLF2.1J\_Perturbation\_Cell\_Atlas/](https://y-doctor.github.io/KOLF2.1J_Perturbation_Cell_Atlas/).
+
+[Access through your institution](https://wayf.springernature.com/?redirect_uri=https%3A%2F%2Fwww.nature.com%2Farticles%2Fs41587-026-03199-w)
+
+[Buy or subscribe](https://www.nature.com/articles/s41587-026-03199-w#access-options)
+
+This is a preview of subscription content, [access via your institution](https://wayf.springernature.com/?redirect_uri=https%3A%2F%2Fwww.nature.com%2Farticles%2Fs41587-026-03199-w)
+
+## Access options
+
+[Access through your institution](https://wayf.springernature.com/?redirect_uri=https%3A%2F%2Fwww.nature.com%2Farticles%2Fs41587-026-03199-w)
+
+Access Nature and 54 other Nature Portfolio journals
+
+
+Get Nature+, our best-value online-access subscription
+
+
+$32.99 / 30 days
+
+cancel any time
+
+[Learn more](https://shop-amers.nature.com/products/plus/?region=US)
+
+Subscribe to this journal
+
+Receive 12 print issues and online access
+
+
+$259.00 per year
+
+only $21.58 per issue
+
+[Learn more](https://www.nature.com/nbt/subscribe)
+
+Buy this article
+
+- Purchase on SpringerLink
+- Instant access to the full article PDF.
+
+USD 39.95
+
+Prices may be subject to local taxes which are calculated during checkout
+
+**Fig. 1: KOLF2.1J perturbation cell atlas.**
+
+![](https://media.springernature.com/m312/springer-static/image/art%3A10.1038%2Fs41587-026-03199-w/MediaObjects/41587_2026_3199_Fig1_HTML.png)
+
+**Fig. 2: Systematic reconstruction of fundamental KOLF2.1J cellular processes.**
+
+![](https://media.springernature.com/m312/springer-static/image/art%3A10.1038%2Fs41587-026-03199-w/MediaObjects/41587_2026_3199_Fig2_HTML.png)
+
+**Fig. 3: Discovery of metabolic factors and pluripotency regulators.**
+
+![](https://media.springernature.com/m312/springer-static/image/art%3A10.1038%2Fs41587-026-03199-w/MediaObjects/41587_2026_3199_Fig3_HTML.png)
+
+**Fig. 4: Unbiased genome-wide identification of RNA-editing regulators.**
+
+![](https://media.springernature.com/m312/springer-static/image/art%3A10.1038%2Fs41587-026-03199-w/MediaObjects/41587_2026_3199_Fig4_HTML.png)
+
+### Similar content being viewed by others
+
+![](https://media.springernature.com/w215h120/springer-static/image/art%3A10.1038%2Fs41467-024-53284-4/MediaObjects/41467_2024_53284_Fig1_HTML.png)
+
+### [Parallel genome-scale CRISPR-Cas9 screens uncouple human pluripotent stem cell identity versus fitness](https://www.nature.com/articles/s41467-024-53284-4?fromPaywallRec=true)
+
+ArticleOpen access17 October 2024
+
+![](https://media.springernature.com/w215h120/springer-static/image/art%3A10.1038%2Fs41592-024-02537-7/MediaObjects/41592_2024_2537_Fig1_HTML.png)
+
+### [A genome-wide atlas of human cell morphology](https://www.nature.com/articles/s41592-024-02537-7?fromPaywallRec=true)
+
+ArticleOpen access27 January 2025
+
+![](https://media.springernature.com/w215h120/springer-static/image/art%3A10.1038%2Fs41588-025-02284-1/MediaObjects/41588_2025_2284_Fig1_HTML.png)
+
+### [Comprehensive transcription factor perturbations recapitulate fibroblast transcriptional states](https://www.nature.com/articles/s41588-025-02284-1?fromPaywallRec=true)
+
+Article06 August 2025
+
+## Data availability
+
+FASTQ files can be found through the Sequence Read Archive under BioProject [PRJNA1173491](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1173491). The anndata file containing the aggregated 10x feature-barcode matrix can be found on Figshare ( [https://doi.org/10.25452/figshare.plus.27261219](https://doi.org/10.25452/figshare.plus.27261219))[108](https://www.nature.com/articles/s41587-026-03199-w#ref-CR108 "Nourreddine, S., et al. A genome-scale CRISPRi perturbation atlas of human induced pluripotent stem cells. figshare                  https://doi.org/10.25452/figshare.plus.27261219                                 (2026)."). An online web browser for the dataset can be found on GitHub ( [https://y-doctor.github.io/KOLF2.1J\_Perturbation\_Cell\_Atlas/](https://y-doctor.github.io/KOLF2.1J_Perturbation_Cell_Atlas/)), with further information on data availability. All other data supporting the findings of this study are available within the article and its [Supplementary Information](https://www.nature.com/articles/s41587-026-03199-w#Sec42). [Source data](https://www.nature.com/articles/s41587-026-03199-w#Sec43) are provided with this paper.
+
+## Code availability
+
+Analysis pipeline code and Jupyter notebooks used for analysis are available through GitHub ( [https://github.com/y-doctor/KOLF2.1J\_Perturbation\_Cell\_Atlas/](https://github.com/y-doctor/KOLF2.1J_Perturbation_Cell_Atlas/)).
+
+## References
+
+001. Yamanaka, S. Pluripotent stem cell-based cell therapy—promise and challenges. _Cell Stem Cell_ **27**, 523–531 (2020).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2020.09.014) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXitFOit7nI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33007237) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Pluripotent%20stem%20cell-based%20cell%20therapy%E2%80%94promise%20and%20challenges&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2020.09.014&volume=27&pages=523-531&publication_year=2020&author=Yamanaka%2CS)
+
+002. Park, I.-H. et al. Reprogramming of human somatic cells to pluripotency with defined factors. _Nature_ **451**, 141–146 (2008).
+
+     [Article](https://doi.org/10.1038%2Fnature06534) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1cXksVGhtQ%3D%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=18157115) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Reprogramming%20of%20human%20somatic%20cells%20to%20pluripotency%20with%20defined%20factors&journal=Nature&doi=10.1038%2Fnature06534&volume=451&pages=141-146&publication_year=2008&author=Park%2CI-H)
+
+003. Takahashi, K. & Yamanaka, S. Induction of pluripotent stem cells from mouse embryonic and adult fibroblast cultures by defined factors. _Cell_ **126**, 663–676 (2006).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2006.07.024) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD28Xpt1aktbs%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16904174) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Induction%20of%20pluripotent%20stem%20cells%20from%20mouse%20embryonic%20and%20adult%20fibroblast%20cultures%20by%20defined%20factors&journal=Cell&doi=10.1016%2Fj.cell.2006.07.024&volume=126&pages=663-676&publication_year=2006&author=Takahashi%2CK&author=Yamanaka%2CS)
+
+004. Wang, H., Yang, Y., Liu, J. & Qian, L. Direct cell reprogramming: approaches, mechanisms and progress. _Nat. Rev. Mol. Cell Biol._ **22**, 410–424 (2021).
+
+     [Article](https://doi.org/10.1038%2Fs41580-021-00335-z) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33619373) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8161510) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Direct%20cell%20reprogramming%3A%20approaches%2C%20mechanisms%20and%20progress&journal=Nat.%20Rev.%20Mol.%20Cell%20Biol.&doi=10.1038%2Fs41580-021-00335-z&volume=22&pages=410-424&publication_year=2021&author=Wang%2CH&author=Yang%2CY&author=Liu%2CJ&author=Qian%2CL)
+
+005. Jia, Y. K., Yu, Y. & Guan, L. Advances in understanding the regulation of pluripotency fate transition in embryonic stem cells. _Front. Cell Dev. Biol._ **12**, 1494398 (2024).
+
+     [Article](https://doi.org/10.3389%2Ffcell.2024.1494398) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=39479513) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC11521825) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Advances%20in%20understanding%20the%20regulation%20of%20pluripotency%20fate%20transition%20in%20embryonic%20stem%20cells&journal=Front.%20Cell%20Dev.%20Biol.&doi=10.3389%2Ffcell.2024.1494398&volume=12&publication_year=2024&author=Jia%2CYK&author=Yu%2CY&author=Guan%2CL)
+
+006. Li, K., Ouyang, M., Zhan, J. & Tian, R. CRISPR-based functional genomics screening in human-pluripotent-stem-cell-derived cell types. _Cell Genom._ **3**, 100300 (2023).
+
+     [Article](https://doi.org/10.1016%2Fj.xgen.2023.100300) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXotVSmtb8%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=37228745) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC10203043) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=CRISPR-based%20functional%20genomics%20screening%20in%20human-pluripotent-stem-cell-derived%20cell%20types&journal=Cell%20Genom.&doi=10.1016%2Fj.xgen.2023.100300&volume=3&publication_year=2023&author=Li%2CK&author=Ouyang%2CM&author=Zhan%2CJ&author=Tian%2CR)
+
+007. Arafeh, R., Shibue, T., Dempster, J. M., Hahn, W. C. & Vazquez, F. The present and future of the Cancer Dependency Map. _Nat. Rev. Cancer_ **25**, 59–73 (2025).
+
+     [Article](https://doi.org/10.1038%2Fs41568-024-00763-x) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXitlCrt7jK) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=39468210) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20present%20and%20future%20of%20the%20Cancer%20Dependency%20Map&journal=Nat.%20Rev.%20Cancer&doi=10.1038%2Fs41568-024-00763-x&volume=25&pages=59-73&publication_year=2025&author=Arafeh%2CR&author=Shibue%2CT&author=Dempster%2CJM&author=Hahn%2CWC&author=Vazquez%2CF)
+
+008. Joung, J. et al. A transcription factor atlas of directed differentiation. _Cell_ **187**, 3161 (2024).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2024.04.038) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXps1OhtL4%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=38697106) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20transcription%20factor%20atlas%20of%20directed%20differentiation&journal=Cell&doi=10.1016%2Fj.cell.2024.04.038&volume=187&publication_year=2024&author=Joung%2CJ)
+
+009. Dixit, A. et al. Perturb-Seq: dissecting molecular circuits with scalable single-cell RNA profiling of pooled genetic screens. _Cell_ **167**, 1853–1866 (2016).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2016.11.038) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28XitFWlsrvI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=27984732) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5181115) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Perturb-Seq%3A%20dissecting%20molecular%20circuits%20with%20scalable%20single-cell%20RNA%20profiling%20of%20pooled%20genetic%20screens&journal=Cell&doi=10.1016%2Fj.cell.2016.11.038&volume=167&pages=1853-1866&publication_year=2016&author=Dixit%2CA)
+
+010. Adamson, B. et al. A multiplexed single-cell CRISPR screening platform enables systematic dissection of the unfolded protein response. _Cell_ **167**, 1867–1882.e21 (2016).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2016.11.048) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28XitFWlsrjK) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=27984733) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315571) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20multiplexed%20single-cell%20CRISPR%20screening%20platform%20enables%20systematic%20dissection%20of%20the%20unfolded%20protein%20response&journal=Cell&doi=10.1016%2Fj.cell.2016.11.048&volume=167&pages=1867-1882.e21&publication_year=2016&author=Adamson%2CB)
+
+011. Jaitin, D. A. et al. Dissecting immune circuits by linking CRISPR-pooled screens with single-cell RNA-seq. _Cell_ **167**, 1883–1896 (2016).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2016.11.039) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28XitFWlsrvP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=27984734) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Dissecting%20immune%20circuits%20by%20linking%20CRISPR-pooled%20screens%20with%20single-cell%20RNA-seq&journal=Cell&doi=10.1016%2Fj.cell.2016.11.039&volume=167&pages=1883-1896&publication_year=2016&author=Jaitin%2CDA)
+
+012. Datlinger, P. et al. Pooled CRISPR screening with single-cell transcriptome readout. _Nat. Methods_ **14**, 297–301 (2017).
+
+     [Article](https://doi.org/10.1038%2Fnmeth.4177) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXhtlKjsrk%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28099430) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5334791) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Pooled%20CRISPR%20screening%20with%20single-cell%20transcriptome%20readout&journal=Nat.%20Methods&doi=10.1038%2Fnmeth.4177&volume=14&pages=297-301&publication_year=2017&author=Datlinger%2CP)
+
+013. Pantazis, C. B. et al. A reference human induced pluripotent stem cell line for large-scale collaborative studies. _Cell Stem Cell_ **29**, 1685–1702 (2022).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2022.11.004) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB38XjtVGktbnE) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=36459969) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9782786) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20reference%20human%20induced%20pluripotent%20stem%20cell%20line%20for%20large-scale%20collaborative%20studies&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2022.11.004&volume=29&pages=1685-1702&publication_year=2022&author=Pantazis%2CCB)
+
+014. Alerasool, N., Segal, D., Lee, H. & Taipale, M. An efficient KRAB domain for CRISPRi applications in human cells. _Nat. Methods_ **17**, 1093–1096 (2020).
+
+     [Article](https://doi.org/10.1038%2Fs41592-020-0966-x) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXhvF2jtLfN) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33020655) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=An%20efficient%20KRAB%20domain%20for%20CRISPRi%20applications%20in%20human%20cells&journal=Nat.%20Methods&doi=10.1038%2Fs41592-020-0966-x&volume=17&pages=1093-1096&publication_year=2020&author=Alerasool%2CN&author=Segal%2CD&author=Lee%2CH&author=Taipale%2CM)
+
+015. Peidli, S. et al. scPerturb: harmonized single-cell perturbation data. _Nat. Methods_ **21**, 531–540 (2024).
+
+     [Article](https://doi.org/10.1038%2Fs41592-023-02144-y) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXit1Slu7g%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=38279009) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC12220817) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=scPerturb%3A%20harmonized%20single-cell%20perturbation%20data&journal=Nat.%20Methods&doi=10.1038%2Fs41592-023-02144-y&volume=21&pages=531-540&publication_year=2024&author=Peidli%2CS)
+
+016. Love, M. I., Huber, W. & Anders, S. Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. _Genome Biol._ **15**, 550 (2014).
+
+     [Article](https://link.springer.com/doi/10.1186/s13059-014-0550-8) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=25516281) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4302049) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Moderated%20estimation%20of%20fold%20change%20and%20dispersion%20for%20RNA-seq%20data%20with%20DESeq2&journal=Genome%20Biol.&doi=10.1186%2Fs13059-014-0550-8&volume=15&publication_year=2014&author=Love%2CMI&author=Huber%2CW&author=Anders%2CS)
+
+017. Bostick, M. et al. UHRF1 plays a role in maintaining DNA methylation in mammalian cells. _Science_ **317**, 1760–1764 (2007).
+
+     [Article](https://doi.org/10.1126%2Fscience.1147939) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2sXhtVGmsLbN) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17673620) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=UHRF1%20plays%20a%20role%20in%20maintaining%20DNA%20methylation%20in%20mammalian%20cells&journal=Science&doi=10.1126%2Fscience.1147939&volume=317&pages=1760-1764&publication_year=2007&author=Bostick%2CM)
+
+018. Arita, K., Ariyoshi, M., Tochio, H., Nakamura, Y. & Shirakawa, M. Recognition of hemi-methylated DNA by the SRA protein UHRF1 by a base-flipping mechanism. _Nature_ **455**, 818–821 (2008).
+
+     [Article](https://doi.org/10.1038%2Fnature07249) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1cXht1WktLbJ) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=18772891) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Recognition%20of%20hemi-methylated%20DNA%20by%20the%20SRA%20protein%20UHRF1%20by%20a%20base-flipping%20mechanism&journal=Nature&doi=10.1038%2Fnature07249&volume=455&pages=818-821&publication_year=2008&author=Arita%2CK&author=Ariyoshi%2CM&author=Tochio%2CH&author=Nakamura%2CY&author=Shirakawa%2CM)
+
+019. Saxton, R. A. & Sabatini, D. M. MTOR signaling in growth, metabolism, and disease. _Cell_ **168**, 960–976 (2017).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2017.02.004) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXkt1Ogtb4%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28283069) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5394987) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=MTOR%20signaling%20in%20growth%2C%20metabolism%2C%20and%20disease&journal=Cell&doi=10.1016%2Fj.cell.2017.02.004&volume=168&pages=960-976&publication_year=2017&author=Saxton%2CRA&author=Sabatini%2CDM)
+
+020. Doench, J. G. et al. Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR–Cas9. _Nat. Biotechnol._ **34**, 184–191 (2016).
+
+     [Article](https://doi.org/10.1038%2Fnbt.3437) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28Xps1GisQ%3D%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=26780180) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4744125) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Optimized%20sgRNA%20design%20to%20maximize%20activity%20and%20minimize%20off-target%20effects%20of%20CRISPR%E2%80%93Cas9&journal=Nat.%20Biotechnol.&doi=10.1038%2Fnbt.3437&volume=34&pages=184-191&publication_year=2016&author=Doench%2CJG)
+
+021. Sanson, K. R. et al. Optimized libraries for CRISPR–Cas9 genetic screens with multiple modalities. _Nat. Commun._ **9**, 5416 (2018).
+
+     [Article](https://doi.org/10.1038%2Fs41467-018-07901-8) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1cXisFyntLjM) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=30575746) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC6303322) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Optimized%20libraries%20for%20CRISPR%E2%80%93Cas9%20genetic%20screens%20with%20multiple%20modalities&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-018-07901-8&volume=9&publication_year=2018&author=Sanson%2CKR)
+
+022. Sanjana, N. E., Shalem, O. & Zhang, F. Improved vectors and genome-wide libraries for CRISPR screening. _Nat. Methods_ **11**, 783–784 (2014).
+
+     [Article](https://doi.org/10.1038%2Fnmeth.3047) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2cXhslelsLjK) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=25075903) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4486245) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Improved%20vectors%20and%20genome-wide%20libraries%20for%20CRISPR%20screening&journal=Nat.%20Methods&doi=10.1038%2Fnmeth.3047&volume=11&pages=783-784&publication_year=2014&author=Sanjana%2CNE&author=Shalem%2CO&author=Zhang%2CF)
+
+023. Amir, H. et al. Spontaneous single-copy loss of TP53 in human embryonic stem cells markedly increases cell proliferation and survival. _Stem Cells_ **35**, 872–885 (2017).
+
+     [Article](https://doi.org/10.1002%2Fstem.2550) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXkvVyhurc%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=27888558) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Spontaneous%20single-copy%20loss%20of%20TP53%20in%20human%20embryonic%20stem%20cells%20markedly%20increases%20cell%20proliferation%20and%20survival&journal=Stem%20Cells&doi=10.1002%2Fstem.2550&volume=35&pages=872-885&publication_year=2017&author=Amir%2CH)
+
+024. Kim, E. J. Y. et al. BAK/BAX-mediated apoptosis is a Myc-induced roadblock to reprogramming. _Stem Cell Rep._ **10**, 331–338 (2018).
+
+     [Article](https://doi.org/10.1016%2Fj.stemcr.2017.12.019) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1cXhs1yqu7Y%3D) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=BAK%2FBAX-mediated%20apoptosis%20is%20a%20Myc-induced%20roadblock%20to%20reprogramming&journal=Stem%20Cell%20Rep.&doi=10.1016%2Fj.stemcr.2017.12.019&volume=10&pages=331-338&publication_year=2018&author=Kim%2CEJY)
+
+025. Ihry, R. J. et al. Genome-scale CRISPR screens identify human pluripotency-specific genes. _Cell Rep._ **27**, 616–630 (2019).
+
+     [Article](https://doi.org/10.1016%2Fj.celrep.2019.03.043) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1MXntFertLg%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=30970262) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Genome-scale%20CRISPR%20screens%20identify%20human%20pluripotency-specific%20genes&journal=Cell%20Rep.&doi=10.1016%2Fj.celrep.2019.03.043&volume=27&pages=616-630&publication_year=2019&author=Ihry%2CRJ)
+
+026. Lake, B. B. et al. Context-dependent enhancement of induced pluripotent stem cell reprogramming by silencing Puma. _Stem Cells_ **30**, 888–897 (2012).
+
+     [Article](https://doi.org/10.1002%2Fstem.1054) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC38Xns12ntLs%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=22311782) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3531606) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Context-dependent%20enhancement%20of%20induced%20pluripotent%20stem%20cell%20reprogramming%20by%20silencing%20Puma&journal=Stem%20Cells&doi=10.1002%2Fstem.1054&volume=30&pages=888-897&publication_year=2012&author=Lake%2CBB)
+
+027. Naxerova, K. et al. Integrated loss- and gain-of-function screens define a core network governing human embryonic stem cell behavior. _Genes Dev._ **35**, 1527–1547 (2021).
+
+     [Article](https://doi.org/10.1101%2Fgad.349048.121) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXislKgtLzE) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=34711655) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8559676) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Integrated%20loss-%20and%20gain-of-function%20screens%20define%20a%20core%20network%20governing%20human%20embryonic%20stem%20cell%20behavior&journal=Genes%20Dev.&doi=10.1101%2Fgad.349048.121&volume=35&pages=1527-1547&publication_year=2021&author=Naxerova%2CK)
+
+028. Tsherniak, A. et al. Defining a cancer dependency map. _Cell_ **170**, 564–576 (2017).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2017.06.010) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXht1GisLjP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28753430) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5667678) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Defining%20a%20cancer%20dependency%20map&journal=Cell&doi=10.1016%2Fj.cell.2017.06.010&volume=170&pages=564-576&publication_year=2017&author=Tsherniak%2CA)
+
+029. Usluer, S. et al. Optimized whole-genome CRISPR interference screens identify ARID1A-dependent growth regulators in human induced pluripotent stem cells. _Stem Cell Rep._ **18**, 1061–1074 (2023).
+
+     [Article](https://doi.org/10.1016%2Fj.stemcr.2023.03.008) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXpsl2msbY%3D) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Optimized%20whole-genome%20CRISPR%20interference%20screens%20identify%20ARID1A-dependent%20growth%20regulators%20in%20human%20induced%20pluripotent%20stem%20cells&journal=Stem%20Cell%20Rep.&doi=10.1016%2Fj.stemcr.2023.03.008&volume=18&pages=1061-1074&publication_year=2023&author=Usluer%2CS)
+
+030. Silva, J. et al. Nanog is the gateway to the pluripotent ground state. _Cell_ **138**, 722–737 (2009).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2009.07.039) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXhsVCjs7rI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19703398) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3437554) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Nanog%20is%20the%20gateway%20to%20the%20pluripotent%20ground%20state&journal=Cell&doi=10.1016%2Fj.cell.2009.07.039&volume=138&pages=722-737&publication_year=2009&author=Silva%2CJ)
+
+031. Matulka, K. et al. PTP1B is an effector of activin signaling and regulates neural specification of embryonic stem cells. _Cell Stem Cell_ **13**, 706–719 (2013).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2013.09.016) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3sXhs1Clt7vI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=24139759) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=PTP1B%20is%20an%20effector%20of%20activin%20signaling%20and%20regulates%20neural%20specification%20of%20embryonic%20stem%20cells&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2013.09.016&volume=13&pages=706-719&publication_year=2013&author=Matulka%2CK)
+
+032. Kamiya, D. et al. Intrinsic transition of embryonic stem-cell differentiation into neural progenitors. _Nature_ **470**, 503–509 (2011).
+
+     [Article](https://doi.org/10.1038%2Fnature09726) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3MXhvFKltbg%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=21326203) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Intrinsic%20transition%20of%20embryonic%20stem-cell%20differentiation%20into%20neural%20progenitors&journal=Nature&doi=10.1038%2Fnature09726&volume=470&pages=503-509&publication_year=2011&author=Kamiya%2CD)
+
+033. Szutorisz, H., Georgiou, A., Tora, L. & Dillon, N. The proteasome restricts permissive transcription at tissue-specific gene loci in embryonic stem cells. _Cell_ **127**, 1375–1388 (2006).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2006.10.045) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2sXmvVyktg%3D%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17190601) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20proteasome%20restricts%20permissive%20transcription%20at%20tissue-specific%20gene%20loci%20in%20embryonic%20stem%20cells&journal=Cell&doi=10.1016%2Fj.cell.2006.10.045&volume=127&pages=1375-1388&publication_year=2006&author=Szutorisz%2CH&author=Georgiou%2CA&author=Tora%2CL&author=Dillon%2CN)
+
+034. Zhao, W. et al. Jmjd3 inhibits reprogramming by upregulating expression of INK4a/Arf and targeting PHF20 for ubiquitination. _Cell_ **152**, 1037–1050 (2013).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2013.02.006) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3sXjsFChsbs%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=23452852) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3742052) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Jmjd3%20inhibits%20reprogramming%20by%20upregulating%20expression%20of%20INK4a%2FArf%20and%20targeting%20PHF20%20for%20ubiquitination&journal=Cell&doi=10.1016%2Fj.cell.2013.02.006&volume=152&pages=1037-1050&publication_year=2013&author=Zhao%2CW)
+
+035. Zhou, Y. et al. Metascape provides a biologist-oriented resource for the analysis of systems-level datasets. _Nat. Commun._ **10**, 1523 (2019).
+
+     [Article](https://doi.org/10.1038%2Fs41467-019-09234-6) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=30944313) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC6447622) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Metascape%20provides%20a%20biologist-oriented%20resource%20for%20the%20analysis%20of%20systems-level%20datasets&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-019-09234-6&volume=10&publication_year=2019&author=Zhou%2CY)
+
+036. Replogle, J. M. et al. Mapping information-rich genotype-phenotype landscapes with genome-scale Perturb-Seq. _Cell_ **185**, 2559–2575 (2022).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2022.05.013) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB38XhsFWgsLrP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=35688146) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9380471) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Mapping%20information-rich%20genotype-phenotype%20landscapes%20with%20genome-scale%20Perturb-Seq&journal=Cell&doi=10.1016%2Fj.cell.2022.05.013&volume=185&pages=2559-2575&publication_year=2022&author=Replogle%2CJM)
+
+037. Shen, S., Pu, J., Lang, B. & McCaig, C. D. A zinc finger protein Zfp521 directs neural differentiation and beyond. _Stem Cell Res. Ther._ **2**, 20 (2011).
+
+     [Article](https://link.springer.com/doi/10.1186/scrt61) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3MXms1WjurY%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=21539723) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3226291) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20zinc%20finger%20protein%20Zfp521%20directs%20neural%20differentiation%20and%20beyond&journal=Stem%20Cell%20Res.%20Ther.&doi=10.1186%2Fscrt61&volume=2&publication_year=2011&author=Shen%2CS&author=Pu%2CJ&author=Lang%2CB&author=McCaig%2CCD)
+
+038. Kim, J. B. et al. Oct4-induced pluripotency in adult neural stem cells. _Cell_ **136**, 411–419 (2009).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2009.01.023) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXltFSnsr4%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19203577) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Oct4-induced%20pluripotency%20in%20adult%20neural%20stem%20cells&journal=Cell&doi=10.1016%2Fj.cell.2009.01.023&volume=136&pages=411-419&publication_year=2009&author=Kim%2CJB)
+
+039. Feng, C. et al. A genome-scale single-cell CRISPRi map of trans gene regulation across human pluripotent stem cell lines. _Cell Genom._ **6**, 101076 (2026).
+
+     [Article](https://doi.org/10.1016%2Fj.xgen.2025.101076) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2MXivF2lsbvP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=41330380) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20genome-scale%20single-cell%20CRISPRi%20map%20of%20trans%20gene%20regulation%20across%20human%20pluripotent%20stem%20cell%20lines&journal=Cell%20Genom.&doi=10.1016%2Fj.xgen.2025.101076&volume=6&publication_year=2026&author=Feng%2CC)
+
+040. Fossati, A. et al. Toward comprehensive plasma proteomics by orthogonal protease digestion. _J. Proteome Res._ **20**, 4031–4040 (2021).
+
+     [Article](https://doi.org/10.1021%2Facs.jproteome.1c00357) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXhs1Cnu73N) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=34319755) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8442619) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Toward%20comprehensive%20plasma%20proteomics%20by%20orthogonal%20protease%20digestion&journal=J.%20Proteome%20Res.&doi=10.1021%2Facs.jproteome.1c00357&volume=20&pages=4031-4040&publication_year=2021&author=Fossati%2CA)
+
+041. Fossati, A. et al. Next-generation proteomics for quantitative Jumbophage–bacteria interaction mapping. _Nat. Commun._ **14**, 5156 (2023).
+
+     [Article](https://doi.org/10.1038%2Fs41467-023-40724-w) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXhslyktbjE) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=37620325) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC10449902) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Next-generation%20proteomics%20for%20quantitative%20Jumbophage%E2%80%93bacteria%20interaction%20mapping&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-023-40724-w&volume=14&publication_year=2023&author=Fossati%2CA)
+
+042. Mootha, V. K. et al. PGC-1α-responsive genes involved in oxidative phosphorylation are coordinately downregulated in human diabetes. _Nat. Genet._ **34**, 267–273 (2003).
+
+     [Article](https://doi.org/10.1038%2Fng1180) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD3sXkvFSrs7o%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12808457) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=PGC-1%CE%B1-responsive%20genes%20involved%20in%20oxidative%20phosphorylation%20are%20coordinately%20downregulated%20in%20human%20diabetes&journal=Nat.%20Genet.&doi=10.1038%2Fng1180&volume=34&pages=267-273&publication_year=2003&author=Mootha%2CVK)
+
+043. Subramanian, A. et al. Gene set enrichment analysis: a knowledge-based approach for interpreting genome-wide expression profiles. _Proc. Natl Acad. Sci. USA_ **102**, 15545–15550 (2005).
+
+     [Article](https://doi.org/10.1073%2Fpnas.0506580102) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2MXht1ShtrnO) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16199517) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1239896) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Gene%20set%20enrichment%20analysis%3A%20a%20knowledge-based%20approach%20for%20interpreting%20genome-wide%20expression%20profiles&journal=Proc.%20Natl%20Acad.%20Sci.%20USA&doi=10.1073%2Fpnas.0506580102&volume=102&pages=15545-15550&publication_year=2005&author=Subramanian%2CA)
+
+044. Zafarana, G., Avery, S. R., Avery, K., Moore, H. D. & Andrews, P. W. Specific knockdown of OCT4 in human embryonic stem cells by inducible short hairpin RNA interference. _Stem Cells_ **27**, 776–782 (2009).
+
+     [Article](https://doi.org/10.1002%2Fstem.5) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXmt1WnsLo%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19350677) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847189) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Specific%20knockdown%20of%20OCT4%20in%20human%20embryonic%20stem%20cells%20by%20inducible%20short%20hairpin%20RNA%20interference&journal=Stem%20Cells&doi=10.1002%2Fstem.5&volume=27&pages=776-782&publication_year=2009&author=Zafarana%2CG&author=Avery%2CSR&author=Avery%2CK&author=Moore%2CHD&author=Andrews%2CPW)
+
+045. Niwa, H., Miyazaki, J. & Smith, A. G. Quantitative expression of Oct-3/4 defines differentiation, dedifferentiation or self-renewal of ES cells. _Nat. Genet._ **24**, 372–376 (2000).
+
+     [Article](https://doi.org/10.1038%2F74199) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD3cXisVCjsbo%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=10742100) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Quantitative%20expression%20of%20Oct-3%2F4%20defines%20differentiation%2C%20dedifferentiation%20or%20self-renewal%20of%20ES%20cells&journal=Nat.%20Genet.&doi=10.1038%2F74199&volume=24&pages=372-376&publication_year=2000&author=Niwa%2CH&author=Miyazaki%2CJ&author=Smith%2CAG)
+
+046. Hay, D. C., Sutherland, L., Clark, J. & Burdon, T. Oct-4 knockdown induces similar patterns of endoderm and trophoblast differentiation markers in human and mouse embryonic stem cells. _Stem Cells_ **22**, 225–235 (2004).
+
+     [Article](https://doi.org/10.1634%2Fstemcells.22-2-225) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2cXis1Sgsbc%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14990861) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Oct-4%20knockdown%20induces%20similar%20patterns%20of%20endoderm%20and%20trophoblast%20differentiation%20markers%20in%20human%20and%20mouse%20embryonic%20stem%20cells&journal=Stem%20Cells&doi=10.1634%2Fstemcells.22-2-225&volume=22&pages=225-235&publication_year=2004&author=Hay%2CDC&author=Sutherland%2CL&author=Clark%2CJ&author=Burdon%2CT)
+
+047. Hough, S. R., Clements, I., Welch, P. J. & Wiederholt, K. A. Differentiation of mouse embryonic stem cells after RNA interference-mediated silencing of OCT4 and Nanog. _Stem Cells_ **24**, 1467–1475 (2006).
+
+     [Article](https://doi.org/10.1634%2Fstemcells.2005-0475) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD28XhtFKlsbnE) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16456133) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Differentiation%20of%20mouse%20embryonic%20stem%20cells%20after%20RNA%20interference-mediated%20silencing%20of%20OCT4%20and%20Nanog&journal=Stem%20Cells&doi=10.1634%2Fstemcells.2005-0475&volume=24&pages=1467-1475&publication_year=2006&author=Hough%2CSR&author=Clements%2CI&author=Welch%2CPJ&author=Wiederholt%2CKA)
+
+048. Kim, D. I. et al. An improved smaller biotin ligase for BioID proximity labeling. _Mol. Biol. Cell_ **27**, 1188–1196 (2016).
+
+     [Article](https://doi.org/10.1091%2Fmbc.E15-12-0844) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28Xhs1art7bP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=26912792) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4831873) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=An%20improved%20smaller%20biotin%20ligase%20for%20BioID%20proximity%20labeling&journal=Mol.%20Biol.%20Cell&doi=10.1091%2Fmbc.E15-12-0844&volume=27&pages=1188-1196&publication_year=2016&author=Kim%2CDI)
+
+049. Lumpkin, R. J., Baker, R. W., Leschziner, A. E. & Komives, E. A. Structure and dynamics of the ASB9 CUL–RING E3 Ligase. _Nat. Commun._ **11**, 2866 (2020).
+
+     [Article](https://doi.org/10.1038%2Fs41467-020-16499-9) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXhtFagtr%2FK) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=32513959) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC7280518) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Structure%20and%20dynamics%20of%20the%20ASB9%20CUL%E2%80%93RING%20E3%20Ligase&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-020-16499-9&volume=11&publication_year=2020&author=Lumpkin%2CRJ&author=Baker%2CRW&author=Leschziner%2CAE&author=Komives%2CEA)
+
+050. Kostrhon, S. et al. CUL5–ARIH2 E3–E3 ubiquitin ligase structure reveals cullin-specific NEDD8 activation. _Nat. Chem. Biol._ **17**, 1075–1083 (2021).
+
+     [Article](https://doi.org/10.1038%2Fs41589-021-00858-8) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXitVajtrvN) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=34518685) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8460447) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=CUL5%E2%80%93ARIH2%20E3%E2%80%93E3%20ubiquitin%20ligase%20structure%20reveals%20cullin-specific%20NEDD8%20activation&journal=Nat.%20Chem.%20Biol.&doi=10.1038%2Fs41589-021-00858-8&volume=17&pages=1075-1083&publication_year=2021&author=Kostrhon%2CS)
+
+051. Pang, E. Z. et al. Structural basis for l-isoaspartyl-containing protein recognition by the PCMTD1 cullin–RING E3 ubiquitin ligase. _J. Biol. Chem._ **301**, 110735 (2025).
+
+     [Article](https://doi.org/10.1016%2Fj.jbc.2025.110735) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2MXis1Smu7%2FF) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=40975169) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC12590147) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Structural%20basis%20for%20l-isoaspartyl-containing%20protein%20recognition%20by%20the%20PCMTD1%20cullin%E2%80%93RING%20E3%20ubiquitin%20ligase&journal=J.%20Biol.%20Chem.&doi=10.1016%2Fj.jbc.2025.110735&volume=301&publication_year=2025&author=Pang%2CEZ)
+
+052. Markson, G. et al. Analysis of the human E2 ubiquitin conjugating enzyme protein interaction network. _Genome Res._ **19**, 1905–1911 (2009).
+
+     [Article](https://doi.org/10.1101%2Fgr.093963.109) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXht1GjtbrJ) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19549727) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2765280) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Analysis%20of%20the%20human%20E2%20ubiquitin%20conjugating%20enzyme%20protein%20interaction%20network&journal=Genome%20Res.&doi=10.1101%2Fgr.093963.109&volume=19&pages=1905-1911&publication_year=2009&author=Markson%2CG)
+
+053. Ding, J., Xu, H., Faiola, F., Ma’ayan, A. & Wang, J. Oct4 links multiple epigenetic pathways to the pluripotency network. _Cell Res._ **22**, 155–167 (2012).
+
+     [Article](https://doi.org/10.1038%2Fcr.2011.179) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC38Xks1Cjug%3D%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=22083510) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Oct4%20links%20multiple%20epigenetic%20pathways%20to%20the%20pluripotency%20network&journal=Cell%20Res.&doi=10.1038%2Fcr.2011.179&volume=22&pages=155-167&publication_year=2012&author=Ding%2CJ&author=Xu%2CH&author=Faiola%2CF&author=Ma%E2%80%99ayan%2CA&author=Wang%2CJ)
+
+054. Kelly, K. F. et al. β-catenin enhances Oct-4 activity and reinforces pluripotency through a TCF-independent mechanism. _Cell Stem Cell_ **8**, 214–227 (2011).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2010.12.010) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3MXhsFOku74%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=21295277) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3465368) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=%CE%B2-catenin%20enhances%20Oct-4%20activity%20and%20reinforces%20pluripotency%20through%20a%20TCF-independent%20mechanism&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2010.12.010&volume=8&pages=214-227&publication_year=2011&author=Kelly%2CKF)
+
+055. Huang, X. et al. OCT4 cooperates with distinct ATP-dependent chromatin remodelers in naïve and primed pluripotent states in human. _Nat. Commun._ **12**, 5123 (2021).
+
+     [Article](https://doi.org/10.1038%2Fs41467-021-25107-3) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXhvFSrt7bO) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=34446700) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8390644) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=OCT4%20cooperates%20with%20distinct%20ATP-dependent%20chromatin%20remodelers%20in%20na%C3%AFve%20and%20primed%20pluripotent%20states%20in%20human&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-021-25107-3&volume=12&publication_year=2021&author=Huang%2CX)
+
+056. Levanon, E. Y. et al. Systematic identification of abundant A-to-I editing sites in the human transcriptome. _Nat. Biotechnol._ **22**, 1001–1005 (2004).
+
+     [Article](https://doi.org/10.1038%2Fnbt996) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2cXmtFWru7w%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15258596) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Systematic%20identification%20of%20abundant%20A-to-I%20editing%20sites%20in%20the%20human%20transcriptome&journal=Nat.%20Biotechnol.&doi=10.1038%2Fnbt996&volume=22&pages=1001-1005&publication_year=2004&author=Levanon%2CEY)
+
+057. Levanon, K., Eisenberg, E., Rechavi, G. & Levanon, E. Y. Letter from the editor: Adenosine-to-inosine RNA editing in Alu repeats in the human genome. _EMBO Rep._ **6**, 831–835 (2005).
+
+     [Article](https://doi.org/10.1038%2Fsj.embor.7400507) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD2MXpslaktL4%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16138094) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1369171) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Letter%20from%20the%20editor%3A%20Adenosine-to-inosine%20RNA%20editing%20in%20Alu%20repeats%20in%20the%20human%20genome&journal=EMBO%20Rep.&doi=10.1038%2Fsj.embor.7400507&volume=6&pages=831-835&publication_year=2005&author=Levanon%2CK&author=Eisenberg%2CE&author=Rechavi%2CG&author=Levanon%2CEY)
+
+058. Zhang, Y., Bryant, J., Herron, L. & Mali, P. ADARs: pleiotropy in function, versatility in application. _Nucleic Acids Res._ **53**, gkaf672 (2025).
+
+     [Article](https://doi.org/10.1093%2Fnar%2Fgkaf672) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=40671518) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC12266145) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=ADARs%3A%20pleiotropy%20in%20function%2C%20versatility%20in%20application&journal=Nucleic%20Acids%20Res.&doi=10.1093%2Fnar%2Fgkaf672&volume=53&publication_year=2025&author=Zhang%2CY&author=Bryant%2CJ&author=Herron%2CL&author=Mali%2CP)
+
+059. Rainaldi, J., Mali, P. & Nourreddine, S. Emerging clinical applications of ADAR based RNA editing. _Stem Cells Transl. Med._ **14**, szaf016 (2025).
+
+     [Article](https://doi.org/10.1093%2Fstcltm%2Fszaf016) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2MXhvVWqsr3N) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=40418634) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC12105611) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Emerging%20clinical%20applications%20of%20ADAR%20based%20RNA%20editing&journal=Stem%20Cells%20Transl.%20Med.&doi=10.1093%2Fstcltm%2Fszaf016&volume=14&publication_year=2025&author=Rainaldi%2CJ&author=Mali%2CP&author=Nourreddine%2CS)
+
+060. Roth, S. H., Levanon, E. Y. & Eisenberg, E. Genome-wide quantification of ADAR adenosine-to-inosine RNA editing activity. _Nat. Methods_ **16**, 1131–1138 (2019).
+
+     [Article](https://doi.org/10.1038%2Fs41592-019-0610-9) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1MXitVSlsbnI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=31636457) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Genome-wide%20quantification%20of%20ADAR%20adenosine-to-inosine%20RNA%20editing%20activity&journal=Nat.%20Methods&doi=10.1038%2Fs41592-019-0610-9&volume=16&pages=1131-1138&publication_year=2019&author=Roth%2CSH&author=Levanon%2CEY&author=Eisenberg%2CE)
+
+061. Dailamy, A. et al. Charting and probing the activity of ADARs in human development and cell-fate specification. _Nat. Commun._ **15**, 9818 (2024).
+
+     [Article](https://doi.org/10.1038%2Fs41467-024-53973-0) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXisFWgt7vL) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=39537590) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC11561244) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Charting%20and%20probing%20the%20activity%20of%20ADARs%20in%20human%20development%20and%20cell-fate%20specification&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-024-53973-0&volume=15&publication_year=2024&author=Dailamy%2CA)
+
+062. Wei, T. et al. Multimodal CRISPR screens uncover DDX39B as a global repressor of A-to-I RNA editing. _Cell Rep._ **44**, 116009 (2025).
+
+     [Article](https://doi.org/10.1016%2Fj.celrep.2025.116009) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2MXhsF2mtL%2FM) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=40652511) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Multimodal%20CRISPR%20screens%20uncover%20DDX39B%20as%20a%20global%20repressor%20of%20A-to-I%20RNA%20editing&journal=Cell%20Rep.&doi=10.1016%2Fj.celrep.2025.116009&volume=44&publication_year=2025&author=Wei%2CT)
+
+063. Hong, H. et al. Bidirectional regulation of adenosine-to-inosine (A-to-I) RNA editing by DEAH box helicase 9 (DHX9) in cancer. _Nucleic Acids Res._ **46**, 7953–7969 (2018).
+
+     [Article](https://doi.org/10.1093%2Fnar%2Fgky396) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1MXosFant78%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=29796672) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC6125626) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Bidirectional%20regulation%20of%20adenosine-to-inosine%20%28A-to-I%29%20RNA%20editing%20by%20DEAH%20box%20helicase%209%20%28DHX9%29%20in%20cancer&journal=Nucleic%20Acids%20Res.&doi=10.1093%2Fnar%2Fgky396&volume=46&pages=7953-7969&publication_year=2018&author=Hong%2CH)
+
+064. Cottrell, K. A., Andrews, R. J. & Bass, B. L. The competitive landscape of the dsRNA world. _Mol. Cell_ **84**, 107–119 (2024).
+
+     [Article](https://doi.org/10.1016%2Fj.molcel.2023.11.033) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXis1Cnu73F) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=38118451) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20competitive%20landscape%20of%20the%20dsRNA%20world&journal=Mol.%20Cell&doi=10.1016%2Fj.molcel.2023.11.033&volume=84&pages=107-119&publication_year=2024&author=Cottrell%2CKA&author=Andrews%2CRJ&author=Bass%2CBL)
+
+065. Aktaş, T. et al. DHX9 suppresses RNA processing defects originating from the Alu invasion of the human genome. _Nature_ **544**, 115–119 (2017).
+
+     [Article](https://doi.org/10.1038%2Fnature21715) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28355180) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=DHX9%20suppresses%20RNA%20processing%20defects%20originating%20from%20the%20Alu%20invasion%20of%20the%20human%20genome&journal=Nature&doi=10.1038%2Fnature21715&volume=544&pages=115-119&publication_year=2017&author=Akta%C5%9F%2CT)
+
+066. Buerer, L. et al. The debranching enzyme Dbr1 regulates lariat turnover and intron splicing. _Nat. Commun._ **15**, 4617 (2024).
+
+     [Article](https://doi.org/10.1038%2Fs41467-024-48696-1) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXhtl2msLzO) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=38816363) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC11139901) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20debranching%20enzyme%20Dbr1%20regulates%20lariat%20turnover%20and%20intron%20splicing&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-024-48696-1&volume=15&publication_year=2024&author=Buerer%2CL)
+
+067. Tang, Q., Liao, D. & Zheng, B. DBR1 orchestrates the fate of lariat RNA: debranching-dependent turnover and function. _Nucleic Acids Res._ **53**, gkaf639 (2025).
+
+     [Article](https://doi.org/10.1093%2Fnar%2Fgkaf639) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=40637223) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC12238851) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=DBR1%20orchestrates%20the%20fate%20of%20lariat%20RNA%3A%20debranching-dependent%20turnover%20and%20function&journal=Nucleic%20Acids%20Res.&doi=10.1093%2Fnar%2Fgkaf639&volume=53&publication_year=2025&author=Tang%2CQ&author=Liao%2CD&author=Zheng%2CB)
+
+068. Torkler, P. et al. LoDEI: a robust and sensitive tool to detect transcriptome-wide differential A-to-I editing in RNA-seq data. _Nat. Commun._ **15**, 9121 (2024).
+
+     [Article](https://doi.org/10.1038%2Fs41467-024-53298-y) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXitlequr%2FJ) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=39443485) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC11500352) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=LoDEI%3A%20a%20robust%20and%20sensitive%20tool%20to%20detect%20transcriptome-wide%20differential%20A-to-I%20editing%20in%20RNA-seq%20data&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-024-53298-y&volume=15&publication_year=2024&author=Torkler%2CP)
+
+069. Jiao, H. et al. ADAR1 averts fatal type I interferon induction by ZBP1. _Nature_ **607**, 776–783 (2022).
+
+     [Article](https://doi.org/10.1038%2Fs41586-022-04878-9) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB38XhvVOiu7rL) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=35859176) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9329096) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=ADAR1%20averts%20fatal%20type%20I%20interferon%20induction%20by%20ZBP1&journal=Nature&doi=10.1038%2Fs41586-022-04878-9&volume=607&pages=776-783&publication_year=2022&author=Jiao%2CH)
+
+070. Lemaire, P. A., Anderson, E., Lary, J. & Cole, J. L. Mechanism of PKR activation by dsRNA. _J. Mol. Biol._ **381**, 351–360 (2008).
+
+     [Article](https://doi.org/10.1016%2Fj.jmb.2008.05.056) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1cXoslWqtr0%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=18599071) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2570377) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Mechanism%20of%20PKR%20activation%20by%20dsRNA&journal=J.%20Mol.%20Biol.&doi=10.1016%2Fj.jmb.2008.05.056&volume=381&pages=351-360&publication_year=2008&author=Lemaire%2CPA&author=Anderson%2CE&author=Lary%2CJ&author=Cole%2CJL)
+
+071. Ryall, J. G., Cliff, T., Dalton, S. & Sartorelli, V. Metabolic reprogramming of stem cell epigenetics. _Cell Stem Cell_ **17**, 651–662 (2015).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2015.11.012) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2MXhvVyku73O) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=26637942) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4672395) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Metabolic%20reprogramming%20of%20stem%20cell%20epigenetics&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2015.11.012&volume=17&pages=651-662&publication_year=2015&author=Ryall%2CJG&author=Cliff%2CT&author=Dalton%2CS&author=Sartorelli%2CV)
+
+072. Mathieu, J. & Ruohola-Baker, H. Metabolic remodeling during the loss and acquisition of pluripotency. _Development_ **144**, 541–551 (2017).
+
+     [Article](https://doi.org/10.1242%2Fdev.128389) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXhtF2gtrzN) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28196802) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5312031) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Metabolic%20remodeling%20during%20the%20loss%20and%20acquisition%20of%20pluripotency&journal=Development&doi=10.1242%2Fdev.128389&volume=144&pages=541-551&publication_year=2017&author=Mathieu%2CJ&author=Ruohola-Baker%2CH)
+
+073. Jackson, B. T. & Finley, L. W. S. Metabolic regulation of the hallmarks of stem cell biology. _Cell Stem Cell_ **31**, 161–180 (2024).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2024.01.003) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXislylsbg%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=38306993) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC10842269) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Metabolic%20regulation%20of%20the%20hallmarks%20of%20stem%20cell%20biology&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2024.01.003&volume=31&pages=161-180&publication_year=2024&author=Jackson%2CBT&author=Finley%2CLWS)
+
+074. Zhao, Y., Xiong, X. & Sun, Y. Cullin–RING ligase 5: functional characterization and its role in human cancers. _Semin. Cancer Biol._ **67**, 61–79 (2020).
+
+     [Article](https://doi.org/10.1016%2Fj.semcancer.2020.04.003) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXot1Ckur8%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=32334051) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Cullin%E2%80%93RING%20ligase%205%3A%20functional%20characterization%20and%20its%20role%20in%20human%20cancers&journal=Semin.%20Cancer%20Biol.&doi=10.1016%2Fj.semcancer.2020.04.003&volume=67&pages=61-79&publication_year=2020&author=Zhao%2CY&author=Xiong%2CX&author=Sun%2CY)
+
+075. Tao, Y. et al. Advancements and perspectives of RBX2 as a molecular hallmark in cancer. _Gene_ **892**, 147864 (2024).
+
+     [Article](https://doi.org/10.1016%2Fj.gene.2023.147864) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXitFemtL3F) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=37820940) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Advancements%20and%20perspectives%20of%20RBX2%20as%20a%20molecular%20hallmark%20in%20cancer&journal=Gene&doi=10.1016%2Fj.gene.2023.147864&volume=892&publication_year=2024&author=Tao%2CY)
+
+076. Jang, S.-M., Redon, C. E., Thakur, B. L., Bahta, M. K. & Aladjem, M. I. Regulation of cell cycle drivers by Cullin–RING ubiquitin ligases. _Exp. Mol. Med._ **52**, 1637–1651 (2020).
+
+     [Article](https://doi.org/10.1038%2Fs12276-020-00508-4) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXhvFyisL3F) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33005013) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC8080560) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Regulation%20of%20cell%20cycle%20drivers%20by%20Cullin%E2%80%93RING%20ubiquitin%20ligases&journal=Exp.%20Mol.%20Med.&doi=10.1038%2Fs12276-020-00508-4&volume=52&pages=1637-1651&publication_year=2020&author=Jang%2CS-M&author=Redon%2CCE&author=Thakur%2CBL&author=Bahta%2CMK&author=Aladjem%2CMI)
+
+077. Hannah, J. & Zhou, P. Regulation of DNA damage response pathways by the Cullin–RING ubiquitin ligases. _DNA Repair (Amst.)_ **8**, 536–543 (2009).
+
+     [Article](https://doi.org/10.1016%2Fj.dnarep.2009.01.011) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXktFWrsbk%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19231300) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2858918) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Regulation%20of%20DNA%20damage%20response%20pathways%20by%20the%20Cullin%E2%80%93RING%20ubiquitin%20ligases&journal=DNA%20Repair%20%28Amst.%29&doi=10.1016%2Fj.dnarep.2009.01.011&volume=8&pages=536-543&publication_year=2009&author=Hannah%2CJ&author=Zhou%2CP)
+
+078. Wu, Y. & Zhang, W. The role of E3s in regulating pluripotency of embryonic stem cells and induced pluripotent stem cells. _Int. J. Mol. Sci._ **22**, 1168 (2021).
+
+     [Article](https://doi.org/10.3390%2Fijms22031168) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXlsVahtLc%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33503896) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC7865285) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20role%20of%20E3s%20in%20regulating%20pluripotency%20of%20embryonic%20stem%20cells%20and%20induced%20pluripotent%20stem%20cells&journal=Int.%20J.%20Mol.%20Sci.&doi=10.3390%2Fijms22031168&volume=22&publication_year=2021&author=Wu%2CY&author=Zhang%2CW)
+
+079. Guo, Y.-L., Chakraborty, S., Rajan, S. S., Wang, R. & Huang, F. Effects of oxidative stress on mouse embryonic stem cell proliferation, apoptosis, senescence, and self-renewal. _Stem. Cells Dev._ **19**, 1321–1331 (2010).
+
+     [Article](https://doi.org/10.1089%2Fscd.2009.0313) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC3cXhtFWqsbbP) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=20092403) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3128305) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Effects%20of%20oxidative%20stress%20on%20mouse%20embryonic%20stem%20cell%20proliferation%2C%20apoptosis%2C%20senescence%2C%20and%20self-renewal&journal=Stem.%20Cells%20Dev.&doi=10.1089%2Fscd.2009.0313&volume=19&pages=1321-1331&publication_year=2010&author=Guo%2CY-L&author=Chakraborty%2CS&author=Rajan%2CSS&author=Wang%2CR&author=Huang%2CF)
+
+080. Sun, Y. & Li, H. Functional characterization of SAG/RBX2/ROC2/RNF7, an antioxidant protein and an E3 ubiquitin ligase. _Protein Cell_ **4**, 103–116 (2013).
+
+     [Article](https://link.springer.com/doi/10.1007/s13238-012-2105-7) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=23136067) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Functional%20characterization%20of%20SAG%2FRBX2%2FROC2%2FRNF7%2C%20an%20antioxidant%20protein%20and%20an%20E3%20ubiquitin%20ligase&journal=Protein%20Cell&doi=10.1007%2Fs13238-012-2105-7&volume=4&pages=103-116&publication_year=2013&author=Sun%2CY&author=Li%2CH)
+
+081. Swaroop, M. et al. Expression, purification, and biochemical characterization of SAG, a ring finger redox-sensitive protein. _Free Radic. Biol. Med._ **27**, 193–202 (1999).
+
+     [Article](https://doi.org/10.1016%2FS0891-5849%2899%2900078-7) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DyaK1MXkvVKqsbc%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=10443936) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Expression%2C%20purification%2C%20and%20biochemical%20characterization%20of%20SAG%2C%20a%20ring%20finger%20redox-sensitive%20protein&journal=Free%20Radic.%20Biol.%20Med.&doi=10.1016%2FS0891-5849%2899%2900078-7&volume=27&pages=193-202&publication_year=1999&author=Swaroop%2CM)
+
+082. Hu, Q. et al. Oxidative stress promotes exit from the stem cell state and spontaneous neuronal differentiation. _Oncotarget_ **9**, 4223–4238 (2018).
+
+     [Article](https://doi.org/10.18632%2Foncotarget.23786) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=29423117) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Oxidative%20stress%20promotes%20exit%20from%20the%20stem%20cell%20state%20and%20spontaneous%20neuronal%20differentiation&journal=Oncotarget&doi=10.18632%2Foncotarget.23786&volume=9&pages=4223-4238&publication_year=2018&author=Hu%2CQ)
+
+083. Chen, Y. G. et al. Sensing self and foreign circular RNAs by intron identity. _Mol. Cell_ **67**, 228–238 (2017).
+
+     [Article](https://doi.org/10.1016%2Fj.molcel.2017.05.022) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXhtVWrurzI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28625551) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610545) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Sensing%20self%20and%20foreign%20circular%20RNAs%20by%20intron%20identity&journal=Mol.%20Cell&doi=10.1016%2Fj.molcel.2017.05.022&volume=67&pages=228-238&publication_year=2017&author=Chen%2CYG)
+
+084. Duan, C. et al. Defects in intron recycling suppress the antiviral response via a mechanism of intronic endogenous dsRNA. _J. Exp. Med._ **223**, e20250344 (2026).
+
+     [Article](https://doi.org/10.1084%2Fjem.20250344) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB28XpslyjurY%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=41817448) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC13189227) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Defects%20in%20intron%20recycling%20suppress%20the%20antiviral%20response%20via%20a%20mechanism%20of%20intronic%20endogenous%20dsRNA&journal=J.%20Exp.%20Med.&doi=10.1084%2Fjem.20250344&volume=223&publication_year=2026&author=Duan%2CC)
+
+085. Mannion, N. M. et al. The RNA-editing enzyme ADAR1 controls innate immune responses to RNA. _Cell Rep._ **9**, 1482–1494 (2014).
+
+     [Article](https://doi.org/10.1016%2Fj.celrep.2014.10.041) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2cXhvFGisbfI) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=25456137) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4542304) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=The%20RNA-editing%20enzyme%20ADAR1%20controls%20innate%20immune%20responses%20to%20RNA&journal=Cell%20Rep.&doi=10.1016%2Fj.celrep.2014.10.041&volume=9&pages=1482-1494&publication_year=2014&author=Mannion%2CNM)
+
+086. McDonald, D. et al. Defining the teratoma as a model for multi-lineage human development. _Cell_ **183**, 1402–1419 (2020).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2020.10.018) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXit1OqtLnL) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33152263) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC7704916) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Defining%20the%20teratoma%20as%20a%20model%20for%20multi-lineage%20human%20development&journal=Cell&doi=10.1016%2Fj.cell.2020.10.018&volume=183&pages=1402-1419&publication_year=2020&author=McDonald%2CD)
+
+087. Velasco, S. et al. Individual brain organoids reproducibly form cell diversity of the human cerebral cortex. _Nature_ **570**, 523–527 (2019).
+
+     [Article](https://doi.org/10.1038%2Fs41586-019-1289-x) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1MXhtFWqtLfM) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=31168097) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC6906116) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Individual%20brain%20organoids%20reproducibly%20form%20cell%20diversity%20of%20the%20human%20cerebral%20cortex&journal=Nature&doi=10.1038%2Fs41586-019-1289-x&volume=570&pages=523-527&publication_year=2019&author=Velasco%2CS)
+
+088. Roohani, Y., Huang, K. & Leskovec, J. Predicting transcriptional outcomes of novel multigene perturbations with GEARS. _Nat. Biotechnol._ **42**, 927–935 (2024).
+
+     [Article](https://doi.org/10.1038%2Fs41587-023-01905-6) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXhslantrjF) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=37592036) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Predicting%20transcriptional%20outcomes%20of%20novel%20multigene%20perturbations%20with%20GEARS&journal=Nat.%20Biotechnol.&doi=10.1038%2Fs41587-023-01905-6&volume=42&pages=927-935&publication_year=2024&author=Roohani%2CY&author=Huang%2CK&author=Leskovec%2CJ)
+
+089. Magnusson, J. P. et al. PreciCE: precision engineering of cell fates via data-driven multi-gene control of transcriptional networks. Preprint at _bioRxiv_ [https://doi.org/10.1101/2024.11.04.621938](https://doi.org/10.1101/2024.11.04.621938) (2024).
+
+090. Booeshaghi, A. S., Galvez-Merchán, Á. & Pachter, L. Algorithms for a commons cell atlas. Preprint at _bioRxiv_ [https://doi.org/10.1101/2024.03.23.586413](https://doi.org/10.1101/2024.03.23.586413) (2024).
+
+091. Rood, J. E., Hupalowska, A. & Regev, A. Toward a foundation model of causal cell and tissue biology with a Perturbation Cell and Tissue Atlas. _Cell_ **187**, 4520–4545 (2024).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2024.07.035) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB2cXhvVais7vL) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=39178831) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Toward%20a%20foundation%20model%20of%20causal%20cell%20and%20tissue%20biology%20with%20a%20Perturbation%20Cell%20and%20Tissue%20Atlas&journal=Cell&doi=10.1016%2Fj.cell.2024.07.035&volume=187&pages=4520-4545&publication_year=2024&author=Rood%2CJE&author=Hupalowska%2CA&author=Regev%2CA)
+
+092. Li, W. et al. MAGeCK enables robust identification of essential genes from genome-scale CRISPR/Cas9 knockout screens. _Genome Biol._ **15**, 554 (2014).
+
+     [Article](https://link.springer.com/doi/10.1186/s13059-014-0554-4) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=25476604) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4290824) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=MAGeCK%20enables%20robust%20identification%20of%20essential%20genes%20from%20genome-scale%20CRISPR%2FCas9%20knockout%20screens&journal=Genome%20Biol.&doi=10.1186%2Fs13059-014-0554-4&volume=15&publication_year=2014&author=Li%2CW)
+
+093. Li, H. & Durbin, R. Fast and accurate short read alignment with Burrows–Wheeler transform. _Bioinformatics_ **25**, 1754–1760 (2009).
+
+     [Article](https://doi.org/10.1093%2Fbioinformatics%2Fbtp324) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BD1MXot1Cjtbo%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=19451168) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2705234) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Fast%20and%20accurate%20short%20read%20alignment%20with%20Burrows%E2%80%93Wheeler%20transform&journal=Bioinformatics&doi=10.1093%2Fbioinformatics%2Fbtp324&volume=25&pages=1754-1760&publication_year=2009&author=Li%2CH&author=Durbin%2CR)
+
+094. Li, H. & Durbin, R. Fast and accurate long-read alignment with Burrows–Wheeler transform. _Bioinformatics_ **26**, 589–595 (2010).
+
+     [Article](https://doi.org/10.1093%2Fbioinformatics%2Fbtp698) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=20080505) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2828108) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Fast%20and%20accurate%20long-read%20alignment%20with%20Burrows%E2%80%93Wheeler%20transform&journal=Bioinformatics&doi=10.1093%2Fbioinformatics%2Fbtp698&volume=26&pages=589-595&publication_year=2010&author=Li%2CH&author=Durbin%2CR)
+
+095. Liao, Y., Smyth, G. K. & Shi, W. featureCounts: an efficient general purpose program for assigning sequence reads to genomic features. _Bioinformatics_ **30**, 923–930 (2014).
+
+     [Article](https://doi.org/10.1093%2Fbioinformatics%2Fbtt656) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2cXltFGqu7c%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=24227677) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=featureCounts%3A%20an%20efficient%20general%20purpose%20program%20for%20assigning%20sequence%20reads%20to%20genomic%20features&journal=Bioinformatics&doi=10.1093%2Fbioinformatics%2Fbtt656&volume=30&pages=923-930&publication_year=2014&author=Liao%2CY&author=Smyth%2CGK&author=Shi%2CW)
+
+096. Sieckmann, K. et al. AdipoQ—a simple, open-source software to quantify adipocyte morphology and function in tissues and in vitro. _Mol. Biol. Cell_ **33**, br22 (2022).
+
+     [Article](https://doi.org/10.1091%2Fmbc.E21-11-0592) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB38XisFOqt7zE) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=35947507) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9635306) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=AdipoQ%E2%80%94a%20simple%2C%20open-source%20software%20to%20quantify%20adipocyte%20morphology%20and%20function%20in%20tissues%20and%20in%20vitro&journal=Mol.%20Biol.%20Cell&doi=10.1091%2Fmbc.E21-11-0592&volume=33&publication_year=2022&author=Sieckmann%2CK)
+
+097. Schmidt, U., Weigert, M., Broaddus, C. & Myers, G. Cell detection with star-convex polygons. In _Proc. 21st Medical Image Computing and Computer Assisted Intervention_ (eds Frangi, A. F. et al.) (Springer, 2018).
+
+098. Fossati, A. et al. System-wide profiling of protein complexes via size exclusion chromatography–mass spectrometry (SEC–MS). _Methods Mol. Biol._ **2259**, 269–294 (2021).
+
+     [Article](https://link.springer.com/doi/10.1007/978-1-0716-1178-4_18) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3MXisFKnsrfK) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=33687722) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=System-wide%20profiling%20of%20protein%20complexes%20via%20size%20exclusion%20chromatography%E2%80%93mass%20spectrometry%20%28SEC%E2%80%93MS%29&journal=Methods%20Mol.%20Biol.&doi=10.1007%2F978-1-0716-1178-4_18&volume=2259&pages=269-294&publication_year=2021&author=Fossati%2CA)
+
+099. Penny, J., Arefian, M., Schroeder, G. N., Bengoechea, J. A. & Collins, B. C. A gas phase fractionation acquisition scheme integrating ion mobility for rapid diaPASEF library generation. _Proteomics_ **23**, e2200038 (2023).
+
+     [Article](https://doi.org/10.1002%2Fpmic.202200038) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=36876969) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20gas%20phase%20fractionation%20acquisition%20scheme%20integrating%20ion%20mobility%20for%20rapid%20diaPASEF%20library%20generation&journal=Proteomics&doi=10.1002%2Fpmic.202200038&volume=23&publication_year=2023&author=Penny%2CJ&author=Arefian%2CM&author=Schroeder%2CGN&author=Bengoechea%2CJA&author=Collins%2CBC)
+
+100. Nourreddine, S. et al. NF45 and NF90 regulate mitotic gene expression by competing with Staufen-mediated mRNA decay. _Cell Rep._ **31**, 107660 (2020).
+
+     [Article](https://doi.org/10.1016%2Fj.celrep.2020.107660) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3cXhtVWisL7I) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=32433969) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=NF45%20and%20NF90%20regulate%20mitotic%20gene%20expression%20by%20competing%20with%20Staufen-mediated%20mRNA%20decay&journal=Cell%20Rep.&doi=10.1016%2Fj.celrep.2020.107660&volume=31&publication_year=2020&author=Nourreddine%2CS)
+
+101. Méant, A. et al. Proteomic analysis reveals a role for RSK in p120-catenin phosphorylation and melanoma cell–cell adhesion. _Mol. Cell. Proteomics_ **19**, 50–64 (2020).
+
+     [Article](https://doi.org/10.1074%2Fmcp.RA119.001811) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=31678930) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Proteomic%20analysis%20reveals%20a%20role%20for%20RSK%20in%20p120-catenin%20phosphorylation%20and%20melanoma%20cell%E2%80%93cell%20adhesion&journal=Mol.%20Cell.%20Proteomics&doi=10.1074%2Fmcp.RA119.001811&volume=19&pages=50-64&publication_year=2020&author=M%C3%A9ant%2CA)
+
+102. Houles, T. et al. CDK12 is hyperactivated and a synthetic-lethal target in _BRAF_-mutated melanoma. _Nat. Commun._ **13**, 6457 (2022).
+
+     [Article](https://doi.org/10.1038%2Fs41467-022-34179-8) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB38Xislyqt73J) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=36309522) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9617877) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=CDK12%20is%20hyperactivated%20and%20a%20synthetic-lethal%20target%20in%20BRAF-mutated%20melanoma&journal=Nat.%20Commun.&doi=10.1038%2Fs41467-022-34179-8&volume=13&publication_year=2022&author=Houles%2CT)
+
+103. Heumos, L. et al. Best practices for single-cell analysis across modalities. _Nat. Rev. Genet._ **24**, 550–572 (2023).
+
+     [Article](https://doi.org/10.1038%2Fs41576-023-00586-w) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXmsl2nsbg%3D) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=37002403) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC10066026) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Best%20practices%20for%20single-cell%20analysis%20across%20modalities&journal=Nat.%20Rev.%20Genet.&doi=10.1038%2Fs41576-023-00586-w&volume=24&pages=550-572&publication_year=2023&author=Heumos%2CL)
+
+104. Liu, F. T., Ting, K. M. & Zhou, Z.-H. Isolation-based anomaly detection. _ACM Trans. Knowl. Discov. Data_ **6**, 1–39 (2012).
+
+     [Article](https://doi.org/10.1145%2F2133360.2133363) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Isolation-based%20anomaly%20detection&journal=ACM%20Trans.%20Knowl.%20Discov.%20Data&doi=10.1145%2F2133360.2133363&volume=6&pages=1-39&publication_year=2012&author=Liu%2CFT&author=Ting%2CKM&author=Zhou%2CZ-H)
+
+105. Korsunsky, I. et al. Fast, sensitive and accurate integration of single-cell data with Harmony. _Nat. Methods_ **16**, 1289–1296 (2019).
+
+     [Article](https://doi.org/10.1038%2Fs41592-019-0619-0) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC1MXitFOqsr7N) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=31740819) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC6884693) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Fast%2C%20sensitive%20and%20accurate%20integration%20of%20single-cell%20data%20with%20Harmony&journal=Nat.%20Methods&doi=10.1038%2Fs41592-019-0619-0&volume=16&pages=1289-1296&publication_year=2019&author=Korsunsky%2CI)
+
+106. Hafemeister, C. & Halbritter, F. Single-cell RNA-seq differential expression tests within a sample should use pseudo-bulk data of pseudo-replicates. Preprint at _bioRxiv_ [https://doi.org/10.1101/2023.03.28.534443](https://doi.org/10.1101/2023.03.28.534443) (2023).
+
+107. Tsitsiridis, G. et al. CORUM: the comprehensive resource of mammalian protein complexes-2022. _Nucleic Acids Res._ **51**, D539–D545 (2023).
+
+     [Article](https://doi.org/10.1093%2Fnar%2Fgkac1015) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BB3sXhtl2itLfF) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=36382402) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC9825459) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=CORUM%3A%20the%20comprehensive%20resource%20of%20mammalian%20protein%20complexes-2022&journal=Nucleic%20Acids%20Res.&doi=10.1093%2Fnar%2Fgkac1015&volume=51&pages=D539-D545&publication_year=2023&author=Tsitsiridis%2CG)
+
+108. Nourreddine, S., et al. A genome-scale CRISPRi perturbation atlas of human induced pluripotent stem cells. _figshare_ [https://doi.org/10.25452/figshare.plus.27261219](https://doi.org/10.25452/figshare.plus.27261219) (2026).
+
+109. Liu, F. T., Ting, K. M. & Zhou, Z.-H. Isolation forest. In _Proc. 8th IEEE International Conference on Data Mining_ (eds Giannotti, F. et al.) (IEEE, 2008).
+
+110. Tchieu, J. et al. A modular platform for differentiation of human PSCs into all major ectodermal lineages. _Cell Stem Cell_ **21**, 399–410 (2017).
+
+     [Article](https://doi.org/10.1016%2Fj.stem.2017.08.015) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC2sXhsVOhu7%2FO) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=28886367) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737635) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=A%20modular%20platform%20for%20differentiation%20of%20human%20PSCs%20into%20all%20major%20ectodermal%20lineages&journal=Cell%20Stem%20Cell&doi=10.1016%2Fj.stem.2017.08.015&volume=21&pages=399-410&publication_year=2017&author=Tchieu%2CJ)
+
+111. Loh, K. M. et al. Mapping the pairwise choices leading from pluripotency to human bone, heart, and other mesoderm cell types. _Cell_ **166**, 451–467 (2016).
+
+     [Article](https://doi.org/10.1016%2Fj.cell.2016.06.011) [CAS](https://www.nature.com/articles/cas-redirect/1:CAS:528:DC%2BC28XhtFynu7nO) [PubMed](http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=27419872) [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5474394) [Google Scholar](http://scholar.google.com/scholar_lookup?&title=Mapping%20the%20pairwise%20choices%20leading%20from%20pluripotency%20to%20human%20bone%2C%20heart%2C%20and%20other%20mesoderm%20cell%20types&journal=Cell&doi=10.1016%2Fj.cell.2016.06.011&volume=166&pages=451-467&publication_year=2016&author=Loh%2CKM)
+
+
+[Download references](https://citation-needed.springer.com/v2/references/10.1038/s41587-026-03199-w?format=refman&flavour=references)
+
+## Acknowledgements
+
+We would like to thank A. Vellal, M. Tong, J. Rainaldi and A. Cloninger for useful discussions and support throughout all stages of the study. We thank M. Ghassemian, director of the Biomolecular and Proteomics MS Facility (University of California, San Diego), and K. Jepsen, director of Institute for Genomic Medicine Genomics Center (University of California, San Diego).
+
+## Funding
+
+P.M., N.K., E.L. and T.I. disclose support for the research of this work from a National Institutes of Health (NIH) grant (OT2OD032742). P.M. further discloses support from NIH grants (R01CA310063 and R01HG012351), a California Institute for Regenerative Medicine grant (DISC4-19271), a Department of Defense grant (W81XWH-22-1-0401) and University of California, San Diego institutional funds. E.L. further discloses support from a Rubicon grant from the Dutch Research Council (019.231EN.013). J.N.H. was supported by a European Molecular Biology Organization postdoctoral fellowship (ALTF 556-2022). This publication includes data generated at the University of California, San Diego Institute for Genomic Medicine Genomics Center using an Illumina NovaSeq 6000 that was purchased with funding from an NIH shared instrumentation grant (S10 OD026929) and the National Cancer Institute (P30CA023100). The remaining authors declare no relevant funding.
+
+## Author information
+
+Author notes
+
+1. These authors contributed equally: Sami Nourreddine, Yesh Doctor.
+
+
+### Authors and Affiliations
+
+01. Department of Bioengineering, University of California San Diego, San Diego, CA, USA
+
+    Sami Nourreddine, Yesh Doctor, Yi-Hung Lee, Rebecca Chinn, Sushant Sunder, Emily Pan, Christian Metallo, Trey Ideker & Prashant Mali
+
+02. Department of Developmental Biology, Stanford University, Stanford, CA, USA
+
+    Amir Dailamy
+
+03. Department of Bioengineering, Stanford University, Stanford, CA, USA
+
+    Jan N. Hansen & Emma Lundberg
+
+04. Molecular and Cell Biology Laboratory, The Salk Institute for Biological Studies, San Francisco, CA, USA
+
+    Rebecca Chinn & Christian Metallo
+
+05. Quantitative Biosciences Institute (QBI), University of California San Francisco, San Francisco, CA, USA
+
+    Antoine Forget, Benjamin Polacco, Monita Muralidharan, Kirsten Obernier & Nevan Krogan
+
+06. Gladstone Institute of Data Science and Biotechnology, J. David Gladstone Institutes, San Francisco, CA, USA
+
+    Antoine Forget, Benjamin Polacco, Monita Muralidharan, Kirsten Obernier & Nevan Krogan
+
+07. Department of Cellular and Molecular Pharmacology, University of California San Francisco, San Francisco, CA, USA
+
+    Benjamin Polacco & Nevan Krogan
+
+08. Division of Cellular and Clinical Proteomics, Department of Protein Science, SciLifeLab, KTH Royal Institute of Technology, Stockholm, Sweden
+
+    Alina Sigaeva & Emma Lundberg
+
+09. School of Medicine, University of California San Diego, San Diego, CA, USA
+
+    Jiahao Gao, Jillian Parker & Trey Ideker
+
+10. Big Data Institute, University of Oxford, Oxford, UK
+
+    Jiahao Gao & Trey Ideker
+
+11. Department of Computer Science, The University of Alabama at Birmingham, Birmingham, VA, USA
+
+    Jake Y. Chen
+
+12. Department of Medicine, University of Virginia, Charlottesville, VA, USA
+
+    Timothy Clark
+
+13. Department of Pathology, Stanford University, CA, USA
+
+    Emma Lundberg
+
+14. Chan Zuckerberg Biohub, San Francisco, San Francisco, CA, USA
+
+    Emma Lundberg
+
+15. Department of Bioengineering and Therapeutics Sciences, University of California San Francisco, San Francisco, CA, USA
+
+    Nevan Krogan
+
+
+Authors
+
+01. Sami Nourreddine
+
+
+    [View author publications](https://www.nature.com/search?author=Sami%20Nourreddine)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Sami%20Nourreddine) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Sami%20Nourreddine%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+02. Yesh Doctor
+
+
+    [View author publications](https://www.nature.com/search?author=Yesh%20Doctor)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Yesh%20Doctor) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Yesh%20Doctor%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+03. Amir Dailamy
+
+
+    [View author publications](https://www.nature.com/search?author=Amir%20Dailamy)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Amir%20Dailamy) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Amir%20Dailamy%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+04. Yi-Hung Lee
+
+
+    [View author publications](https://www.nature.com/search?author=Yi-Hung%20Lee)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Yi-Hung%20Lee) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Yi-Hung%20Lee%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+05. Jan N. Hansen
+
+
+    [View author publications](https://www.nature.com/search?author=Jan%20N.%20Hansen)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Jan%20N.%20Hansen) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Jan%20N.%20Hansen%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+06. Rebecca Chinn
+
+
+    [View author publications](https://www.nature.com/search?author=Rebecca%20Chinn)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Rebecca%20Chinn) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Rebecca%20Chinn%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+07. Antoine Forget
+
+
+    [View author publications](https://www.nature.com/search?author=Antoine%20Forget)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Antoine%20Forget) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Antoine%20Forget%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+08. Benjamin Polacco
+
+
+    [View author publications](https://www.nature.com/search?author=Benjamin%20Polacco)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Benjamin%20Polacco) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Benjamin%20Polacco%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+09. Monita Muralidharan
+
+
+    [View author publications](https://www.nature.com/search?author=Monita%20Muralidharan)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Monita%20Muralidharan) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Monita%20Muralidharan%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+10. Alina Sigaeva
+
+
+    [View author publications](https://www.nature.com/search?author=Alina%20Sigaeva)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Alina%20Sigaeva) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Alina%20Sigaeva%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+11. Sushant Sunder
+
+
+    [View author publications](https://www.nature.com/search?author=Sushant%20Sunder)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Sushant%20Sunder) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Sushant%20Sunder%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+12. Emily Pan
+
+
+    [View author publications](https://www.nature.com/search?author=Emily%20Pan)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Emily%20Pan) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Emily%20Pan%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+13. Jiahao Gao
+
+
+    [View author publications](https://www.nature.com/search?author=Jiahao%20Gao)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Jiahao%20Gao) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Jiahao%20Gao%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+14. Jake Y. Chen
+
+
+    [View author publications](https://www.nature.com/search?author=Jake%20Y.%20Chen)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Jake%20Y.%20Chen) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Jake%20Y.%20Chen%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+15. Timothy Clark
+
+
+    [View author publications](https://www.nature.com/search?author=Timothy%20Clark)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Timothy%20Clark) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Timothy%20Clark%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+16. Jillian Parker
+
+
+    [View author publications](https://www.nature.com/search?author=Jillian%20Parker)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Jillian%20Parker) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Jillian%20Parker%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+17. Kirsten Obernier
+
+
+    [View author publications](https://www.nature.com/search?author=Kirsten%20Obernier)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Kirsten%20Obernier) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Kirsten%20Obernier%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+18. Christian Metallo
+
+
+    [View author publications](https://www.nature.com/search?author=Christian%20Metallo)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Christian%20Metallo) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Christian%20Metallo%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+19. Trey Ideker
+
+
+    [View author publications](https://www.nature.com/search?author=Trey%20Ideker)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Trey%20Ideker) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Trey%20Ideker%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+20. Emma Lundberg
+
+
+    [View author publications](https://www.nature.com/search?author=Emma%20Lundberg)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Emma%20Lundberg) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Emma%20Lundberg%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+21. Nevan Krogan
+
+
+    [View author publications](https://www.nature.com/search?author=Nevan%20Krogan)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Nevan%20Krogan) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Nevan%20Krogan%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+22. Prashant Mali
+
+
+    [View author publications](https://www.nature.com/search?author=Prashant%20Mali)
+
+
+
+
+
+    Search author on:[PubMed](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&term=Prashant%20Mali) [Google Scholar](https://scholar.google.co.uk/scholar?as_q=&num=10&btnG=Search+Scholar&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=%22Prashant%20Mali%22&as_publication=&as_ylo=&as_yhi=&as_allsubj=all&hl=en)
+
+
+### Contributions
+
+Conceptualization and design, S.N., Y.D. and P.M. Experiments, S.N., Y.D., A.D., Y.H.L., J.N.H., A.F., B.C., A.S., M.M. and E.P. Computational analyses, Y.D., S.N., B.P., S.S. and J.G. Supervision, J.P., K.O., C.M., E.L., T.I., N.K. and P.M. Writing, S.N., Y.D. and P.M., with input from all authors.
+
+### Corresponding author
+
+Correspondence to
+[Prashant Mali](mailto:pmali@ucsd.edu).
+
+## Ethics declarations
+
+### Competing interests
+
+P.M. is a scientific cofounder of Shape Therapeutics, Boundless Biosciences, Navega Therapeutics, Pi Bio and Engine Biosciences. The terms of these arrangements have been reviewed and approved by the University of California, San Diego in accordance with its conflict of interest policies. T.I. is a cofounder, advisor and holder of equity for Data4Cure and Serinus Biosciences and he is an advisor and shareholder for Ideaya BioSciences. The terms of these arrangements have been reviewed and approved by University of California, San Diego in accordance with its conflict of interest policies. The N.K. laboratory has received research support from Vir Biotechnology, F. Hoffmann-La Roche and Rezo Therapeutics. N.K. has a financially compensated consulting agreement with Maze Therapeutics, is the president and is on the board of directors of Rezo Therapeutics and is a shareholder in Tenaya Therapeutics, Maze Therapeutics, Rezo Therapeutics, GEn1E Lifesciences and Interline Therapeutics. E.L. is a cofounder of GenBio.ai and an advisor for the Chan-Zuckerberg Initiative Foundation, Element Biosciences, Cartography Biosciences, Pfizer and Pixelgen Technologies. The remaining authors declare no competing interests.
+
+## Peer review
+
+### Peer review information
+
+_Nature Biotechnology_ thanks Krishanu Saha and the other, anonymous, reviewer(s) for their contribution to the peer review of this work.
+
+## Additional information
+
+**Publisher’s note** Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.
+
+## Extended data
+
+### [Extended Data Fig. 1 Perturb-Seq of Chromatin Modifiers and Metabolic Enzymes in KOLF2.1J hiPSCs.](https://www.nature.com/articles/s41587-026-03199-w/figures/5)
+
+( **a**) Perturb-Seq pilot screens experimental scheme. KOLF2.1J iPSCs constitutively expressing KRABZIM3-dCas9 were transduced with a sgRNA library targeting two gene sets: (i) a panel of 108 chromatin modifying genes and (ii) a panel of 97 genes involved in metabolism. 108 non-targeting control (NTC) sgRNA were included. Following 2 day recovery, cells receiving perturbations were selected via puromycin for 2 days. On day 4, cells were harvested for single cell RNA sequencing. (Created using Biorender [https://BioRender.com/f8grmmb](https://biorender.com/f8grmmb)) ( **b-l**) correspond to results from the chromatin modifiers screen, while ( **m-q**) correspond to results from the metabolic enzymes screen. ( **b**) Number of cells per perturbation, indicating that 92% of perturbations (sgRNA) have more than 25 associated cells. ( **c**) On-target knockdown per perturbation, indicating that 65% of perturbations demonstrate repression >30%. ( **d**) Energy distance permutation testing of perturbations vs NTC cells. ( **e**) Relationship between energy distance and number of induced differentially expressed genes (DEGs) per perturbation. Perturbations with significance for both metrics are retained. sgRNA are combined per gene to form Strong Perturbations. ( **f**) Number of up- and down- regulated DEGs per Strong Perturbation, identified via DESeq2. ( **g**) Waterfall plot ranking Strong Perturbations on their average combined rank of energy distance and DEGs, with the top 10 labeled. ( **h**) Pairwise correlation matrix of pseudo bulked transcriptional profiles of strong perturbations. ( **i**) Exploration of alternate methods of clustering perturbations (See [Methods](https://www.nature.com/articles/s41587-026-03199-w#Sec8)). ( **j**) Annotated Minimum Distortion Embedding (MDE) of Strong Perturbation correlation matrix. ( **k**) UMAP density visualization of perturbed and NTC cells (top), DNMT1 and UHRF1 (bottom). ( **l**) Mechanism by which URHF1 recruits DNMT1 to regulate hemimethylated DNA. Modified from Arita et al.18 (Created using Biorender [https://BioRender.com/rvwc39u](https://biorender.com/rvwc39u)) ( **m, n**) Effect of loading variable number of cells per 10X channel on yield of cells with 1 sgRNA assigned for metabolic enzymes Perturb-Seq dataset. ( **o**) Energy distance permutation testing of perturbations vs NTC cells. ( **p**) Pairwise correlation matrix of pseudo bulked transcriptional profiles of Strong Perturbations. ( **q**) UMAP density visualization of perturbed and NTC cells (top), MTOR (bottom).
+
+### [Extended Data Fig. 2 Data Analysis Pipeline PASTA (Perturbation Atlas Sanitization, Triage, and Analysis).](https://www.nature.com/articles/s41587-026-03199-w/figures/6)
+
+Plots correspond to data from expressed genome wide Perturb-Seq assay. See [Methods](https://www.nature.com/articles/s41587-026-03199-w#Sec8) for full details. Data is first sanitized ( **a-f**), removing outlier cells and non-effective perturbations. Next, perturbations are triaged, removing low-priority perturbations that do not measurably cause cell state alterations ( **g-k**). Finally, analysis is performed to develop a cellular map. ( **l**, Fig. [2](https://www.nature.com/articles/s41587-026-03199-w#Fig2)). ( **a**) sgRNA are assigned per cell using 10x Genomics guide calling algorithm. Cells without exactly 1 sgRNA are filtered. ( **b**) Genes not detected in any single cells are removed. ( **c**) Cells are filtered based on standard QC metrics proposed by Heumos et al.[103](https://www.nature.com/articles/s41587-026-03199-w#ref-CR103 "Heumos, L. et al. Best practices for single-cell analysis across modalities. Nat. Rev. Genet. 24, 550–572 (2023).") ( **d**) Sanity check of standard QC metrics. ( **e**) Filtering of spurious NTC cells. NTC cells are batch-aligned via Harmony[105](https://www.nature.com/articles/s41587-026-03199-w#ref-CR105 "Korsunsky, I. et al. Fast, sensitive and accurate integration of single-cell data with Harmony. Nat. Methods 16, 1289–1296 (2019).") and filtered via Isolation Forest[109](https://www.nature.com/articles/s41587-026-03199-w#ref-CR109 "Liu, F. T., Ting, K. M. & Zhou, Z.-H. Isolation forest. In Proc. 8th IEEE International Conference on Data Mining (eds Giannotti, F. et al.) (IEEE, 2008).") assuming a 30% contamination fraction. ( **f**) Perturbations (sgRNA) with less than 25 associated cells and achieving less than 30% on-target knockdown are removed as proposed by Replogle et al.[36](https://www.nature.com/articles/s41587-026-03199-w#ref-CR36 "Replogle, J. M. et al. Mapping information-rich genotype-phenotype landscapes with genome-scale Perturb-Seq. Cell 185, 2559–2575 (2022).") ( **g**) Energy distance permutation test vs NTC via scPerturb[15](https://www.nature.com/articles/s41587-026-03199-w#ref-CR15 "Peidli, S. et al. scPerturb: harmonized single-cell perturbation data. Nat. Methods 21, 531–540 (2024).") ( **h**) (Left) Differential expression test of perturbations vs NTC cells via DESeq2. (Right) Distribution of number of DEGs for each NTC sgRNA vs. all other NTC cells is used to set a FDR on the # of DEGs identified. ( **i**) Perturbations with both a significant energy distance test result and more DEGs than the NTC FDR baseline are selected. Perturbations are then combined per targeted gene. ( **j, k**) Energy distance testing and # of DEGs filtering is repeated at the gene level. ‘Strong Perturbations’ are defined as those which pass all filtering from steps a-k. ( **l**) Strong Perturbations are prioritized based on the average of their energy distance and # of DEGs rank.
+
+### [Extended Data Fig. 3 Further Analysis Related to CRISPRi Fitness Screening.](https://www.nature.com/articles/s41587-026-03199-w/figures/7)
+
+( **a**) Top 5 GO terms for enriched/depleted perturbations related to Fig. [1(c)](https://www.nature.com/articles/s41587-026-03199-w#Fig1). ( **b**) Fitness screen analysis Z-normalizing to distribution of NTC sgRNA rather than all perturbations (related to Fig. [1c](https://www.nature.com/articles/s41587-026-03199-w#Fig1)). ( **c**) Fitness screen analysis Z-normalizing to distribution of NTC sgRNA rather than all perturbations displays the same pathways as when Z-normalizing to all (related to Fig. [1d](https://www.nature.com/articles/s41587-026-03199-w#Fig1)). ( **c**) Pathways and processes enrichment analysis of DepMap exclusive essential genes (related to Fig. [1d](https://www.nature.com/articles/s41587-026-03199-w#Fig1)). ( **e**) Pathways and processes enrichment analysis of essential genes shared between DepMap and KOLF2.1Js (related to Fig. [1d](https://www.nature.com/articles/s41587-026-03199-w#Fig1)). ( **f, g**) Fitness Z-score at Day 6 (D6) and Day 14 (D14) in KOLF2.1J KRABZIM3-dCas9 expressing cells at the perturbation level. Each dot represents a different gRNA, 3 gRNA/perturbation and 478 gRNAs for NTC conditions. Red bars are perturbations with z-score < −1 at day 14, blue bars are perturbations with z-score>1 at day 14. Error Bars represent SD and asterisks indicate significant differences compared to sg-NTC condition (\*p < 0.05, \*\*p < 0.01, \*\*
