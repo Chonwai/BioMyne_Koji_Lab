@@ -22,12 +22,21 @@ log_info() { echo -e "${CYAN}ℹ${NC}  $1"; }
 header()   { echo -e "\n${BOLD}${YELLOW}━━━ $1 ━━━${NC}"; }
 
 # ── Config ──
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Load .env if present — secrets are only read from the environment,
+# never hardcoded in this script.
+if [ -f "$REPO_ROOT/.env" ]; then
+  set -a; source "$REPO_ROOT/.env"; set +a
+fi
+
 HERMES_URL="${HERMES_URL:-http://localhost:8642}"
 HERMES_KEY="${HERMES_KEY:-koji-phase1-local}"
 OLLAMA_URL="${OLLAMA_URL:-http://localhost:11434}"
-FIRECRAWL_KEY="${FIRECRAWL_KEY:-fc-59fb50e705e142bfb5e3a5dd9b8905d5}"
-SUPABASE_URL="${SUPABASE_URL:-https://yihgpsbofjgoxbfypnia.supabase.co}"
-SUPABASE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpaGdwc2JvZmpnb3hiZnlwbmlhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzMyODg3NywiZXhwIjoyMDk4OTA0ODc3fQ.z-SLd6GxO81kURZYdiq3CsHLC-r_pzn7f_rRKopS8C4}"
+FIRECRAWL_KEY="${FIRECRAWL_KEY:?ERROR: FIRECRAWL_KEY not set in .env}"
+SUPABASE_URL="${SUPABASE_URL:?ERROR: SUPABASE_URL not set in .env}"
+SUPABASE_KEY="${SUPABASE_SERVICE_ROLE_KEY:?ERROR: SUPABASE_SERVICE_ROLE_KEY not set in .env}"
 LANGFUSE_URL="${LANGFUSE_URL:-http://localhost:3001}"
 MODEL="${OLLAMA_MODEL_TAG:-qwen3.6:35b-mlx}"
 
