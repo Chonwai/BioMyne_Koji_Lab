@@ -107,7 +107,6 @@ async def crawl_one(url: str, use_llm: bool, ollama_url: str, model: str) -> dic
             base_url=ollama_url,
             api_token=None,  # local Ollama: no auth token needed
         )
-        run_kwargs["llm_config"] = llm_config
 
         llm = LLMExtractionStrategy(
             llm_config=llm_config,
@@ -159,14 +158,14 @@ async def crawl_one(url: str, use_llm: bool, ollama_url: str, model: str) -> dic
 
 async def main_async(args: argparse.Namespace) -> int:
     ollama_ok = _check_ollama(args.ollama_url)
-    if args.use_llm and not ollama_ok:
+    if args.llm and not ollama_ok:
         print(f"[poc] ⚠️ Ollama not reachable at {args.ollama_url} — degrading to markdown-only "
               f"(graceful degradation).\n", file=sys.stderr)
 
     exit_code = 0
     for url in args.urls:
         print(f"━━━ Crawling: {url} ━━━")
-        result = await crawl_one(url, args.use_llm and ollama_ok, args.ollama_url, args.model)
+        result = await crawl_one(url, args.llm and ollama_ok, args.ollama_url, args.model)
 
         if result.get("error"):
             print(f"  ❌ Error: {result['error']}")
