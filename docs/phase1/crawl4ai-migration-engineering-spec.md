@@ -287,6 +287,7 @@ Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline �
 
 **路由邏輯**（`run_pipeline.sh` 內）：
 ```bash
+# ⚠️ 注意：現況 run_pipeline.sh:258 的 select 僅 10 欄（無 crawler_provider），需先實作 B-2 才能跑通本段
 # Step 2 的 Supabase sources 查詢帶入完整欄位清單（現行欄位 + crawler_provider）
 supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority,crawler_provider&enabled=eq.true"
 # iterate 每個 source 時依 §4.3 優先序決定 provider：
