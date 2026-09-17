@@ -91,7 +91,7 @@ flowchart LR
     end
 
     J --> K{LLM 摘要}
-    K --> L[Ollama Qwen 3.6<br/>LLMExtractionStrategy]
+    K --> L[Ollama Qwen 3.6<br/>LLMConfig + LLMExtractionStrategy]
     L --> M[(Supabase + pgvector)]
 
     subgraph AntiBot["Anti-bot（僅需要時）"]
@@ -103,7 +103,7 @@ flowchart LR
 **關鍵設計決策**：
 - Discovery 以 feedparser + sitemap 為主體（8/11 來源已是 RSS/sitemap 先行）
 - Extraction 以 Crawl4AI 為主，Firecrawl 保留給 3 個 hard sources
-- LLM 用 Ollama Qwen 3.6（`LLMExtractionStrategy(provider="ollama/qwen3.6:35b-mlx")`）
+- LLM 用 Ollama Qwen 3.6（`llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx")` + `markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5))`）
 - Anti-bot 只在需要時啟用（stealth/residential proxy 都不是預設值）
 
 ---
@@ -159,7 +159,7 @@ class CrawlerProvider(Protocol):
 #### `LocalCrawl4AIProvider`
 
 - 使用 `crawl4ai.AsyncWebCrawler`（參考 `ops/poc/crawl4ai_poc.py` L80–110）
-- `scrape()` 設定：`headless=True`, `markdown=True`, `only_main_content=True`, `cache_mode=BYPASS`
+- `scrape()` 設定：`BrowserConfig(headless=True)` + `CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"), cache_mode=CacheMode.BYPASS)`
 - `map()` 使用 Crawl4AI 的 link discovery 或 sitemap XML 解析
 - 需要 `pip install crawl4ai playwright && playwright install chromium`
 
@@ -261,7 +261,7 @@ playwright install chromium
 
 **`scrape()` 行為**：
 - 使用 `crawl4ai.AsyncWebCrawler(config=BrowserConfig(headless=True))`
-- `CrawlerRunConfig(markdown=True, only_main_content=True, cache_mode=CacheMode.BYPASS)`
+- `CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"), cache_mode=CacheMode.BYPASS)`
 - 呼叫 `crawler.arun(url=url, config=run_cfg)`
 - 回傳 `ScrapeResult`（success/markdown/word_count/content_hash/paywall_detected/paywall_signal/provider="local"）
 
