@@ -144,7 +144,7 @@ playwright install chromium
 | --- | --- |
 | `9ecd885` | `chore(dev): add crawl4ai/playwright/trafilatura/pytest to requirements-dev.txt`（+ `.gitignore` 加 `.venv/`） |
 | `8b1b1c8` | `fix(poc): align crawl4ai_poc with v0.9.3 API and CLI` |
-| （待本檔） | `docs: add Crawl4AI PoC verification results (P0)` |
+| `01033e6` | `docs: add Crawl4AI PoC verification results (P0)` |
 
 ### 6.3 已知限制
 
