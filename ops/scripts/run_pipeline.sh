@@ -201,7 +201,7 @@ echo -e "${NC}"
 # ── Step 0: Pre-flight checks ──
 echo -e "\n${CYAN}[0/6] Pre-flight checks...${NC}"
 
-if [ -z "$FIRECRAWL_KEY" ]; then
+if [ "${CRAWLER_ALLOW_CLOUD:-true}" != "false" ] && [ -z "$FIRECRAWL_KEY" ]; then
   echo -e "${RED}✗ FIRECRAWL_KEY not set. Check your .env file.${NC}"; exit 1
 fi
 if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
@@ -255,7 +255,7 @@ echo -e "${GREEN}✓${NC} Crawl run created: $RUN_ID"
 
 # ── Step 2: Fetch sources from Supabase ──
 echo -e "\n${CYAN}[2/6] Fetching sources from Supabase...${NC}"
-SOURCES_JSON=$(supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority&enabled=eq.true" || echo "[]")
+SOURCES_JSON=$(supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority,crawler_provider&enabled=eq.true" || echo "[]")
 SOURCE_COUNT=$(echo "$SOURCES_JSON" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
 
 if [ "$SOURCE_COUNT" -eq 0 ]; then
@@ -298,6 +298,15 @@ while IFS= read -r line; do
   REFRESH_WINDOW_DAYS=$(echo "$line" | python3 -c "import sys,json; value=json.loads(sys.stdin.read()).get('refresh_window_days'); print('' if value is None else value)" 2>/dev/null)
   REFRESH_CADENCE_HOURS=$(echo "$line" | python3 -c "import sys,json; value=json.loads(sys.stdin.read()).get('refresh_cadence_hours'); print('' if value is None else value)" 2>/dev/null)
   REFRESH_PRIORITY=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('refresh_priority','low'))" 2>/dev/null)
+
+  # Provider routing (spec §4.3): kill-switch > DB crawler_provider > env CRAWLER_PROVIDER
+  ALLOW_CLOUD="${CRAWLER_ALLOW_CLOUD:-true}"
+  PROVIDER=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('crawler_provider') or '')" 2>/dev/null)
+  [ -z "$PROVIDER" ] && PROVIDER="${CRAWLER_PROVIDER:-local}"
+  [ "$ALLOW_CLOUD" = "false" ] && PROVIDER="local"
+  # PROVIDER 值：local → 走 Crawl4AI（P1 實作）；firecrawl_cloud → 走 Firecrawl（既有路徑）
+  echo "[pipeline] $SRC_NAME provider=$PROVIDER"
+
   SOURCE_LIMIT=$(articles_limit_for_source "$SRC_NAME")
   
   echo -e "\n  ${YELLOW}→${NC} Discovering articles for ${BOLD}$SRC_NAME${NC} ($SRC_URL) [limit=$SOURCE_LIMIT]..."
