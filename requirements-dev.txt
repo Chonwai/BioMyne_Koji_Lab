@@ -1,2 +1,9 @@
-PyYAML>=6.0
-langfuse>=2,<3
+# Core crawl deps (Crawl4AI v0.9.x — new API: LLMConfig + DefaultMarkdownGenerator)
+Crawl4AI==0.9.3
+playwright==1.63.0
+trafilatura==2.2.0
+pytest==9.1.1
+
+# Existing deps (pin from pip freeze)
+PyYAML==6.0.3
+langfuse==2.60.10
