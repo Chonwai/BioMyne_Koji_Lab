@@ -222,6 +222,8 @@ UPDATE sources SET crawler_provider = 'firecrawl_cloud' WHERE name = 'Endpoints 
 
 ### Step 1: 環境準備
 
+> **注意**：建議使用 **Python 3.12**（Crawl4AI 的 greenlet 依賴在 Python 3.13 有相容性問題，見 upstream issue #291）。
+
 **指令**：
 ```bash
 pip install crawl4ai playwright trafilatura pytest
@@ -286,6 +288,8 @@ Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline �
 - `ops/source-manifests/biotech.yaml` — 保持為 discovery surface 規則的輔助文件，與 pipeline 資料流解耦（不加 provider 欄位）
 
 **路由邏輯**（`run_pipeline.sh` 內）：
+> **註**：此 select 11 欄（含 crawler_provider）為目標狀態；現況 `run_pipeline.sh:258` 為 10 欄（無 crawler_provider），需先實作（見 sql/006 + 本步驟下方路由邏輯）。
+
 ```bash
 # Step 2 的 Supabase sources 查詢帶入完整欄位清單（現行欄位 + crawler_provider）
 supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority,crawler_provider&enabled=eq.true"
@@ -403,7 +407,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 | content_hash 飄移 | 重複文章重跑 LLM | 中 | 調高 dedupe 容忍度；沿用 `hash_markdown()` normalize |
 | Crawl4AI 版本升級破壞 | pipeline crash | 低 | `requirements-dev.txt` pin 版本；`pip install crawl4ai==0.9.3` |
 | Ollama 不可用 | LLM 分析失敗 | 低 | 沿用現有 fallback（跳過 LLM，只存 markdown） |
-| Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl |
+| Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl（另注意 macOS 上 `DYLD_LIBRARY_PATH` 汙染可能導致 chromium renderer crash，見 Playwright issue #42351） |
 
 **通用 rollback（三個手段）**：
 
