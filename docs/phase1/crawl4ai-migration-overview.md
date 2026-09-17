@@ -101,7 +101,7 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 
 | # | 前提 | 說明 | 緩解措施 |
 | --- | --- | --- | --- |
-| P1 | **反爬不是免費的** | Playwright stealth plugin 單獨使用僅 ~5% pass rate；需 residential IP + fingerprint 才有 ~70% | 保留 Cloud fallback 給高風險來源；本地加 request delay + stealth |
+| P1 | **反爬不是免費的** | Playwright stealth plugin 單獨使用僅 ~5% pass rate；需 residential IP + fingerprint 才有 ~70%（數據出自 humanbrowser.cloud 2026-02-19 的 12-method vendor benchmark；其中 ~5% 為「VPS IP + stealth」組合結果，非 stealth 單獨） | 保留 Cloud fallback 給高風險來源；本地加 request delay + stealth |
 | P2 | **「零配置任意網站」是話術** | 已知結構來源近乎零配置，但新來源仍需 2–4 hr/來源 per-pattern config | 遷移 8 個已知來源（低成本），未來新增來源編列配置預算 |
 | P3 | **要守住內容品質閘門** | Playwright 渲染結果可能因 CDN/廣告動態內容飄移，影響 `content_hash` 去重 | 沿用 `_pipeline_normalization.hash_markdown()` 去重邏輯，接受較高 dedupe 率 |
 
