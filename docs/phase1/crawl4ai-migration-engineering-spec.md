@@ -222,6 +222,8 @@ pip install crawl4ai playwright trafilatura
 playwright install chromium
 ```
 
+完成安裝後執行 `pip freeze | grep -i 'crawl4ai\|playwright\|trafilatura' >> requirements-dev.txt` 確保版本可複現。
+
 **驗收標準**：
 - [ ] `python3 -c "from crawl4ai import AsyncWebCrawler; print('OK')"` 輸出 OK
 - [ ] `playwright install chromium` 無報錯
@@ -270,30 +272,27 @@ playwright install chromium
 
 ### Step 4: Source-level Routing
 
+Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline 基礎資料源）：`run_pipeline.sh` 的 source 清單來自 Supabase REST（`GET /rest/v1/sources?enabled=eq.true`），並非直接讀 YAML manifest。
+
 **改動**：
-- `ops/source-manifests/biotech.yaml` — 3 個 hard sources 加 `crawler_provider: firecrawl`
-- `ops/scripts/run_pipeline.sh` — 讀取 source-level `crawler_provider` 並決定用哪個 provider
+- `sql/001_phase1_core_schema.sql` — `sources` 表新增 `crawler_provider` 欄位（text, DEFAULT 'local'，可選 'local' | 'firecrawl_cloud'）
+- `ops/scripts/run_pipeline.sh` — 在 iterate sources 時讀取 `crawler_provider` 欄位，決定該 source 走 Crawl4AI 或保留 Firecrawl
+- `ops/source-manifests/biotech.yaml` — 保持為 discovery surface 規則的輔助文件，與 pipeline 資料流解耦（不加 provider 欄位）
 
 **路由邏輯**（`run_pipeline.sh` 內）：
 ```bash
-# 讀取 source-level provider override（預設用全域 CRAWLER_PROVIDER）
-SOURCE_PROVIDER=$(SOURCE_NAME="$SRC_NAME" python3 -c "
-import yaml, os, sys
-with open('ops/source-manifests/biotech.yaml') as f:
-    data = yaml.safe_load(f)
-for s in data['sources']:
-    if s['name'].lower() == os.environ['SOURCE_NAME'].strip().lower():
-        print(s.get('crawler_provider', ''))
-        sys.exit(0)
-print('')
-" 2>/dev/null)
-
-PROVIDER="${SOURCE_PROVIDER:-$CRAWLER_PROVIDER}"
+# Step 2 的 Supabase sources 查詢帶入 crawler_provider 欄位
+supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,crawler_provider&enabled=eq.true"
+# iterate 每個 source 時依該欄位決定 provider：
+#   crawler_provider='firecrawl_cloud' → 走 Firecrawl（3 個 hard sources）
+#   其餘（'local' 或 NULL）→ 走 Crawl4AI 本地
+PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('crawler_provider') or 'local')")
 ```
 
 **驗收標準**：
-- [ ] `Endpoints News` 的 `SOURCE_PROVIDER` 輸出 `firecrawl`
-- [ ] `STAT News` 的 `SOURCE_PROVIDER` 輸出空字串（用全域預設）
+- [ ] `sources` 表新增 `crawler_provider` 欄位（text, DEFAULT 'local'）
+- [ ] `Endpoints News`（hard source）的 `crawler_provider='firecrawl_cloud'`，routing 走 Firecrawl
+- [ ] 其他 easy sources 的 `crawler_provider='local'`（或 NULL），走 Crawl4AI 本地
 - [ ] 環境變數 `CRAWLER_PROVIDER=local` 時，所有非 override sources 走本地
 
 ---
@@ -305,7 +304,7 @@ PROVIDER="${SOURCE_PROVIDER:-$CRAWLER_PROVIDER}"
 **驗收標準**（每個 source）：
 - [ ] `scrape()` 成功（success=True）
 - [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（300）
-- [ ] content_hash 非空且穩定（同一 URL 兩次抓取 hash 相同）
+- [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證
 - [ ] `run_pipeline.sh` 單 source 測試通過
 - [ ] 抓取成功率 ≥ 95%（跑 10 次，≤1 次失敗）
 
@@ -406,5 +405,5 @@ PROVIDER="${SOURCE_PROVIDER:-$CRAWLER_PROVIDER}"
 | Crawl4AI 官方文件 | https://docs.crawl4ai.com/ |
 | Playwright Python 文件 | https://playwright.dev/python/ |
 | Trafilatura 文件 | https://trafilatura.readthedocs.io/ |
-| Phase 1 Engineering Spec（格式參考） | `docs/koji/02-engineering-spec-phase1.md` |
+| Phase 1 Engineering Spec（格式參考） | `docs/phase1/engineering-spec.md` |
 | Firecrawl API 文件 | https://docs.firecrawl.dev/ |

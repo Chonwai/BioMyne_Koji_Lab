@@ -11,9 +11,9 @@
 
 ## Executive Summary
 
-BioMyne Koji 目前使用 Firecrawl Cloud（月費 $19）爬取 11 個生技情報來源，每日約 660 篇文章。這個依賴造成三個問題：**持續性月費支出**、**生技情報送入第三方雲端**、以及**新增來源受 credit 上限限制**。
+BioMyne Koji 目前使用 Firecrawl Cloud（月費 $16）爬取 11 個生技情報來源，每日約 660 篇文章。這個依賴造成三個問題：**持續性月費支出**、**生技情報送入第三方雲端**、以及**新增來源受 credit 上限限制**。
 
-深度研究已完成評估：使用本地 **Playwright + Crawl4AI + Ollama** 組合取代 Firecrawl「有條件可行」。11 個來源中 **8 個可直接遷移**，其餘 3 個保留 Cloud fallback。遷移後月成本從 **$19 降至 ~$4.32（僅電費）**，年省 **~$140–168**，同時資料完全留在本地。
+深度研究已完成評估：使用本地 **Playwright + Crawl4AI + Ollama** 組合取代 Firecrawl「有條件可行」。11 個來源中 **8 個可直接遷移**，其餘 3 個保留 Cloud fallback。遷移後月成本從 **$16 降至 ~$4.32（僅電費）**，年省 **~$140**，同時資料完全留在本地。
 
 遷移不影響現有功能。系統保留 Firecrawl Free tier 作為最後防線，確保任何來源異常時自動回退。預計 **2–3 週分階段完成**，每階段有明確驗收標準。
 
@@ -27,9 +27,9 @@ BioMyne Koji 目前使用 Firecrawl Cloud（月費 $19）爬取 11 個生技情�
 
 | 指標 | 現況（Firecrawl Cloud） | 遷移後（本地） |
 | --- | --- | --- |
-| 月費 | $19/mo（Hobby plan, 5000 credits） | ~$4.32/mo（電費） |
-| 年成本 | $228 | ~$60 |
-| **年省** | — | **~$168** |
+| 月費 | $16/mo（Hobby plan, 5000 credits） | ~$4.32/mo（電費） |
+| 年成本 | $192 | ~$52 |
+| **年省** | — | **~$140** |
 | 額度限制 | 5000 credits/mo，超出需加購 | **無上限** |
 
 Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗。成本工具 `ops/scripts/estimate_crawler_cost.py` 可參數化試算。
@@ -53,7 +53,7 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 
 | 維度 | Firecrawl Cloud（現況） | 本地 Crawl4AI Stack（目標） |
 | --- | --- | --- |
-| **月成本** | $19（5000 credits） | ~$4.32（電費） |
+| **月成本** | $16（5000 credits） | ~$4.32（電費） |
 | **資料隱私** | 內容送第三方雲端 | 全部本地，不出內網 |
 | **來源彈性** | 受 credit 上限限制 | 無上限，隨意新增 |
 | **維運負擔** | 零（雲端 SLA） | 需管理 browser binary + Crawl4AI 版本 |
@@ -69,12 +69,14 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 
 | 項目 | Firecrawl Cloud | 本地（Mac Studio） |
 | --- | --- | --- |
-| 月費 | $19/mo | ~$5/mo（電費） |
+| 月費 | $16/mo | ~$4.32/mo（電費） |
 | 電費計算 | — | 30W × 24h × 30d × $0.2/kWh ≈ $4.32/mo |
-| 年成本 | $228 | ~$60 |
-| **年省** | — | **~$168** |
+| 年成本 | $192 | ~$52 |
+| **年省** | — | **~$140** |
 
 > 以上為概估範圍。實際節省以 `ops/scripts/estimate_crawler_cost.py` 參數化試算為準。
+>
+> Hobby 定價範圍 $16–19/mo（依促銷），以上以工具預設 $16/mo 為準。重跑：`python3 ops/scripts/estimate_crawler_cost.py --articles 660 --scrape-credits 3`
 
 ### 無形效益
 
@@ -142,6 +144,8 @@ gantt
 | **content_hash 去重率** | 現有基線 | 維持（不因渲染差異導致重複文章重跑 LLM） | `_pipeline_normalization` output |
 | **LLM 分析覆蓋率** | 現有基線 | ≥ 現況（`MIN_WORDS_FOR_LLM` 通過率不降） | pipeline run log |
 
+**決策閘**：P2 Easy sources 完成後，若任一 source 抓取成功率 < 80% 或 LLM 分析覆蓋率低於現況，該 source 回滾至 Firecrawl Cloud，並進行根因分析後決定是否繼續嘗試。
+
 ---
 
 ## 7. 決策建議
@@ -149,7 +153,7 @@ gantt
 **建議進行遷移，同時保留 Firecrawl Free tier 作為 fallback。**
 
 理由：
-1. **成本效益明確**：年省 ~$168，無額度上限
+1. **成本效益明確**：年省 ~$140，無額度上限
 2. **資料隱私提升**：生技情報不出本地
 3. **風險可控**：3 個 hard sources 保留 Cloud fallback，Firecrawl Free tier 當最後防線
 4. **一次性投入低**：8 個 easy sources 約 8–16 hr 一次性配置成本
