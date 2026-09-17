@@ -14,9 +14,9 @@ Budget: ~16 iterations
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
 | EXECUTE-I1（文檔修正 F-1..F-6） | 1 | 2 | ✅ done（Iteration 1 — 5 commits） |
-| EXECUTE-I2（B-3 sql/006 + B-2 routing） | 0 | 2 | pending |
-| EXECUTE-I3（B-4 環境 + B-1 POC + P0 實測） | 0 | 2 | pending |
-| VERIFY（smith strict 93） | 0 | 3 | pending |
+| EXECUTE-I2（B-3 sql/006 + B-2 routing） | 1 | 2 | ✅ done（Iteration 2 — 2 commits，7-case 語意測試 7/7 PASS） |
+| EXECUTE-I3（B-4 環境 + B-1 POC + P0 實測） | 1 | 2 | ✅ done（Iteration 3 — 3 commits，未知數 1 已回答） |
+| VERIFY（smith strict 93） | 1 | 3 | 🔄 active |
 | REPAIR（trinity bounded） | 0 | 2 | pending |
 
 ## 任務形態與範圍
@@ -47,8 +47,33 @@ Budget: ~16 iterations
 
 **Outcome: I1 ✅ → EXECUTE-I2（B-3 + B-2）**
 
+### Iteration 2 — EXECUTE-I2（trinity B-3 + B-2）
+
+**Agent: trinity** — 2 commits：
+- `60b1b71` feat(sql): add 006 crawl4ai migration — `alter table sources add column if not exists crawler_provider text not null default 'local'` + seed 3 hard sources（名稱與 sql/003 L44/50/56 吻合）；沿用小寫慣例
+- `93746c0` feat(pipeline): crawler_provider routing — L204 pre-flight 放寬（CRAWLER_ALLOW_CLOUD=false 跳過 FIRECRAWL_KEY hard-fail）、L258 select 11 欄、L302–308 三層決策（kill-switch > DB > env；`$line` 為現有 JSON 變數）+ log 一行
+- `bash -n` 通過；isolated sandbox 7-case 語意測試 7/7 PASS（kill-switch 壓過 DB/env、DB 值 honored、空值→env→local）
+- 偏離標記：2b env fallback 採 spec §4.3 正規版（DB 缺值→env→local），非 user 範例的 or 'local'；範圍錨定遵守（crawler_providers.py 留 P1）
+
+**Outcome: I2 ✅ → EXECUTE-I3（B-4 環境重建 + P0 實測）**
+
+### Iteration 3 — EXECUTE-I3（trinity B-4 + B-1 + P0）
+
+**Agent: trinity** — 3 commits：
+- `9ecd885` chore(dev): requirements-dev.txt 加 crawl4ai==0.9.3/playwright/trafilatura/pytest/PyYAML/langfuse（.venv 已建，Python 3.12.9 避 3.13 greenlet）
+- `8b1b1c8` fix(poc): 對齊 v0.9.3 API + CLI（`args.llm`、移除不存在的 `CrawlerRunConfig(llm_config=...)`）
+- `01033e6` docs: `docs/phase1/crawl4ai-poc-verification.md`（153 行 P0 實測證據）
+- **P0 實測**：markdown-only success（status 200, word_count 2173）；Ollama LLM extraction 端到端跑通（完整合法 JSON：title/summary/priority_level/entities 四型齊全）
+- **關鍵發現：單篇 LLM extraction 首輪 ~9.5min / warm ~5.4min**（Ollama prefix cache 命中 9348/9352）— 遠慢於 Firecrawl 秒級，P1 延遲預算必須納入
+- 環境注意：zsh `python3` alias 劫持 venv → 用 `.venv/bin/python3`；.venv 已入 .gitignore
+- 實測 URL 偏離（虛構 DOI 404→真實 preprint 10.1101/2024.05.21.595135v1）、POC CLI 預設 markdown-only 已標記
+
+**未知數 1 ✅ 已回答：Crawl4AI 0.9.3 新 API + Ollama qwen3.6:35b-mlx（MLX 100% GPU）端到端跑通。**
+
+**Outcome: I3 ✅ → VERIFY（smith strict 93，全變更審查）**
+
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 8%
+Budget: 30%
 Status: HEALTHY
