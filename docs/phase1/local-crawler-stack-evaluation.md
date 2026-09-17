@@ -162,6 +162,8 @@ flowchart LR
 | 年成本 | $228 | ~$60（電費） |
 | **年省** | — | **~$168** |
 
+> **註**：以上數字為概估範圍（$168/yr 為 Hobby $19 上限對照，$140/yr 為 tool 預設 $16/mo 對照）。實際節省以 `ops/scripts/estimate_crawler_cost.py` 參數化試算為準。
+
 > 詳細參數化試算見 `ops/scripts/estimate_crawler_cost.py`。
 
 ---

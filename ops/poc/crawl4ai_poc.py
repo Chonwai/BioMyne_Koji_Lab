@@ -33,7 +33,7 @@ import asyncio
 import json
 import os
 import sys
-from typing import Any, Optional
+from typing import Any
 
 # Public, non-paywalled demo URLs (bioRxiv preprints and STAT News are the pilot pair)
 DEFAULT_URLS = [

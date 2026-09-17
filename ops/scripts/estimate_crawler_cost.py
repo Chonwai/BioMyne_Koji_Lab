@@ -36,6 +36,8 @@ FIRECRAWL_TIERS = [
 
 # ── Local cost defaults ──
 
+# Default monthly article volume: 11 sources × 30 articles/source × 4 weeks × ~50% dedup ≈ 660.
+DEFAULT_ARTICLES_PER_MONTH = 660
 DEFAULT_MAC_STUDIO_WATTS    = 30
 DEFAULT_RUNNING_HOURS_PER_DAY = 24
 DEFAULT_DAYS_PER_MONTH       = 30
@@ -111,8 +113,8 @@ def main(argv: list[str] | None = None) -> int:
             "  echo '660' | python3 ops/scripts/estimate_crawler_cost.py --stdin\n"
         ),
     )
-    parser.add_argument("--articles", type=int, default=660,
-                        help="Monthly articles to crawl (default: 660)")
+    parser.add_argument("--articles", type=int, default=DEFAULT_ARTICLES_PER_MONTH,
+                        help=f"Monthly articles to crawl (default: {DEFAULT_ARTICLES_PER_MONTH})")
     parser.add_argument("--scrape-credits", type=int, default=3,
                         help="Firecrawl credits per scrape (default: 3)")
     parser.add_argument("--watts", type=float, default=DEFAULT_MAC_STUDIO_WATTS,
