@@ -235,6 +235,8 @@ playwright install chromium
 - [ ] `playwright install chromium` 無報錯
 - [ ] `python3 -c "import trafilatura; print('OK')"` 輸出 OK
 
+> **⚠️ Python 版本建議**：使用 **Python 3.12**（crawl4ai 的 greenlet 相依在 3.13+ 有已知相容性問題 — GitHub Issue #291）。若開發機有 Homebrew 安裝 Python 3.13，建議先 `brew install python@3.12` 並使用 `python3.12` 建立 venv。Mac 上若出現 Playwright chromium renderer crash，檢查 `DYLD_LIBRARY_PATH` 是否被 Homebrew libpng 汙染（GitHub Issue playwright#42351）。
+
 ---
 
 ### Step 2: Provider Abstraction 骨架
@@ -405,6 +407,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 | Crawl4AI 版本升級破壞 | pipeline crash | 低 | `requirements-dev.txt` pin 版本；`pip install crawl4ai==0.9.3` |
 | Ollama 不可用 | LLM 分析失敗 | 低 | 沿用現有 fallback（跳過 LLM，只存 markdown） |
 | Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl |
+| Python 3.13+ greenlet 不相容 | crawl4ai import crash | 低 | 使用 Python 3.12 建 venv（見 Step 1 建議）；playwright #42351 依 `DYLD_LIBRARY_PATH` 調整 |
 
 **通用 rollback（三個手段）**：
 
