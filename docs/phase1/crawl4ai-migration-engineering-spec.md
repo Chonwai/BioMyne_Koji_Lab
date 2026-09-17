@@ -103,7 +103,7 @@ flowchart LR
 **關鍵設計決策**：
 - Discovery 以 feedparser + sitemap 為主體（8/11 來源已是 RSS/sitemap 先行）
 - Extraction 以 Crawl4AI 為主，Firecrawl 保留給 3 個 hard sources
-- LLM 用 Ollama Qwen 3.6（`CrawlerRunConfig(llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"))`，v0.9.x 新 API）
+- LLM 用 Ollama Qwen 3.6（`LLMExtractionStrategy(llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"))`，v0.9.x 新 API）
 - Anti-bot 只在需要時啟用（stealth/residential proxy 都不是預設值）
 
 ---
