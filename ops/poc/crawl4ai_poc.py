@@ -15,9 +15,9 @@ Usage:
 
 Behavior:
     * AsyncWebCrawler fetches a public article page (bioRxiv / STAT News — no paywall).
-    * Extracts markdown (Crawl4AI's onlyMainContent equivalent).
-    * Optionally runs LLMExtractionStrategy with a local Ollama model
-      (provider="ollama/qwen3.6:35b-mlx"). If Ollama is unavailable, it degrades
+    * Extracts markdown (Crawl4AI's DefaultMarkdownGenerator + PruningContentFilter).
+    * Optionally runs LLMExtractionStrategy with a local Ollama model via
+      LLMConfig(provider="ollama/qwen3.6:35b-mlx"). If Ollama is unavailable, it degrades
       gracefully to markdown-only output (never crashes the PoC).
     * Prints word count + first 500 chars of markdown + LLM result (when available).
 
@@ -82,7 +82,7 @@ def _check_ollama(url: str, timeout: float = 3.0) -> bool:
 async def crawl_one(url: str, use_llm: bool, ollama_url: str, model: str) -> dict[str, Any]:
     """Crawl a single URL with Crawl4AI. Returns a dict — never raises on content issues."""
     try:
-        from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode
+        from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode, LLMConfig, DefaultMarkdownGenerator, PruningContentFilter
         from crawl4ai.extraction_strategy import LLMExtractionStrategy
     except ImportError as exc:
         return {
@@ -97,14 +97,20 @@ async def crawl_one(url: str, use_llm: bool, ollama_url: str, model: str) -> dic
     )
 
     run_kwargs: dict[str, Any] = {
-        "markdown": True,
-        "only_main_content": True,
+        "markdown_generator": DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)),
         "cache_mode": CacheMode.BYPASS,
     }
 
     if use_llm:
-        llm = LLMExtractionStrategy(
+        llm_config = LLMConfig(
             provider=f"ollama/{model}",
+            base_url=ollama_url,
+            api_token=None,  # local Ollama: no auth token needed
+        )
+        run_kwargs["llm_config"] = llm_config
+
+        llm = LLMExtractionStrategy(
+            llm_config=llm_config,
             schema=LLM_SCHEMA,
             extraction_type="schema",
             instruction=(
@@ -113,8 +119,6 @@ async def crawl_one(url: str, use_llm: bool, ollama_url: str, model: str) -> dic
                 "priority_level (high|medium|low), and named entities (company, drug, "
                 "person, technology, deal). Return valid JSON."
             ),
-            base_url=ollama_url,
-            api_token=None,  # local Ollama: no auth token needed
             verbose=False,
         )
         run_kwargs["extraction_strategy"] = llm
