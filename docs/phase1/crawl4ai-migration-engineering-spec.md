@@ -8,7 +8,7 @@
 | Phase                   | Phase 1 — Crawl4AI Migration                  |
 | Intended reader         | Full-stack engineer                            |
 | Baseline quality target | 93+                                            |
-| Last updated            | 2026-09-17                                     |
+| Last updated            | 2026-09-18                                     |
 
 ---
 
@@ -118,8 +118,12 @@ flowchart LR
 class CrawlerProvider(Protocol):
     """Abstract interface for web scraping providers."""
 
-    def scrape(self, url: str) -> ScrapeResult:
+    async def scrape(self, url: str) -> ScrapeResult:
         """Scrape a single URL and return structured result.
+
+        async 契約：`scrape()` 必須可 await。
+        - `LocalCrawl4AIProvider`：原生 async（`AsyncWebCrawler.arun`）。
+        - `FirecrawlProvider`：以 `asyncio.to_thread` 包裝同步的 Firecrawl HTTP 呼叫。
         
         Returns ScrapeResult with fields:
         - success: bool
@@ -148,7 +152,7 @@ class CrawlerProvider(Protocol):
 #### `FirecrawlProvider`
 
 - 沿用現有 `_scrape_markdown.py` 邏輯（L79–112）
-- 需要 `FIRECRAWL_KEY` 環境變數
+- 需要 `FIRECRAWL_KEY` 環境變數（僅在有 source 走 cloud 時必需；判定與放寬範圍見 §4.3）
 - `map()` 呼叫 `firecrawl_map()` 邏輯（`_discover_article_urls.py` L225–269）
 - 輸出 JSON 欄位保持不變
 
@@ -161,10 +165,18 @@ class CrawlerProvider(Protocol):
 
 ### 4.3 切換機制
 
-**雙層切換**：
+#### 雲端接觸模型與優先序
 
-1. **全域預設**：環境變數 `CRAWLER_PROVIDER=local|firecrawl_cloud`（預設 `local`）
-2. **Source-level override**：Supabase `sources` 表的 `crawler_provider` 欄位（值：`local` / `firecrawl_cloud`）
+**切換層級（高 → 低）**：
+
+1. **`CRAWLER_ALLOW_CLOUD=false`** → 強制全部本地（全域 kill-switch，忽略 DB / global 設定）
+2. **`source.crawler_provider`（Supabase DB 欄位）有值** → 用它（`local` | `firecrawl_cloud`）
+3. **否則** → 環境變數 `CRAWLER_PROVIDER`（env global；預設 `local`）
+
+- `CRAWLER_ALLOW_CLOUD` 為 crawler 專用 flag：預設 `true`（穩態：8 local + 3 cloud）；`false` = 全本地（成本封頂 / 雲端隔離 / 測試用）。
+- ⚠️ **不要混用**：`CRAWLER_ALLOW_CLOUD`（crawler 雲端路由）與 Hermes 的 `ENABLE_CLOUD_FALLBACK`（LLM cloud fallback 開關，`hermes/profiles/biotech-worker/config.yaml:8`）是兩個系統的獨立開關，控制對象不同；本 spec 的雲端切換一律用 `CRAWLER_ALLOW_CLOUD`。
+- **憑證需求**：`FIRECRAWL_KEY` 僅在「有任何 source 走 cloud」時必需；local-only 模式（`CRAWLER_ALLOW_CLOUD=false`）下 `run_pipeline.sh`（Step 0 pre-flight）與 `smoke_test.sh` 現行的 hard-fail 檢查需放寬 — 列為 P1 實作項。
+- 註：`crawler_provider` 欄位為 `NOT NULL DEFAULT 'local'`；部署後第 2 層恆有值，第 3 層（env）為欄位缺值環境的 fallback。
 
 ```sql
 -- 範例：Endpoints News 保留 Firecrawl（hard source）
@@ -199,7 +211,7 @@ UPDATE sources SET crawler_provider = 'firecrawl_cloud' WHERE name = 'Endpoints 
 | `ops/scripts/crawler_providers.py` | **新增** — `CrawlerProvider` 介面 + `FirecrawlProvider` + `LocalCrawl4AIProvider` | Provider abstraction 核心 | 低（新增檔案，不影響現有） |
 | `ops/scripts/_scrape_markdown.py` | **改** — 抽出 scrape 邏輯到 `FirecrawlProvider`，保留為 wrapper | 讓 pipeline 可呼叫 provider | 中（需確保 JSON 輸出不變） |
 | `ops/scripts/_discover_article_urls.py` | **改** — `firecrawl_map()` 改為呼叫 `provider.map()` | 讓 map 邏輯走 provider | 中（map 輸出格式需相容） |
-| `ops/scripts/_fetch_firecrawl_credit_usage.py` | **改** — 加條件：`CRAWLER_PROVIDER=local` 時跳過 Firecrawl API call | 本地模式不需要 credit 觀測 | 低（不影響 Firecrawl 模式） |
+| `ops/scripts/_fetch_firecrawl_credit_usage.py` | **改** — 加條件：**本輪 run 中無任何 source 走 cloud 時**才跳過 credit 觀測 | 有 source 走 cloud 即有 credit 消耗（穩態 3 個 hard sources），Free tier 1,000 credits 需持續觀測 | 低（不影響 Firecrawl 模式） |
 | `ops/scripts/run_pipeline.sh` | **改** — 環境變數、fallback routing、source-level provider 決策 | 讓 pipeline 支援雙 provider | 中（shell 邏輯變動需測試） |
 | `ops/scripts/smoke_test.sh` | **改** — step 4 改為本地 Crawl4AI health check | 本地模式不需要 Firecrawl API | 低（獨立測試腳本） |
 | `sql/006_crawl4ai_migration.sql` | **新增** — `sources` 表加 `crawler_provider` 欄位（text NOT NULL DEFAULT 'local'） | source-level routing | 低（新增 migration） |
@@ -212,11 +224,11 @@ UPDATE sources SET crawler_provider = 'firecrawl_cloud' WHERE name = 'Endpoints 
 
 **指令**：
 ```bash
-pip install crawl4ai playwright trafilatura
+pip install crawl4ai playwright trafilatura pytest
 playwright install chromium
 ```
 
-完成安裝後執行 `pip freeze | grep -i 'crawl4ai\|playwright\|trafilatura' >> requirements-dev.txt` 確保版本可複現。
+完成安裝後執行 `pip freeze | grep -i 'crawl4ai\|playwright\|trafilatura\|pytest' >> requirements-dev.txt` 確保版本可複現。
 
 **驗收標準**：
 - [ ] `python3 -c "from crawl4ai import AsyncWebCrawler; print('OK')"` 輸出 OK
@@ -275,12 +287,15 @@ Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline �
 
 **路由邏輯**（`run_pipeline.sh` 內）：
 ```bash
-# Step 2 的 Supabase sources 查詢帶入 crawler_provider 欄位
-supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,crawler_provider&enabled=eq.true"
-# iterate 每個 source 時依該欄位決定 provider：
-#   crawler_provider='firecrawl_cloud' → 走 Firecrawl（3 個 hard sources）
-#   其餘（'local' 或 NULL）→ 走 Crawl4AI 本地
+# Step 2 的 Supabase sources 查詢帶入完整欄位清單（現行欄位 + crawler_provider）
+supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority,crawler_provider&enabled=eq.true"
+# iterate 每個 source 時依 §4.3 優先序決定 provider：
+#   1. CRAWLER_ALLOW_CLOUD=false → 一律 local（kill-switch）
+#   2. crawler_provider='firecrawl_cloud' → 走 Firecrawl（3 個 hard sources）
+#   3. 其餘（'local' 或 NULL）→ 走 Crawl4AI 本地
+ALLOW_CLOUD="${CRAWLER_ALLOW_CLOUD:-true}"
 PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('crawler_provider') or 'local')")
+[ "$ALLOW_CLOUD" = "false" ] && PROVIDER="local"
 ```
 
 **驗收標準**：
@@ -288,7 +303,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 - [ ] `Endpoints News`（hard source）的 `crawler_provider='firecrawl_cloud'`，routing 走 Firecrawl
 - [ ] 其他 easy sources 的 `crawler_provider='local'`（或 NULL），走 Crawl4AI 本地
 - [ ] 更新 sources 表不需動到 manifest（routing 以 DB 為準）
-- [ ] 環境變數 `CRAWLER_PROVIDER=local` 時，所有非 override sources 走本地
+- [ ] 環境變數 `CRAWLER_PROVIDER=local` 時，所有非 override sources 走本地；`CRAWLER_ALLOW_CLOUD=false`（kill-switch）時則一律本地（忽略 DB / global 設定）
 
 ---
 
@@ -301,7 +316,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 - [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（依 `.env` 配置；repo 預設 100）
 - [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證
 - [ ] `run_pipeline.sh` 單 source 測試通過
-- [ ] 抓取成功率 ≥ 95%（跑 10 次，≤1 次失敗）
+- [ ] 抓取成功率 ≥ 95%（樣本：20 runs、≤1 fail）
 
 ---
 
@@ -309,12 +324,15 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 **來源清單**：Endpoints News, BioCentury, Science
 
-**驗收標準**：
+**驗收標準（兩個情境）**：
+
+情境 A — 穩態（`CRAWLER_ALLOW_CLOUD=true`）：
 - [ ] `Endpoints News`：`crawler_provider='firecrawl_cloud'` 生效，走 Firecrawl `/v2/map`
-- [ ] `BioCentury`：RSS 正常抓取，paywall 頁面偵測到 `paywall_detected=True`
+- [ ] `BioCentury`：RSS 正常抓取，paywall 頁面偵測到 `paywall_detected=True`（cloud 路徑）
 - [ ] `Science`：RSS 正常抓取，全文 paywall 偵測正常
-- [ ] `ENABLE_CLOUD_FALLBACK=false` 時，hard sources 走本地（降級，不 crash）
-- [ ] `ENABLE_CLOUD_FALLBACK=true` 時，hard sources 走 Firecrawl
+
+情境 B — kill-switch（`CRAWLER_ALLOW_CLOUD=false`）：
+- [ ] 全部 hard sources 走本地、不 crash（degraded 模式；雲端路徑不被觸發）
 
 ---
 
@@ -322,14 +340,14 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 **改動**：
 - `ops/scripts/smoke_test.sh` — step 4 改為本地 Crawl4AI health check
-- `ops/scripts/_fetch_firecrawl_credit_usage.py` — 加 `CRAWLER_PROVIDER=local` 條件
+- `ops/scripts/_fetch_firecrawl_credit_usage.py` — 加「本輪 run 無任何 source 走 cloud 時跳過 credit 觀測」條件
 - `docs/phase1/local-crawler-stack-evaluation.md` — 加遷移完成標記
-- `.env` — 加 `CRAWLER_PROVIDER=local` 預設值
+- `.env` — 加 `CRAWLER_PROVIDER=local` 與 `CRAWLER_ALLOW_CLOUD=true` 預設值
 
 **驗收標準**：
 - [ ] `smoke_test.sh` 在 `CRAWLER_PROVIDER=local` 時全部 pass
-- [ ] `_fetch_firecrawl_credit_usage.py` 在 local 模式不呼叫 Firecrawl API
-- [ ] `.env` 有 `CRAWLER_PROVIDER=local`
+- [ ] 本輪 run 無任何 source 走 cloud 時，`_fetch_firecrawl_credit_usage.py` 不呼叫 Firecrawl API（穩態仍有 3 個 hard sources 消耗 credits，需持續觀測）
+- [ ] `.env` 有 `CRAWLER_PROVIDER=local` 與 `CRAWLER_ALLOW_CLOUD=true`
 
 ---
 
@@ -337,16 +355,18 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 | # | 條件 | 測量方式 |
 | --- | --- | --- |
-| AC-1 | 8 easy sources 用本地 provider 抓取成功率 ≥ 95% | `run_pipeline.sh` 單 source 跑 10 次 |
+| AC-1 | 8 easy sources 用本地 provider 抓取成功率 ≥ 95% | `run_pipeline.sh` 單 source 跑 20 runs、≤1 fail |
 | AC-2 | content_hash 去重率維持（不因渲染差異導致重複文章重跑 LLM） | `content_hash` 一致性測試 |
 | AC-3 | LLM 分析覆蓋率 ≥ 現況（`MIN_WORDS_FOR_LLM` 通過率不降） | pipeline run log |
 | AC-4 | 成本工具顯示本地 $4.32/mo | `estimate_crawler_cost.py` 輸出 |
 | AC-5 | Firecrawl 路徑保留，環境變數切回 `firecrawl_cloud` 時原路徑正常 | `CRAWLER_PROVIDER=firecrawl_cloud` 跑 smoke_test.sh |
-| AC-6 | 3 hard sources 的 `crawler_provider='firecrawl_cloud'` 在 Supabase `sources` 表生效，pipeline log 確認走 Firecrawl `/v2/map` 或 `/v1/scrape` | `sources` 表欄位查詢 + pipeline log |
+| AC-6 | 3 hard sources 的 `crawler_provider='firecrawl_cloud'` 在 Supabase `sources` 表生效（前提：`CRAWLER_ALLOW_CLOUD=true`；設 `false` 時全域強制本地），pipeline log 確認走 Firecrawl `/v2/map` 或 `/v1/scrape` | `sources` 表欄位查詢 + pipeline log |
 
 ---
 
 ## 8. 測試計畫
+
+> **測試檔案位置**：`ops/tests/`（pytest；`requirements-dev.txt` 需加入 pytest）。
 
 ### 8.1 Unit Tests
 
@@ -385,7 +405,11 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 | Ollama 不可用 | LLM 分析失敗 | 低 | 沿用現有 fallback（跳過 LLM，只存 markdown） |
 | Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl |
 
-**通用 rollback**：所有變更透過環境變數控制。出問題時設定 `CRAWLER_PROVIDER=firecrawl_cloud` + 把該 source 的 `crawler_provider` 更新回 `'firecrawl_cloud'`（Supabase `sources` 表）即可回到原狀。
+**通用 rollback（三個手段）**：
+
+1. **單一 source 回滾**：把該 source 的 `crawler_provider` 更新回 `'firecrawl_cloud'`（Supabase `sources` 表）→ 該來源立即回到 Firecrawl 路徑。
+2. **全域 kill-switch**：`CRAWLER_ALLOW_CLOUD=false` → 忽略 DB / env 設定、全部走本地（degraded；用於成本封頂或雲端路徑故障隔離）。
+3. **env 切換**：`CRAWLER_PROVIDER=firecrawl_cloud` → 無 DB 值的來源回到 Firecrawl（第 3 層 fallback）。
 
 ---
 
