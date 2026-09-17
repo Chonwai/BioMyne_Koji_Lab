@@ -25,7 +25,7 @@
 3. **保留 3 個 hard sources** 的 Firecrawl Cloud fallback
 4. **更新 `run_pipeline.sh`** 支援 source-level routing
 5. **更新 smoke_test.sh** 本地 health check
-6. **更新 source manifest** 加 `crawler_provider` 欄位
+6. **Supabase `sources` 表新增 `crawler_provider` 欄位**（值：`local` / `firecrawl_cloud`）
 
 ### 1.3 Out of Scope
 
@@ -128,7 +128,7 @@ class CrawlerProvider(Protocol):
         - content_hash: str (from _pipeline_normalization.hash_markdown)
         - paywall_detected: bool
         - paywall_signal: str | None
-        - provider: str ("firecrawl" | "crawl4ai" | "local")
+        - provider: str ("firecrawl_cloud" | "local")
         """
         ...
 
@@ -163,21 +163,15 @@ class CrawlerProvider(Protocol):
 
 **雙層切換**：
 
-1. **全域預設**：環境變數 `CRAWLER_PROVIDER=local|firecrawl`（預設 `local`）
-2. **Source-level override**：`biotech.yaml` 每個 source 可加 `crawler_provider: firecrawl` 欄位
+1. **全域預設**：環境變數 `CRAWLER_PROVIDER=local|firecrawl_cloud`（預設 `local`）
+2. **Source-level override**：Supabase `sources` 表的 `crawler_provider` 欄位（值：`local` / `firecrawl_cloud`）
 
-```yaml
-# 範例：Endpoints News 保留 Firecrawl
-- name: Endpoints News
-  url: https://endpoints.news/
-  crawler_provider: firecrawl  # source-level override
-  ...
+```sql
+-- 範例：Endpoints News 保留 Firecrawl（hard source）
+UPDATE sources SET crawler_provider = 'firecrawl_cloud' WHERE name = 'Endpoints News';
 
-# 範例：STAT News 用本地（可省略，因為全域預設是 local）
-- name: STAT News
-  url: https://www.statnews.com/
-  # crawler_provider: local  # 省略 = 用全域預設
-  ...
+-- 範例：STAT News 用本地（可省略，因為欄位 DEFAULT 是 local）
+-- crawler_provider = 'local'（或 NULL）→ 走 Crawl4AI 本地
 ```
 
 ### 4.4 相容性要求
@@ -208,7 +202,7 @@ class CrawlerProvider(Protocol):
 | `ops/scripts/_fetch_firecrawl_credit_usage.py` | **改** — 加條件：`CRAWLER_PROVIDER=local` 時跳過 Firecrawl API call | 本地模式不需要 credit 觀測 | 低（不影響 Firecrawl 模式） |
 | `ops/scripts/run_pipeline.sh` | **改** — 環境變數、fallback routing、source-level provider 決策 | 讓 pipeline 支援雙 provider | 中（shell 邏輯變動需測試） |
 | `ops/scripts/smoke_test.sh` | **改** — step 4 改為本地 Crawl4AI health check | 本地模式不需要 Firecrawl API | 低（獨立測試腳本） |
-| `ops/source-manifests/biotech.yaml` | **改** — 3 個 hard sources 加 `crawler_provider: firecrawl` | source-level routing | 低（YAML 欄位新增） |
+| `sql/006_crawl4ai_migration.sql` | **新增** — `sources` 表加 `crawler_provider` 欄位（text NOT NULL DEFAULT 'local'） | source-level routing | 低（新增 migration） |
 
 ---
 
@@ -244,7 +238,7 @@ playwright install chromium
 
 **驗收標準**：
 - [ ] `python3 -c "from crawler_providers import create_provider; p = create_provider('local'); print(type(p))"` 輸出 `<class 'LocalCrawl4AIProvider'>`
-- [ ] `python3 -c "from crawler_providers import create_provider; p = create_provider('firecrawl'); print(type(p))"` 輸出 `<class 'FirecrawlProvider'>`
+- [ ] `python3 -c "from crawler_providers import create_provider; p = create_provider('firecrawl_cloud'); print(type(p))"` 輸出 `<class 'FirecrawlProvider'>`
 - [ ] unit test：`ScrapeResult` 欄位完整（success/markdown/word_count/content_hash/paywall_detected/paywall_signal/provider）
 
 ---
@@ -275,7 +269,7 @@ playwright install chromium
 Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline 基礎資料源）：`run_pipeline.sh` 的 source 清單來自 Supabase REST（`GET /rest/v1/sources?enabled=eq.true`），並非直接讀 YAML manifest。
 
 **改動**：
-- `sql/001_phase1_core_schema.sql` — `sources` 表新增 `crawler_provider` 欄位（text, DEFAULT 'local'，可選 'local' | 'firecrawl_cloud'）
+- `sql/006_crawl4ai_migration.sql` — **新增** migration（sql/001 已套用不可改），內容為 `ALTER TABLE sources ADD COLUMN IF NOT EXISTS crawler_provider text NOT NULL DEFAULT 'local';`
 - `ops/scripts/run_pipeline.sh` — 在 iterate sources 時讀取 `crawler_provider` 欄位，決定該 source 走 Crawl4AI 或保留 Firecrawl
 - `ops/source-manifests/biotech.yaml` — 保持為 discovery surface 規則的輔助文件，與 pipeline 資料流解耦（不加 provider 欄位）
 
@@ -290,9 +284,10 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 ```
 
 **驗收標準**：
-- [ ] `sources` 表新增 `crawler_provider` 欄位（text, DEFAULT 'local'）
+- [ ] `sources` 表新增 `crawler_provider` 欄位（text NOT NULL DEFAULT 'local'）
 - [ ] `Endpoints News`（hard source）的 `crawler_provider='firecrawl_cloud'`，routing 走 Firecrawl
 - [ ] 其他 easy sources 的 `crawler_provider='local'`（或 NULL），走 Crawl4AI 本地
+- [ ] 更新 sources 表不需動到 manifest（routing 以 DB 為準）
 - [ ] 環境變數 `CRAWLER_PROVIDER=local` 時，所有非 override sources 走本地
 
 ---
@@ -315,7 +310,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 **來源清單**：Endpoints News, BioCentury, Science
 
 **驗收標準**：
-- [ ] `Endpoints News`：`crawler_provider: firecrawl` 生效，走 Firecrawl `/v2/map`
+- [ ] `Endpoints News`：`crawler_provider='firecrawl_cloud'` 生效，走 Firecrawl `/v2/map`
 - [ ] `BioCentury`：RSS 正常抓取，paywall 頁面偵測到 `paywall_detected=True`
 - [ ] `Science`：RSS 正常抓取，全文 paywall 偵測正常
 - [ ] `ENABLE_CLOUD_FALLBACK=false` 時，hard sources 走本地（降級，不 crash）
@@ -346,8 +341,8 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 | AC-2 | content_hash 去重率維持（不因渲染差異導致重複文章重跑 LLM） | `content_hash` 一致性測試 |
 | AC-3 | LLM 分析覆蓋率 ≥ 現況（`MIN_WORDS_FOR_LLM` 通過率不降） | pipeline run log |
 | AC-4 | 成本工具顯示本地 $4.32/mo | `estimate_crawler_cost.py` 輸出 |
-| AC-5 | Firecrawl 路徑保留，環境變數切回 firecrawl 時原路徑正常 | `CRAWLER_PROVIDER=firecrawl` 跑 smoke_test.sh |
-| AC-6 | 3 hard sources 的 `crawler_provider: firecrawl` 生效 | manifest 欄位 + pipeline log |
+| AC-5 | Firecrawl 路徑保留，環境變數切回 `firecrawl_cloud` 時原路徑正常 | `CRAWLER_PROVIDER=firecrawl_cloud` 跑 smoke_test.sh |
+| AC-6 | 3 hard sources 的 `crawler_provider='firecrawl_cloud'` 在 Supabase `sources` 表生效，pipeline log 確認走 Firecrawl `/v2/map` 或 `/v1/scrape` | `sources` 表欄位查詢 + pipeline log |
 
 ---
 
@@ -374,7 +369,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 | 測試 | 內容 | 預期 |
 | --- | --- | --- |
-| `smoke_test_firecrawl` | `CRAWLER_PROVIDER=firecrawl` 跑 smoke_test.sh | 全 pass |
+| `smoke_test_firecrawl` | `CRAWLER_PROVIDER=firecrawl_cloud` 跑 smoke_test.sh | 全 pass |
 | `smoke_test_local` | `CRAWLER_PROVIDER=local` 跑 smoke_test.sh | 全 pass |
 | `pipeline_single_source` | `run_pipeline.sh` 單 source 跑完整流程 | 無 error |
 
@@ -384,13 +379,13 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 | 風險 | 影響 | 機率 | Rollback 計畫 |
 | --- | --- | --- | --- |
-| 反爬封鎖（Cloudflare/PerimeterX） | 來源抓不到 | 中 | 該 source 的 `crawler_provider` 切回 `firecrawl` |
+| 反爬封鎖（Cloudflare/PerimeterX） | 來源抓不到 | 中 | 該 source 的 `crawler_provider` 更新為 `'firecrawl_cloud'`，routing 改走 Firecrawl |
 | content_hash 飄移 | 重複文章重跑 LLM | 中 | 調高 dedupe 容忍度；沿用 `hash_markdown()` normalize |
 | Crawl4AI 版本升級破壞 | pipeline crash | 低 | `requirements-dev.txt` pin 版本；`pip install crawl4ai==0.9.3` |
 | Ollama 不可用 | LLM 分析失敗 | 低 | 沿用現有 fallback（跳過 LLM，只存 markdown） |
 | Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl |
 
-**通用 rollback**：所有變更透過環境變數控制。出問題時設定 `CRAWLER_PROVIDER=firecrawl` + 移除 manifest 中的 `crawler_provider` override 即可回到原狀。
+**通用 rollback**：所有變更透過環境變數控制。出問題時設定 `CRAWLER_PROVIDER=firecrawl_cloud` + 把該 source 的 `crawler_provider` 更新回 `'firecrawl_cloud'`（Supabase `sources` 表）即可回到原狀。
 
 ---
 

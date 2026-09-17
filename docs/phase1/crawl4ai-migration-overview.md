@@ -144,7 +144,11 @@ gantt
 | **content_hash 去重率** | 現有基線 | 維持（不因渲染差異導致重複文章重跑 LLM） | `_pipeline_normalization` output |
 | **LLM 分析覆蓋率** | 現有基線 | ≥ 現況（`MIN_WORDS_FOR_LLM` 通過率不降） | pipeline run log |
 
-**決策閘**：P2 Easy sources 完成後，若任一 source 抓取成功率 < 80% 或 LLM 分析覆蓋率低於現況，該 source 回滾至 Firecrawl Cloud，並進行根因分析後決定是否繼續嘗試。
+**驗收閘（P2 完成標準）**：8 easy sources 抓取成功率 ≥ 95%（抽樣 10 篇）且 LLM 分析覆蓋率不低於現況，P2 才算通過（對應 Spec Step 5 AC / AC-1）。
+
+**回滾決策閘（營運閘）**：任一 source 抓取成功率 < 80% 時，該 source 回滾至 Firecrawl Cloud（`crawler_provider` 更新回 `'firecrawl_cloud'`），並進行根因分析後決定是否繼續嘗試。
+
+> 分工：95% 是 P2 的**驗收標準**（過關門檻），80% 是**營運回滾閘**（低於即停損），兩者並存不衝突。
 
 ---
 
