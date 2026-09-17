@@ -1,8 +1,8 @@
 # Crawl4AI 本地爬蟲棧遷移 — Stakeholder Overview
 
 > **文件狀態**：Proposal  
-> **日期**：2026-09-17  
-> **版本**：v1.0  
+> **日期**：2026-09-18  
+> **版本**：v1.1  
 > **作者**：BioMyne Engineering  
 > **目標讀者**：老闆、非技術 stakeholder、投資人  
 > **基線品質目標**：93+
@@ -13,9 +13,9 @@
 
 BioMyne Koji 目前使用 Firecrawl Cloud（月費 $16）爬取 11 個生技情報來源，每月約 660 篇文章。這個依賴造成三個問題：**持續性月費支出**、**生技情報送入第三方雲端**、以及**新增來源受 credit 上限限制**。
 
-深度研究已完成評估：使用本地 **Playwright + Crawl4AI + Ollama** 組合取代 Firecrawl「有條件可行」。11 個來源中 **8 個可直接遷移**，其餘 3 個保留 Cloud fallback。遷移後月成本從 **$16 降至 ~$4.32（僅電費）**，年省 **~$140**，同時資料完全留在本地。
+深度研究已完成評估：使用本地 **Playwright + Crawl4AI + Ollama** 組合取代 Firecrawl「有條件可行」。11 個來源中 **8 個可直接遷移**，其餘 3 個保留 Cloud fallback。遷移後月成本從 **$16 降至 ~$4.32（僅電費）**，年省 **~$140**（限定：8 個遷移來源；3 個 hard sources 仍依 routing 使用 Cloud，穩態方案與成本於 P3 決策），同時遷移來源的資料完全留在本地。
 
-遷移不影響現有功能。系統保留 Firecrawl Free tier 作為最後防線，確保任何來源異常時自動回退。預計 **2–3 週分階段完成**，每階段有明確驗收標準。
+遷移不影響現有功能。系統保留 Firecrawl Free tier 作為最後防線，任何來源異常時依回滾規則手動切換（自動化不在本次範圍）。預計 **2–3 週分階段完成**，每階段有明確驗收標準。
 
 **建議**：進行遷移，同時保留 Firecrawl Free tier 作為 fallback。
 
@@ -32,13 +32,15 @@ BioMyne Koji 目前使用 Firecrawl Cloud（月費 $16）爬取 11 個生技情�
 | **年省** | — | **~$140** |
 | 額度限制 | 5000 credits/mo，超出需加購 | **無上限** |
 
+> **限定**：~$4.32/mo 與 ~$140/yr 為 8 個遷移來源的估算；3 個 hard sources 仍依 routing 使用 Cloud，穩態方案與成本於 P3 決策。
+
 Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗。成本工具 `ops/scripts/estimate_crawler_cost.py` 可參數化試算。
 
 ### 驅動力 2：資料隱私
 
 生技情報（藥物研發進展、臨床試驗、企業併購）具有高度商業敏感度。現狀下每篇文章的 HTML 內容都送入 Firecrawl 雲端伺服器處理。
 
-遷移後，所有抓取、解析、LLM 分析 **100% 在本地 Mac Studio 完成**，內容不出內網。
+遷移後，除 3 個 hard sources（依 routing 走 Cloud）外，抓取、解析、LLM 分析 **100% 在本地 Mac Studio 完成**，內容不出內網。
 
 ### 驅動力 3：彈性
 
@@ -54,12 +56,14 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 | 維度 | Firecrawl Cloud（現況） | 本地 Crawl4AI Stack（目標） |
 | --- | --- | --- |
 | **月成本** | $16（5000 credits） | ~$4.32（電費） |
-| **資料隱私** | 內容送第三方雲端 | 全部本地，不出內網 |
+| **資料隱私** | 內容送第三方雲端 | 8 個遷移來源全部本地；3 個 hard sources 依 routing（P3 決策） |
 | **來源彈性** | 受 credit 上限限制 | 無上限，隨意新增 |
 | **維運負擔** | 零（雲端 SLA） | 需管理 browser binary + Crawl4AI 版本 |
 | **反爬能力** | 雲端 proxy + stealth（較強） | 本地 stealth plugin（需調校） |
 | **LLM 分析** | 另需 ~$89/mo token 訂閱 | Ollama 本地，零成本 |
 | **Vendor lock-in** | 高（API schema 綁定） | 無（open source + 標準 Playwright API） |
+
+> **限定**：~$4.32 為 8 個遷移來源的電費估算；3 個 hard sources 仍依 routing 使用 Cloud，穩態方案與成本於 P3 決策。
 
 ---
 
@@ -74,13 +78,15 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 | 年成本 | $192 | ~$52 |
 | **年省** | — | **~$140** |
 
+> **限定**：~$4.32/mo 與 ~$140/yr 為 8 個遷移來源的估算；3 個 hard sources 仍依 routing 使用 Cloud，穩態方案與成本於 P3 決策。
+>
 > 以上為概估範圍。實際節省以 `ops/scripts/estimate_crawler_cost.py` 參數化試算為準。
 >
 > Hobby 定價範圍 $16–19/mo（依促銷），以上以工具預設 $16/mo 為準。重跑：`python3 ops/scripts/estimate_crawler_cost.py --articles 660 --scrape-credits 3`
 
 ### 無形效益
 
-- **資料隱私**：生技情報不出本地，降低洩漏風險
+- **資料隱私**：8 個遷移來源的生技情報不出本地，降低洩漏風險
 - **無 credit 上限**：來源數量與抓取頻率不再受商業方案限制
 - **LLM 成本歸零**：本地 Ollama Qwen 分析不需額外 token 費用
 - **自主可控**：不依賴第三方服務 uptime 與定價變動
@@ -115,7 +121,7 @@ Mac Studio M3 Ultra 96GB 已購入（折舊另計），爬蟲僅佔 30W 功耗�
 | --- | --- | --- | --- |
 | **P0 PoC** | 單頁抓取驗證（bioRxiv / STAT News） | 2–3 天 | markdown + LLM extraction 可行性報告 |
 | **P1 Provider Abstraction** | 抽象爬蟲介面，Firecrawl/本地可切換 | 3–4 天 | 可切換的 scrape/map 實作 |
-| **P2 Easy sources** | 8/11 來源遷移至本地 | 5–7 天 | 來源 manifest 更新、pipeline 全本地跑通 |
+| **P2 Easy sources** | 8/11 來源遷移至本地 | 5–7 天 | Supabase `sources` 表 `crawler_provider` 更新、pipeline 全本地跑通 |
 | **P3 Hard sources** | Endpoints/BioCentury/Science 評估 | 2–3 天 | 保留 Cloud fallback 的 routing 規則 |
 | **P4 Free fallback** | Firecrawl Free tier 當最後防線 | 1–2 天 | 成本接近 $0，僅高風險來源觸發 |
 | **總計** | | **2–3 週** | |
@@ -149,6 +155,8 @@ gantt
 **回滾決策閘（營運閘）**：任一 source 抓取成功率 < 80% 時，該 source 回滾至 Firecrawl Cloud（`crawler_provider` 更新回 `'firecrawl_cloud'`），並進行根因分析後決定是否繼續嘗試。
 
 > 分工：95% 是 P2 的**驗收標準**（過關門檻），80% 是**營運回滾閘**（低於即停損），兩者並存不衝突。
+>
+> **Cloud routing**：3 個 hard sources 依 `crawler_provider` 走 Cloud；可用 `CRAWLER_ALLOW_CLOUD=false` 全域停用雲端路徑。
 
 ---
 
@@ -157,8 +165,8 @@ gantt
 **建議進行遷移，同時保留 Firecrawl Free tier 作為 fallback。**
 
 理由：
-1. **成本效益明確**：年省 ~$140，無額度上限
-2. **資料隱私提升**：生技情報不出本地
+1. **成本效益明確**：8 個遷移來源年省 ~$140，無額度上限
+2. **資料隱私提升**：8 個遷移來源的生技情報不出本地
 3. **風險可控**：3 個 hard sources 保留 Cloud fallback，Firecrawl Free tier 當最後防線
 4. **一次性投入低**：8 個 easy sources 約 8–16 hr 一次性配置成本
 5. **未來彈性高**：新增來源不受 credit 限制，LLM 分析零成本
