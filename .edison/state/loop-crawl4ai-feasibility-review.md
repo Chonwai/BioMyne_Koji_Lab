@@ -14,9 +14,9 @@ Budget: ~14 iterations
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
 | DISCOVER（雙軌：codebase 驗證 + 外部深研） | 1 | 2 | ✅ done（見 Iteration 1） |
-| PLAN（可行性報告撰寫） | 0 | 2 | pending |
-| VERIFY（smith doc-review strict 93） | 0 | 3 | pending |
-| REPAIR（trinity bounded） | 0 | 2 | pending |
+| PLAN（可行性報告撰寫） | 1 | 2 | ✅ done（Iteration 2 — 2 次 retry 後分塊寫入成功） |
+| VERIFY（smith doc-review strict 93） | 1 | 3 | ✅ **PASS 93/100**（Iteration 3，borderline +0.14） |
+| REPAIR（trinity bounded） | 0 | 2 | 不觸發（PASS） |
 
 ## 任務形態分類
 
@@ -46,8 +46,36 @@ Budget: ~14 iterations
 
 **Outcome: DISCOVER ✅ → dispatch architect（PLAN）**
 
+### Iteration 2 — PLAN（architect 可行性報告，有 retry）
+
+**Agent: architect** — 產出 `docs/phase1/crawl4ai-migration-feasibility-review.md`（135 行）
+- 2 次 retry（前兩次回報「開始撰寫」但未寫檔 → Empty/Invalid Output）；第 3 次以「分塊寫入 + 內容預備好」策略成功
+- 報告結構：Executive Summary / 調查方法 / 文檔合理性評比（overview ✅、spec ⚠️ 3 處需修正、POC 🔴）/ 遷移成敗證據判斷（三大支柱全真實）/ 缺口清單（4 BLOCKING + 5 NON-BLOCKING）/ P0 未知數 3 個 / 修正建議 F-1..F-6 / 結論 / 證據索引 14 項
+- 4 BLOCKING：B-1 Crawl4AI API 舊式參數、B-2 run_pipeline.sh select 10 欄無 crawler_provider + 三層決策未實作、B-3 sql/006 不存在、B-4 環境空轉
+- Commit：`6b2add8` docs: add Crawl4AI migration feasibility review report
+
+**Outcome: PLAN ✅ → dispatch smith（VERIFY strict 93）**
+
+### Iteration 3 — VERIFY（smith，1 次 retry）
+
+**Measured Score: 93/100 → PASS**（D1=92, D2=95, D3=94, D4=92, D5=95, D6=94, D7=90；7 維均權 93.14 → 93）
+- 11/11 codebase claim 獨立抽查全吻合（run_pipeline.sh select 10 欄 / sql/006 不存在 / requirements-dev.txt 2 行 / qwen 21GB / 三層決策零命中 / spec+POC 舊式 API / MIN_WORDS 三處不一致 / 0.975^20≈0.6 數學正確）
+- 0 Critical / 0 High；2 Medium（M-1 缺 25 項 claim 對照表、M-2 外部來源映射不全）+ 3 Low（L-1 成本假設 / L-2 DYLD 未展開 / L-3 未引用 overview 95/80 分工）
+- smith 讚揚報告自我揭露（vendor benchmark 利益相關、~5% 為 VPS IP+stealth、0.975^20 推導）
+- smith 裁定：**audit_only，PASS，可作為 handoff 依據**；建議後續 loop 若合併此報告先補 M-1
+
+**Neo 決策：93 ≥ 93 → PASS → DELIVER**（Stop Rule 不觸發；M/L findings 記錄供 P0 loop 參考，不阻塞交付）
+
+## 最終交付物
+
+| # | 檔案 | 內容 | commit |
+| --- | --- | --- | --- |
+| 1 | `.edison/state/loop-crawl4ai-feasibility-review.md` | Loop State（Goal/Iterations/CB） | `f13e6e3` |
+| 2 | `docs/phase1/crawl4ai-migration-feasibility-review.md` | 可行性調查報告（135 行，PASS 93） | `6b2add8` |
+| 3 | `.edison/state/loop-crawl4ai-feasibility-review.md`（更新） | VERIFY PASS 記錄 | `（本次）` |
+
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 15%
-Status: HEALTHY
+Budget: 35%
+Status: HEALTHY（Loop complete ✅）
