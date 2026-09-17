@@ -2,7 +2,7 @@
 
 > **狀態**：評估完成，結論為「有條件可行」
 > **日期**：2026-09-17
-> **範圍**：BioMyne Koji Phase 1 爬蟲棧（11 個資訊來源、每日增量、Supabase + pgvector 落地）
+> **範圍**：BioMyne Koji Phase 1 爬蟲棧（11 個資訊來源、增量更新、Supabase + pgvector 落地）
 > **關聯文件**：`docs/phase1/firecrawl-self-host-decision-memo.md`、`docs/phase1/p2a-discovery-surface-audit.md`、`docs/phase1/p2-crawl-strategy-planning.md`
 
 ---
@@ -48,7 +48,7 @@
 
 | 維度 | Firecrawl Cloud | Crawl4AI（本地） |
 | --- | --- | --- |
-| **成本** | Hobby $16-19/mo（5000 credits）；Free 1000 一次性；AI extraction 另需 ~$89/mo token 訂閱 | Apache 2.0 開源，僅電費與硬體折舊（Mac Studio 30W 約 **$4.32/mo**） |
+| **成本** | Hobby $16-19/mo（5000 credits）；Free tier 1,000 credits（額度週期以官網現行條款為準）；AI extraction 另需 ~$89/mo token 訂閱 | Apache 2.0 開源，僅電費與硬體折舊（Mac Studio 30W 約 **$4.32/mo**） |
 | **功能** | /map、/scrape、/search、AI extraction（LLM 串接）、proxy、actions、sitemap 內建 | markdown extraction、LLMExtractionStrategy、sitemap/link discovery、多 browser engine、`AsyncWebCrawler` |
 | **anti-bot** | 雲端 proxy + stealth 優化，pass rate 較高 | 依 Playwright stealth 插件；無 residential IP 時約 5% pass，需額外 fingerprint 設定 |
 | **隱私** | 內容送第三方雲端處理 | 全部內容留在本地（生技情報敏感度較高時為優勢） |
@@ -125,7 +125,7 @@ flowchart LR
 ```
 
 **關鍵設計決策**：
-- **Discovery 以 feedparser + sitemap 為主體**（9/11 來源已是 RSS/sitemap 先行，map 只是 fallback）→ Crawl4AI 只補 map 空缺
+- **Discovery 以 feedparser + sitemap 為主體**（8/11 來源已是 RSS/sitemap 先行，map 只是 fallback）→ Crawl4AI 只補 map 空缺
 - **Extraction 以 Trafilatura + Crawl4AI 互補**：Crawl4AI 渲染 JS 頁，Trafilatura 抓乾淨全文（業界標準組合，成本約 Firecrawl 1/10）
 - **LLM 用 Ollama Qwen 3.6**：`LLMExtractionStrategy(provider="ollama/qwen3.6:35b-mlx")`，零 token 成本、資料不出本地
 - **Anti-bot 只在需要時啟用**（stealth/residential proxy 都不是預設值）
@@ -186,7 +186,7 @@ Crawl4AI 宣稱「零配置抓任意網站」，實測後的真實成本：
 ## 10. 參考來源清單
 
 - Crawl4AI 官方文件（v0.9.3，2026-08-31 release，Apache 2.0，70K+ stars）
-- Firecrawl 定價頁（Hobby $16-19/mo 5000 credits；Free 1000 一次性）
+- Firecrawl 定價頁（Hobby $16-19/mo 5000 credits；Free tier 1,000 credits，額度週期以官網現行條款為準）
 - Playwright stealth 實測研究（2026 anti-bot：單獨 stealth ~5% pass，residential + fingerprint ~70%）
 - hiQ Labs v. LinkedIn（美國最高法院判例：公開資料抓取不違 CFAA，但 ToS 契約違反有效）
 - 業界標準本地組合：feedparser + trafilatura + Playwright（成本約 Firecrawl 1/10）
