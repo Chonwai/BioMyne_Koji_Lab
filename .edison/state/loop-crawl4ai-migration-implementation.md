@@ -16,8 +16,8 @@ Budget: ~16 iterations
 | EXECUTE-I1（文檔修正 F-1..F-6） | 1 | 2 | ✅ done（Iteration 1 — 5 commits） |
 | EXECUTE-I2（B-3 sql/006 + B-2 routing） | 1 | 2 | ✅ done（Iteration 2 — 2 commits，7-case 語意測試 7/7 PASS） |
 | EXECUTE-I3（B-4 環境 + B-1 POC + P0 實測） | 1 | 2 | ✅ done（Iteration 3 — 3 commits，未知數 1 已回答） |
-| VERIFY（smith strict 93） | 1 | 3 | 🔄 active |
-| REPAIR（trinity bounded） | 0 | 2 | pending |
+| VERIFY（smith strict 93） | 2 | 3 | ✅ **R1 90.4 REPAIRABLE → R2 93.75 PASS** |
+| REPAIR（trinity bounded） | 1 | 2 | ✅ done（H-1/H-2/L-1 全修） |
 
 ## 任務形態與範圍
 
@@ -72,8 +72,50 @@ Budget: ~16 iterations
 
 **Outcome: I3 ✅ → VERIFY（smith strict 93，全變更審查）**
 
+### Iteration 4 — VERIFY R1（edison-doc-reviewer，smith 網路失敗後替代）
+
+**Measured Score: 90.4/100 → REPAIRABLE**（D1=90 D2=88 D3=85 D4=88 D5=95 D6=92 D7=95）
+- 3 findings：**H-1**（spec §3:106 `CrawlerRunConfig(llm_config=...)` 錯誤寫法 — 同批次 POC 實測證實 TypeError）、**H-2**（evaluation memo L130 舊式 API 殘留，掃同類）、**L-1**（poc-verification commits 表待填 hash）
+- 正面：sql/006 正確、routing 三層決策正確、P0 數字全數實測複核吻合
+- 一票決：N（修復後可放行）
+
+### Iteration 5 — REPAIR（trinity H-1/H-2/L-1）
+- `fef238a` fix(spec): H-1 §3 LLMConfig 用法修正（與 §4.2/Step 3 POC 驗證模式一致）
+- `70f714f` fix(memo): H-2 evaluation memo 舊式 API 修正
+- `d8bb9e8` docs(poc): L-1 commit hash 填入 `01033e6`
+- 掃同類：`CrawlerRunConfig(llm_config=`/`LLMExtractionStrategy(provider=` 僅剩記錄性命中（poc-verification/feasibility-review 的 before 描述），正確保留
+
+### Iteration 6 — VERIFY R2（edison-doc-reviewer 複審）
+
+**Measured Score: 93.75/100 → PASS**（DR-D1=95 D2=96 D3=94 D4=95 D5=90 D6=90 D7=93；加權 93.75）
+- 上輪 3 findings 全數驗證修復（diff 實證）；§3/§4.2/Step 3 三處新 API 完全一致
+- 掃同類：零活躍殘留；新 finding 僅 L-2（Low 觀察項：spec 可補 LLM extraction 完整鏈路說明，不阻塞）
+- 一票決：**Y — 可作為 P1 開發通過閘**
+
+**Neo 決策：93.75 ≥ 93 → PASS → DELIVER**（Stop Rule 不觸發；L-2 記錄供 P1 參考）
+
+## 最終交付物
+
+| # | 類別 | 內容 | commits |
+| --- | --- | --- | --- |
+| 1 | 文檔修正 | spec F-1..F-6（API 新寫法/AC-1 下修/select 註/Python3.12/content_hash）+ overview F-5 | `706917a` `e236a54` `38badb4` `8c2d710` `83952cc` + `fef238a` |
+| 2 | SQL | `sql/006_crawl4ai_migration.sql`（crawler_provider 欄位 + seed 3 hard sources） | `60b1b71` |
+| 3 | Pipeline | `run_pipeline.sh` select 11 欄 + 三層決策 + pre-flight 放寬（7-case 測試 7/7） | `93746c0` |
+| 4 | POC | `crawl4ai_poc.py` 還原 + 對齊 v0.9.3 API（`8b1b1c8`） | `453a555` `8b1b1c8` |
+| 5 | 環境 | `.venv`（Python 3.12.9）+ requirements-dev.txt（crawl4ai==0.9.3 等） | `9ecd885` |
+| 6 | P0 證據 | `docs/phase1/crawl4ai-poc-verification.md`（153 行） | `01033e6` `d8bb9e8` |
+
+**Loop 總 commits：15 個**（ccbf090 → 706917a → e236a54 → 38badb4 → 8c2d710 → 83952cc → 453a555 → 60b1b71 → 93746c0 → 9ecd885 → 8b1b1c8 → 01033e6 → fef238a → 70f714f → d8bb9e8 → 04059df）
+
+## 關鍵成果（供下一輪 P1 參考）
+
+- **未知數 1 ✅ 已回答**：Crawl4AI 0.9.3 新 API + Ollama qwen3.6:35b-mlx（MLX 100% GPU）端到端跑通 LLM extraction（完整合法 JSON）
+- **⚠️ 延遲警示**：單篇 LLM extraction 首輪 ~9.5min / warm ~5.4min（Ollama prefix cache 命中 9348/9352）— 遠慢於 Firecrawl 秒級；P1 需設計每篇延遲預算（本地 0 成本 + 資料不出機器的取捨）
+- **未知數 2 未回答**：8 easy sources 反爬現況（STAT/Fierce 已知 Cloudflare）→ P1 前需 P0 逐一實測
+- **L-2 觀察**：spec 可補 LLM extraction 完整鏈路說明
+
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 30%
-Status: HEALTHY
+Budget: 45%
+Status: HEALTHY（Loop complete ✅）
