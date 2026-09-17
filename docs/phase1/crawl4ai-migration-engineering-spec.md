@@ -317,7 +317,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 **驗收標準**（每個 source）：
 - [ ] `scrape()` 成功（success=True）
 - [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（依 `.env` 配置；repo 預設 100）
-- [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證
+- [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證。**建議**：hash 前先用 `PruningContentFilter` 提取 fit_markdown（僅主文區），再送入 `hash_markdown()`；raw markdown 含廣告/推薦/時間戳等動態區塊，會導致同文不同 hash（naman.so 2025-10-07 實證：ad rotation 致 127 次 refetch）
 - [ ] `run_pipeline.sh` 單 source 測試通過
 - [ ] 抓取成功率：**8 sources 平均 ≥ 95%**（每 source 20 runs、≤1 fail）、**單一 source ≥ 80%**（參考業界 Crawl4AI 平均 ~89.7% — datacelix 2026-07-07；需 per-domain 調校）
 
