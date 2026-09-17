@@ -75,6 +75,7 @@ def main(argv: list[str]) -> int:
             "formats": ["markdown"],
             "onlyMainContent": True,
             "timeout": timeout_ms,
+            "waitFor": 2000,
         }
         req = urllib.request.Request(
             "https://api.firecrawl.dev/v1/scrape",
