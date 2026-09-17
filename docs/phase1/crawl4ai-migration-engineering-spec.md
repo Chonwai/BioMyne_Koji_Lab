@@ -91,7 +91,7 @@ flowchart LR
     end
 
     J --> K{LLM 摘要}
-    K --> L[Ollama Qwen 3.6<br/>LLMConfig + LLMExtractionStrategy]
+    K --> L[Ollama Qwen 3.6<br/>LLMExtractionStrategy]
     L --> M[(Supabase + pgvector)]
 
     subgraph AntiBot["Anti-bot（僅需要時）"]
@@ -103,7 +103,7 @@ flowchart LR
 **關鍵設計決策**：
 - Discovery 以 feedparser + sitemap 為主體（8/11 來源已是 RSS/sitemap 先行）
 - Extraction 以 Crawl4AI 為主，Firecrawl 保留給 3 個 hard sources
-- LLM 用 Ollama Qwen 3.6（`llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx")` + `markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5))`）
+- LLM 用 Ollama Qwen 3.6（`CrawlerRunConfig(llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"))`，v0.9.x 新 API）
 - Anti-bot 只在需要時啟用（stealth/residential proxy 都不是預設值）
 
 ---
@@ -159,7 +159,7 @@ class CrawlerProvider(Protocol):
 #### `LocalCrawl4AIProvider`
 
 - 使用 `crawl4ai.AsyncWebCrawler`（參考 `ops/poc/crawl4ai_poc.py` L80–110）
-- `scrape()` 設定：`BrowserConfig(headless=True)` + `CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"), cache_mode=CacheMode.BYPASS)`
+- `scrape()` 設定：`BrowserConfig(headless=True)`；`CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), cache_mode=CacheMode.BYPASS)`（v0.9.x 新 API；`markdown=True`/`only_main_content=True` 為已棄用舊式參數）
 - `map()` 使用 Crawl4AI 的 link discovery 或 sitemap XML 解析
 - 需要 `pip install crawl4ai playwright && playwright install chromium`
 
@@ -235,8 +235,6 @@ playwright install chromium
 - [ ] `playwright install chromium` 無報錯
 - [ ] `python3 -c "import trafilatura; print('OK')"` 輸出 OK
 
-> **⚠️ Python 版本建議**：使用 **Python 3.12**（crawl4ai 的 greenlet 相依在 3.13+ 有已知相容性問題 — GitHub Issue #291）。若開發機有 Homebrew 安裝 Python 3.13，建議先 `brew install python@3.12` 並使用 `python3.12` 建立 venv。Mac 上若出現 Playwright chromium renderer crash，檢查 `DYLD_LIBRARY_PATH` 是否被 Homebrew libpng 汙染（GitHub Issue playwright#42351）。
-
 ---
 
 ### Step 2: Provider Abstraction 骨架
@@ -263,7 +261,7 @@ playwright install chromium
 
 **`scrape()` 行為**：
 - 使用 `crawl4ai.AsyncWebCrawler(config=BrowserConfig(headless=True))`
-- `CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"), cache_mode=CacheMode.BYPASS)`
+- `CrawlerRunConfig(markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter(threshold=0.5)), cache_mode=CacheMode.BYPASS)`
 - 呼叫 `crawler.arun(url=url, config=run_cfg)`
 - 回傳 `ScrapeResult`（success/markdown/word_count/content_hash/paywall_detected/paywall_signal/provider="local"）
 
@@ -289,7 +287,6 @@ Step 4 的 source-level routing 決策基於 Supabase `sources` 表（pipeline �
 
 **路由邏輯**（`run_pipeline.sh` 內）：
 ```bash
-# ⚠️ 注意：現況 run_pipeline.sh:258 的 select 僅 10 欄（無 crawler_provider），需先實作 B-2 才能跑通本段
 # Step 2 的 Supabase sources 查詢帶入完整欄位清單（現行欄位 + crawler_provider）
 supa GET "/rest/v1/sources?select=id,name,url,domain,source_type,extraction_mode,refresh_enabled,refresh_window_days,refresh_cadence_hours,refresh_priority,crawler_provider&enabled=eq.true"
 # iterate 每個 source 時依 §4.3 優先序決定 provider：
@@ -317,9 +314,9 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 **驗收標準**（每個 source）：
 - [ ] `scrape()` 成功（success=True）
 - [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（依 `.env` 配置；repo 預設 100）
-- [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證。**建議**：hash 前先用 `PruningContentFilter` 提取 fit_markdown（僅主文區），再送入 `hash_markdown()`；raw markdown 含廣告/推薦/時間戳等動態區塊，會導致同文不同 hash（naman.so 2025-10-07 實證：ad rotation 致 127 次 refetch）
+- [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證
 - [ ] `run_pipeline.sh` 單 source 測試通過
-- [ ] 抓取成功率：**8 sources 平均 ≥ 95%**（每 source 20 runs、≤1 fail）、**單一 source ≥ 80%**（參考業界 Crawl4AI 平均 ~89.7% — datacelix 2026-07-07；需 per-domain 調校）
+- [ ] 抓取成功率 ≥ 95%（樣本：20 runs、≤1 fail）
 
 ---
 
@@ -358,7 +355,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 | # | 條件 | 測量方式 |
 | --- | --- | --- |
-| AC-1 | 8 easy sources 用本地 provider 抓取成功率：**平均 ≥ 95%、單一 source ≥ 80%**（需 per-domain 調校；P0 逐一實測） | `run_pipeline.sh` 單 source 跑 20 runs、≤1 fail（平均）；單一 source 抽樣 ≥ 80% |
+| AC-1 | 8 easy sources 用本地 provider 抓取成功率 ≥ 95% | `run_pipeline.sh` 單 source 跑 20 runs、≤1 fail |
 | AC-2 | content_hash 去重率維持（不因渲染差異導致重複文章重跑 LLM） | `content_hash` 一致性測試 |
 | AC-3 | LLM 分析覆蓋率 ≥ 現況（`MIN_WORDS_FOR_LLM` 通過率不降） | pipeline run log |
 | AC-4 | 成本工具顯示本地 $4.32/mo | `estimate_crawler_cost.py` 輸出 |
@@ -407,7 +404,6 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 | Crawl4AI 版本升級破壞 | pipeline crash | 低 | `requirements-dev.txt` pin 版本；`pip install crawl4ai==0.9.3` |
 | Ollama 不可用 | LLM 分析失敗 | 低 | 沿用現有 fallback（跳過 LLM，只存 markdown） |
 | Playwright chromium crash | 單頁抓取失敗 | 低 | retry 邏輯（沿用 `MAX_ATTEMPTS` pattern）；必要時切 Firecrawl |
-| Python 3.13+ greenlet 不相容 | crawl4ai import crash | 低 | 使用 Python 3.12 建 venv（見 Step 1 建議）；playwright #42351 依 `DYLD_LIBRARY_PATH` 調整 |
 
 **通用 rollback（三個手段）**：
 
