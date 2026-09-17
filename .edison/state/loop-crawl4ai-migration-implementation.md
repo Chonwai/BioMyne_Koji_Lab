@@ -13,7 +13,7 @@ Budget: ~16 iterations
 
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
-| EXECUTE-I1（文檔修正 F-1..F-6） | 0 | 2 | pending |
+| EXECUTE-I1（文檔修正 F-1..F-6） | 1 | 2 | ✅ done（Iteration 1 — 5 commits） |
 | EXECUTE-I2（B-3 sql/006 + B-2 routing） | 0 | 2 | pending |
 | EXECUTE-I3（B-4 環境 + B-1 POC + P0 實測） | 0 | 2 | pending |
 | VERIFY（smith strict 93） | 0 | 3 | pending |
@@ -32,10 +32,23 @@ Budget: ~16 iterations
 
 ## Iterations
 
-（待填）
+### Iteration 1 — EXECUTE-I1（trinity 文檔修正 F-1..F-6）
+
+**Agent: trinity** — 5 commits，F-1..F-6 全數落地並 grep 驗證：
+- `706917a` docs(spec): F-1 Crawl4AI v0.9.x API fix（§3 L106 / §4.2 L162 / Step 3 L264）
+- `e236a54` docs(spec): F-2 AC-1 目標下修（Step 5 L319 / §7 AC-1 L358）
+- `38badb4` docs(spec): F-3 select 註（L291）+ F-4 Python 3.12/DYLD（L225/L410）
+- `8c2d710` docs(overview): F-5 stealth vendor benchmark 註記（§4 P1 L104）
+- `83952cc` docs(spec): F-6 content_hash normalize 建議（L321）
+- Self-audit mirror：CR-D1..D7 全過（文檔任務 N/A 項標記）
+- 回報 pre-existing dirty state：`ops/poc/crawl4ai_poc.py`（非本次所改）
+
+**B-1 簡化決策（Neo 調查確認）**：`git log` 顯示 HEAD（`f8d52b9`）已把 POC 改成 v0.9.x 新 API；dirty state 是把 POC **倒退成舊式 API** 的未 commit 改動。→ B-1 = `git checkout` 還原 dirty state（最小修復），非重寫。
+
+**Outcome: I1 ✅ → EXECUTE-I2（B-3 + B-2）**
 
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 0%
+Budget: 8%
 Status: HEALTHY
