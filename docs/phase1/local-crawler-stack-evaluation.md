@@ -127,7 +127,7 @@ flowchart LR
 **關鍵設計決策**：
 - **Discovery 以 feedparser + sitemap 為主體**（8/11 來源已是 RSS/sitemap 先行，map 只是 fallback）→ Crawl4AI 只補 map 空缺
 - **Extraction 以 Trafilatura + Crawl4AI 互補**：Crawl4AI 渲染 JS 頁，Trafilatura 抓乾淨全文（業界標準組合，成本約 Firecrawl 1/10）
-- **LLM 用 Ollama Qwen 3.6**：`LLMExtractionStrategy(provider="ollama/qwen3.6:35b-mlx")`，零 token 成本、資料不出本地
+- **LLM 用 Ollama Qwen 3.6**：`LLMExtractionStrategy(llm_config=LLMConfig(provider="ollama/qwen3.6:35b-mlx"))`，零 token 成本、資料不出本地
 - **Anti-bot 只在需要時啟用**（stealth/residential proxy 都不是預設值）
 
 ---
