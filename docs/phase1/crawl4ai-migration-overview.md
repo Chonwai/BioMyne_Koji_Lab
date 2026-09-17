@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-BioMyne Koji 目前使用 Firecrawl Cloud（月費 $16）爬取 11 個生技情報來源，每日約 660 篇文章。這個依賴造成三個問題：**持續性月費支出**、**生技情報送入第三方雲端**、以及**新增來源受 credit 上限限制**。
+BioMyne Koji 目前使用 Firecrawl Cloud（月費 $16）爬取 11 個生技情報來源，每月約 660 篇文章。這個依賴造成三個問題：**持續性月費支出**、**生技情報送入第三方雲端**、以及**新增來源受 credit 上限限制**。
 
 深度研究已完成評估：使用本地 **Playwright + Crawl4AI + Ollama** 組合取代 Firecrawl「有條件可行」。11 個來源中 **8 個可直接遷移**，其餘 3 個保留 Cloud fallback。遷移後月成本從 **$16 降至 ~$4.32（僅電費）**，年省 **~$140**，同時資料完全留在本地。
 
@@ -173,5 +173,5 @@ gantt
 - `ops/poc/crawl4ai_poc.py` — Crawl4AI PoC 腳本
 - `ops/scripts/estimate_crawler_cost.py` — 成本對比工具
 - Crawl4AI 官方文件（v0.9.3，Apache 2.0，70K+ stars）
-- Firecrawl 定價頁（Hobby $16–19/mo, 5000 credits; Free 1000 一次性）
+- Firecrawl 定價頁（Hobby $16–19/mo, 5,000 credits；Free tier 1,000 credits，額度週期以官網現行條款為準）
 - hiQ Labs v. LinkedIn 判例（公開資料抓取不違 CFAA，但 ToS 契約違反有效）

@@ -101,7 +101,7 @@ flowchart LR
 ```
 
 **關鍵設計決策**：
-- Discovery 以 feedparser + sitemap 為主體（9/11 來源已是 RSS/sitemap 先行）
+- Discovery 以 feedparser + sitemap 為主體（8/11 來源已是 RSS/sitemap 先行）
 - Extraction 以 Crawl4AI 為主，Firecrawl 保留給 3 個 hard sources
 - LLM 用 Ollama Qwen 3.6（`LLMExtractionStrategy(provider="ollama/qwen3.6:35b-mlx")`）
 - Anti-bot 只在需要時啟用（stealth/residential proxy 都不是預設值）
@@ -298,7 +298,7 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 **驗收標準**（每個 source）：
 - [ ] `scrape()` 成功（success=True）
-- [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（300）
+- [ ] word_count ≥ `MIN_WORDS_FOR_LLM`（依 `.env` 配置；repo 預設 100）
 - [ ] content_hash 在 normalize 後穩定率 ≥ 現況 Firecrawl 基線。具體驗證方法：隨機選 5 篇 easy source 文章，各抓取 2 次，計算 hash 相同比例。Accept if ≥ 80%。若 < 80%，需調整 `hash_markdown()` 的 normalize 邏輯（如去除動態 DOM 片段）再重新驗證
 - [ ] `run_pipeline.sh` 單 source 測試通過
 - [ ] 抓取成功率 ≥ 95%（跑 10 次，≤1 次失敗）
@@ -361,8 +361,8 @@ PROVIDER=$(echo "$SRC_JSON" | python3 -c "import sys,json; print(json.load(sys.s
 
 | 測試 | 內容 | 預期 |
 | --- | --- | --- |
-| `test_local_scrape_biorxiv` | 本地 provider 抓 bioRxiv 公開頁 | success=True, word_count≥300 |
-| `test_local_scrape_statnews` | 本地 provider 抓 STAT News | success=True, word_count≥300 |
+| `test_local_scrape_biorxiv` | 本地 provider 抓 bioRxiv 公開頁 | success=True, word_count ≥ `MIN_WORDS_FOR_LLM`（repo 預設 100） |
+| `test_local_scrape_statnews` | 本地 provider 抓 STAT News | success=True, word_count ≥ `MIN_WORDS_FOR_LLM`（repo 預設 100） |
 | `test_firecrawl_provider` | Firecrawl provider 抓 STAT News | success=True（需 FIRECRAWL_KEY） |
 
 ### 8.3 回歸測試
