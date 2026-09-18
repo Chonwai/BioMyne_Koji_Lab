@@ -49,3 +49,19 @@ Budget: ~18 iterations
 Consecutive fails: 1/3（REPAIR agent 失敗，非產品 code）
 Budget: 65%
 Status: **BLOCKED**（ESCALATED — 等待人類指示）
+### Iteration 11 — VERIFY R2（smith 複審）
+
+**Measured Score: 95.25/100 → PASS**（+9.55 from 85.7；CR-D1=90 D2=90 D3=N/A D4=95 D5=100 D6=95 D7=100）
+- F-1..F-5 全數驗證 FIXED（逐行實證）；F-6/F-7/F-8 為上輪明確 deferred（smoke fallback / asyncio.run / env_int）
+- 26 passed, 2 skipped；run_pipeline.sh `_scrape_markdown.py` 僅剩 pre-flight helper 檢查 + 無直接呼叫
+- `_scrape_markdown.py` 129→48 行 thin wrapper（`__all__` export 完整）；`_discover firecrawl_map` delegation + token check 保留；F-5 省 63 次 subprocess spawn
+- macOS bash 3.2 兼容性實測（10/10 + 7/7 欄位正確）
+- smith 一票決：可作為 P2 開發通過閘 ✅
+
+**Neo 決策：95.25 ≥ 93 → PASS → DELIVER**
+
+## 最終結果
+
+**P1 Provider Abstraction 完成 ✅（PASS 95.25/93，strict）**
+- 總 commits：`61bdba6..HEAD` = **16 commits**（Step 1-6: 10 + State: 2 + REPAIR: 5，扣除 state 後核心 13）
+- 核心交付：crawler_providers.py（Protocol+ScrapeResult+factory+2 Providers，~320 行）、_scrape_via_provider.py、_scrape_markdown.py（48 行 wrapper）、run_pipeline.sh（provider 分流 + 單次解析）、_discover_article_urls.py（delegation）、smoke_test.sh（5b）、credit 條件化、26 tests、pytest.ini、.env.example
