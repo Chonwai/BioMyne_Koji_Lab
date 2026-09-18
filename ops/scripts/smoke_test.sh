@@ -116,6 +116,26 @@ else
   log_fail "Firecrawl scrape failed"
 fi
 
+# ── Section 5b: Crawl4AI local health check (when CRAWLER_PROVIDER=local) ──
+if [ "${CRAWLER_PROVIDER:-local}" = "local" ]; then
+  echo -e "\n${CYAN}[5b] Crawl4AI local health check...${NC}"
+  CRAWL4AI_RESP=$("$REPO_ROOT/.venv/bin/python3" "$SCRIPT_DIR/_scrape_via_provider.py" "https://www.biorxiv.org/content/10.1101/2024.05.21.595135v1" 2>/dev/null)
+  if echo "$CRAWL4AI_RESP" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+if d.get('success') and d.get('word_count', 0) > 100:
+    print(f'Crawl4AI scraped {d[\"word_count\"]} words via {d.get(\"provider\",\"?\")}')
+    sys.exit(0)
+else:
+    print(f'Crawl4AI check failed: {d.get(\"error\",\"unknown\")}')
+    sys.exit(1)
+" 2>/dev/null; then
+    log_pass "Crawl4AI local scrape OK"
+  else
+    log_fail "Crawl4AI local scrape failed"
+  fi
+fi
+
 # ── 5. Supabase ──
 header "5. Supabase (Database)"
 SOURCES=$(curl -s --max-time 10 \
