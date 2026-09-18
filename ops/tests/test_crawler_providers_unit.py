@@ -100,6 +100,170 @@ class TestContentHashStability:
         assert h1 == h2
 
 
+class TestHashStabilityBoilerplate:
+    """P2 F-2: boilerplate exclusion makes hashes stable across requests.
+
+    Three known dynamic-element drift sources must not affect the hash:
+      1. Nature: `_csrf` CSRF token in URLs (changes every request)
+      2. STAT:   OneTrust cookie-consent modal (randomly kept by PruningContentFilter)
+      3. GEN:    ADVERTISEMENT / SCROLL TO CONTINUE ad-slot lines (random)
+    """
+
+    # ── 1. _csrf CSRF token (Nature) ──
+
+    def test_hash_stability_csrf(self):
+        base = (
+            "# Article title\n\n"
+            "Some stable paragraph about biotech.\n\n"
+            "[ Save article ](https://www.nature.com/articles/s41587-026-03333-8/save-research?_csrf=abc123)\n\n"
+            "More content here.\n"
+        )
+        variant = base.replace("_csrf=abc123", "_csrf=xyz789")
+        assert hash_markdown(base) == hash_markdown(variant)
+
+    def test_csrf_removal_keeps_link_text(self):
+        """Only the query is stripped; the link text survives (no false positive)."""
+        md = "[ Save article ](https://www.nature.com/articles/x/save-research?_csrf=tok123)"
+        normalized = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        out = normalized.normalize_markdown_for_hash(md)
+        assert "_csrf" not in out
+        assert "save article" in out
+
+    # ── 2. OneTrust cookie-consent modal (STAT) ──
+
+    def test_hash_stability_cookie_modal(self):
+        without = (
+            "# STAT article\n\n"
+            "The lead paragraph of the story.\n\n"
+            "A second stable paragraph with real reporting.\n"
+        )
+        modal = (
+            "![STAT News](https://cdn.cookielaw.org/logos/static/ot_company_logo.png)\n"
+            "## Privacy Preference Center\n"
+            "When you visit any website, it may store or retrieve information on your browser.\n"
+            "[More information](https://cookiepedia.co.uk/giving-consent-to-cookies)\n"
+            "Allow All\n"
+            "### Manage Consent Preferences\n"
+            "#### Strictly Necessary Cookies\n"
+            "#### Targeting Cookies\n"
+            "#### Performance Cookies\n"
+            "#### Functional Cookies\n"
+            "### Cookie List\n"
+            "Apply\n"
+            "Cancel\n"
+            "Reject All\n"
+            "Confirm My Choices\n"
+            "[![Powered by Onetrust](...)](https://www.onetrust.com/products/cookie-consent/)\n"
+        )
+        with_modal = modal + without
+        assert hash_markdown(with_modal) == hash_markdown(without)
+
+    def test_cookie_modal_header_stripped(self):
+        """A realistic full modal (with terminal END marker) is removed wholesale;
+        body AFTER the modal survives."""
+        md = (
+            "![STAT News](https://cdn.cookielaw.org/logos/static/ot_company_logo.png)\n"
+            "## Privacy Preference Center\n"
+            "When you visit any website, it may store or retrieve information.\n"
+            "[More information](https://cookiepedia.co.uk/giving-consent-to-cookies)\n"
+            "Allow All\n"
+            "Confirm My Choices\n"
+            "[![Powered by Onetrust](...)](https://www.onetrust.com/products/cookie-consent/)\n"
+            "Some body text.\n"
+        )
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        assert "privacy preference center" not in normalized
+        assert "cookiepedia" not in normalized
+        assert "onetrust" not in normalized
+        assert "some body text" in normalized
+
+    def test_truncated_modal_cap_prevents_swallowing_body(self):
+        """Safety cap: a modal without an END marker cannot swallow unbounded
+        article prose (MAX_COOKIE_MODAL_LINES = 60)."""
+        md = (
+            "## Privacy Preference Center\n"
+            + "\n".join(f"junk line {i}" for i in range(100))
+            + "\nREAL CONTENT LINE\n"
+        )
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        # beyond the cap the lines are preserved (not swallowed)
+        assert "junk line 99" in normalized
+        assert "real content line" in normalized
+        # exactly the cap worth of lines is dropped (header + junk 0..58
+        # consumed; use non-substring-colliding line numbers)
+        assert "junk line 58" not in normalized
+        assert "junk line 59" in normalized
+
+    def test_nature_cookie_banner_stripped(self):
+        """Nature 'Your privacy, your choice' banner (fit-region drift source)
+        is removed while article body survives."""
+        md = (
+            "## Your privacy, your choice\n"
+            "We use essential cookies to make sure the site can function. We also use optional cookies.\n"
+            "By accepting optional cookies, you consent to the processing of your personal data.\n"
+            "See our [privacy policy](https://www.nature.com/info/privacy) for more information.\n"
+            "Accept all cookies Reject optional cookies\n"
+            "Article body text that must survive.\n"
+        )
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        assert "your privacy" not in normalized
+        assert "cookies" not in normalized
+        assert "nature.com/info/privacy" not in normalized
+        assert "article body text" in normalized
+
+    def test_sage_cookie_banner_stripped(self):
+        """GEN (Sage) 'Accept Non-Essential Cookies' banner (fit-region drift
+        source) is removed while article body survives."""
+        md = (
+            'By clicking "Accept Non-Essential Cookies", you agree to the storing of cookies on your device.\n'
+            "Manage Cookies\n"
+            "Reject Non-Essential Cookies Accept Non-Essential Cookies\n"
+            "Article body text that must survive.\n"
+        )
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        assert "non-essential cookies" not in normalized
+        assert "manage cookies" not in normalized
+        assert "article body text" in normalized
+
+    # ── 3. ADVERTISEMENT / SCROLL TO CONTINUE (GEN) ──
+
+    def test_hash_stability_advertisement(self):
+        without = (
+            "# GEN article\n\n"
+            "The main article text with substantive content.\n\n"
+            "Continuing paragraphs that define the story.\n"
+        )
+        with_ad = (
+            "ADVERTISEMENT\n"
+            "SCROLL TO CONTINUE WITH CONTENT\n"
+            + without
+        )
+        assert hash_markdown(with_ad) == hash_markdown(without)
+
+    def test_advertisement_line_removed(self):
+        """Standalone ADVERTISEMENT / SCROLL lines are removed; body kept."""
+        md = "ADVERTISEMENT\nSome body content remains.\nSCROLL TO CONTINUE WITH CONTENT\n"
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        assert "advertisement" not in normalized
+        assert "some body content remains" in normalized
+
+    # ── regression: legacy 6-step normalization untouched ──
+
+    def test_legacy_normalization_still_applies(self):
+        """Boilerplate exclusion must not break the original 6-step rules."""
+        md = "  Title   Line\n\nSome<!-- comment -->body  text\r\n"
+        out = __import__("_pipeline_normalization", fromlist=["normalize_markdown_for_hash"])
+        normalized = out.normalize_markdown_for_hash(md)
+        assert "<!--" not in normalized
+        assert "  " not in normalized  # no double spaces
+        assert "somebody text" in normalized  # comment removed → Somebody
+
+
 class TestPaywallDetection:
     """PAYWALL_MARKERS in markdown trigger paywall detection (spec §8.1)."""
 

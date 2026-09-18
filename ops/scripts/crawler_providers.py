@@ -112,18 +112,35 @@ class LocalCrawl4AIProvider:
         try:
             async with AsyncWebCrawler(config=browser_cfg) as crawler:
                 crawl_result = await crawler.arun(url=url, config=run_cfg)
-                markdown = getattr(crawl_result, "markdown", "") or ""
+                raw_markdown = getattr(crawl_result, "markdown", "") or ""
                 success = bool(getattr(crawl_result, "success", False))
                 error = getattr(crawl_result, "error_message", None) if not success else None
 
-                # Compute paywall detection
-                paywall_detected, paywall_signal = detect_paywall(markdown) if success else (False, None)
+                # Compute paywall detection (on full markdown; markers are
+                # paywall-specific and never appear in the fit region).
+                paywall_detected, paywall_signal = detect_paywall(raw_markdown) if success else (False, None)
+
+                # P2 F-1: extract fit_markdown (main-content region) for hashing
+                # and word_count. Crawl4AI 0.9.3 exposes markdown as
+                # StringCompatibleMarkdown with a .fit_markdown attribute;
+                # the deprecated markdown_v2 raises AttributeError.
+                # fit_markdown excludes sidebar, nav, footer, cookie modals
+                # that pollute full-text hash stability.
+                fit_md = getattr(raw_markdown, "fit_markdown", None) or ""
+                # word_count uses fit_markdown (content-only); keeps MIN_WORDS
+                # gate meaningful (avoids modal/ad inflation like STAT 1484→1937).
+                word_count = len(fit_md.split()) if fit_md else len(raw_markdown.split())
+                # content_hash uses fit_markdown (P2 F-1) + boilerplate
+                # exclusion (P2 F-2, inside hash_markdown → normalize_markdown_for_hash).
+                content_hash = hash_markdown(fit_md) if (success and fit_md) else (
+                    hash_markdown(raw_markdown) if success else None
+                )
 
                 return ScrapeResult(
                     success=success,
-                    markdown=markdown,
-                    word_count=len(markdown.split()),
-                    content_hash=hash_markdown(markdown) if success else None,
+                    markdown=raw_markdown,
+                    word_count=word_count,
+                    content_hash=content_hash,
                     paywall_detected=paywall_detected,
                     paywall_signal=paywall_signal,
                     provider=self.provider_name,
