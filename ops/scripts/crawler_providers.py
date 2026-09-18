@@ -180,7 +180,7 @@ class FirecrawlProvider:
         return await asyncio.to_thread(self._scrape_sync, url, token)
 
     def _scrape_sync(self, url: str, token: str) -> ScrapeResult:
-        # Logic mirrors _scrape_markdown.py L79-112
+        # Logic moved here from _scrape_markdown.py (spec §5 migration)
         def env_int(name: str, default: int, minimum: int = 0) -> int:
             raw = os.environ.get(name, "").strip()
             if not raw: return max(default, minimum)
@@ -255,15 +255,20 @@ class FirecrawlProvider:
             provider="firecrawl_cloud"
         )
 
-    def map(self, url: str, *, search: str | None = None, limit: int = 50) -> list[dict]:
-        """Discover URLs via Firecrawl /v2/map (spec §4.2), wrapped in to_thread."""
+    def map(self, url: str, *, search: str | None = None, limit: int = 50, sitemap: str | None = None) -> list[dict]:
+        """Discover URLs via Firecrawl /v2/map (spec §4.2).
+
+        `sitemap` mirrors Firecrawl's map sitemap mode ("include" / "skip" / "only")
+        and is passed through unchanged so per-source discovery behavior is kept
+        (e.g. bioRxiv / arXiv / Science deliberately skip sitemaps).
+        """
         token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
         if not token:
             return []
-        return asyncio.run(asyncio.to_thread(self._map_sync, url, token, search, limit))
+        return self._map_sync(url, token, search, limit, sitemap)
 
-    def _map_sync(self, url: str, token: str, search: str | None, limit: int) -> list[dict]:
-        # Logic mirrors _discover_article_urls.py firecrawl_map L225-269
+    def _map_sync(self, url: str, token: str, search: str | None, limit: int, sitemap: str | None = None) -> list[dict]:
+        # Logic absorbed from _discover_article_urls.py firecrawl_map (spec §5 migration)
         def env_int(name: str, default: int, minimum: int = 0) -> int:
             raw = os.environ.get(name, "").strip()
             if not raw: return max(default, minimum)
@@ -275,17 +280,15 @@ class FirecrawlProvider:
         retry_attempts = env_int("DISCOVERY_MAP_RETRY_ATTEMPTS", 5)
         retryable = {408, 409, 425, 429, 500, 502, 503, 504}
 
-        # Mirrors _discover_article_urls.py firecrawl_map(): when the url is a
-        # sitemap itself, pass it as the sitemap param; otherwise let Firecrawl infer.
-        sitemap = url if (url.lower().endswith(".xml") or "sitemap" in url.lower()) else None
         payload = {
             "url": url,
-            "sitemap": sitemap,
             "includeSubdomains": False,
             "ignoreQueryParameters": True,
             "limit": limit,
             "timeout": timeout_ms,
         }
+        if sitemap:
+            payload["sitemap"] = sitemap
         if search:
             payload["search"] = search
 
@@ -312,11 +315,33 @@ class FirecrawlProvider:
                 last_error = exc
                 if attempt == retry_attempts - 1: raise
                 time.sleep(2 ** attempt)
+        else:
+            raise RuntimeError(f"Firecrawl map failed: {last_error}")
         
         links = data.get("links", [])
         if not isinstance(links, list):
             return []
-        return [{"url": l, "title": "", "source": "firecrawl_cloud"} for l in links]
+        # Firecrawl v2 returns link objects; earlier responses returned plain strings.
+        results: list[dict] = []
+        for item in links:
+            if isinstance(item, dict):
+                link_url = item.get("url")
+                title = item.get("title") or ""
+                description = item.get("description") or ""
+            elif isinstance(item, str):
+                link_url, title, description = item, "", ""
+            else:
+                continue
+            link_url = str(link_url or "").strip()
+            if not link_url:
+                continue
+            results.append({
+                "url": link_url,
+                "title": str(title),
+                "description": str(description),
+                "source": self.provider_name,
+            })
+        return results
 
 
 def create_provider(name: str | None = None) -> CrawlerProvider:

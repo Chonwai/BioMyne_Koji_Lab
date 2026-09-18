@@ -31,6 +31,11 @@ try:
 except ModuleNotFoundError:
     from ops.scripts._pipeline_normalization import normalize_url
 
+try:
+    from crawler_providers import FirecrawlProvider
+except ModuleNotFoundError:
+    from ops.scripts.crawler_providers import FirecrawlProvider
+
 
 ARTICLE_KEYWORDS = (
     "/article/",
@@ -223,55 +228,14 @@ def fetch_url_bytes(url: str, timeout_seconds: int = 30) -> bytes:
 
 
 def firecrawl_map(url: str, search: Optional[str], sitemap: str, limit: int) -> List[dict]:
+    """Delegate the map surface to FirecrawlProvider.map (spec §5 migration)."""
     token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
     if not token:
+        # Preserve the legacy contract: a missing token fails loudly here
+        # (provider.map returns [] on its own), so the caller marks the surface failed.
         raise RuntimeError("FIRECRAWL_KEY or FIRECRAWL_API_KEY is required")
 
-    timeout_ms = env_int("DISCOVERY_MAP_TIMEOUT_MS", 90000)
-    retry_attempts = env_int("DISCOVERY_MAP_RETRY_ATTEMPTS", 5)
-    payload = {
-        "url": url,
-        "sitemap": sitemap,
-        "includeSubdomains": False,
-        "ignoreQueryParameters": True,
-        "limit": limit,
-        "timeout": timeout_ms,
-    }
-    if search:
-        payload["search"] = search
-
-    last_error = None
-    for attempt in range(retry_attempts):
-        req = urllib.request.Request(
-            "https://api.firecrawl.dev/v2/map",
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-            },
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=max(70, (timeout_ms // 1000) + 20)) as resp:
-                data = json.loads(resp.read())
-            break
-        except urllib.error.HTTPError as exc:
-            last_error = exc
-            if exc.code not in RETRYABLE_HTTP_CODES or attempt == retry_attempts - 1:
-                raise
-            time.sleep(2 ** attempt)
-        except Exception as exc:
-            last_error = exc
-            if attempt == retry_attempts - 1:
-                raise
-            time.sleep(2 ** attempt)
-    else:
-        raise RuntimeError(f"Firecrawl map failed: {last_error}")
-
-    links = data.get("links", [])
-    if not isinstance(links, list):
-        return []
-    return [item for item in links if isinstance(item, dict) and item.get("url")]
+    return FirecrawlProvider().map(url, search=search, limit=limit, sitemap=sitemap)
 
 
 def now_iso() -> str:

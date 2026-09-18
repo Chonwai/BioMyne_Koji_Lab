@@ -211,6 +211,35 @@ class TestProviderMap:
         monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
         assert LocalCrawl4AIProvider().map("https://example.com") == []
 
+    def test_firecrawl_map_passes_sitemap_mode_and_normalizes_links(self, monkeypatch):
+        monkeypatch.setenv("FIRECRAWL_KEY", "test-token")
+        captured = {}
+
+        def fake_urlopen(req, timeout=None):
+            captured.update(json.loads(req.data.decode("utf-8")))
+            body = {
+                "success": True,
+                "links": [
+                    {"url": "https://example.com/article/one", "title": "One", "description": "First"},
+                    "https://example.com/article/two",
+                ],
+            }
+            return _FakeHTTPResponse(json.dumps(body).encode("utf-8"))
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        links = FirecrawlProvider().map("https://example.com", search="content/10.", limit=25, sitemap="skip")
+
+        assert captured["sitemap"] == "skip"
+        assert captured["search"] == "content/10."
+        assert captured["limit"] == 25
+        assert [item["url"] for item in links] == [
+            "https://example.com/article/one",
+            "https://example.com/article/two",
+        ]
+        assert links[0]["title"] == "One"
+        assert links[0]["description"] == "First"
+        assert all(item["source"] == "firecrawl_cloud" for item in links)
+
 
 class TestFirecrawlRetry:
     """FirecrawlProvider retries retryable HTTP errors (spec §8.1)."""
@@ -296,3 +325,35 @@ class TestFirecrawlRetry:
 
         assert [item["url"] for item in links] == ["https://example.com/article/one"]
         assert calls["count"] == 2
+
+
+class TestDiscoverMapDelegation:
+    """_discover_article_urls.firecrawl_map delegates to FirecrawlProvider.map (F-4)."""
+
+    def test_delegates_and_passes_sitemap_mode(self, monkeypatch):
+        monkeypatch.setenv("FIRECRAWL_KEY", "test-token")
+        captured = {}
+
+        def fake_urlopen(req, timeout=None):
+            captured.update(json.loads(req.data.decode("utf-8")))
+            body = {"success": True, "links": [{"url": "https://example.com/a", "title": "", "description": ""}]}
+            return _FakeHTTPResponse(json.dumps(body).encode("utf-8"))
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+
+        import _discover_article_urls
+
+        links = _discover_article_urls.firecrawl_map("https://example.com", "content/10.", "skip", 25)
+
+        assert captured["sitemap"] == "skip"
+        assert captured["limit"] == 25
+        assert [item["url"] for item in links] == ["https://example.com/a"]
+
+    def test_missing_token_raises(self, monkeypatch):
+        monkeypatch.delenv("FIRECRAWL_KEY", raising=False)
+        monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+        import _discover_article_urls
+
+        with pytest.raises(RuntimeError):
+            _discover_article_urls.firecrawl_map("https://example.com", None, "include", 10)
