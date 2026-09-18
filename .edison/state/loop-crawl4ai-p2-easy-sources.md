@@ -33,19 +33,40 @@ Budget: ~16 iterations
 
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
-| DISCOVER（反爬現況 + Supabase） | 0 | 2 | pending |
-| EXECUTE-Step1（sql/006 apply + DB 更新） | 0 | 2 | pending |
-| EXECUTE-Step2（反爬實測） | 0 | 2 | pending |
+| DISCOVER（反爬現況 + Supabase） | 1 | 2 | ✅ done（Iteration 1） |
+| EXECUTE-Step1（sql/006 apply + DB 更新） | 0 | 2 | 🔴 **BLOCKED**（Supabase NXDOMAIN） |
+| EXECUTE-Step2（反爬實測） | 1 | 2 | ✅ done（Iteration 2 — 8/8 ✅） |
 | EXECUTE-Step3（content_hash 穩定率） | 0 | 2 | pending |
 | EXECUTE-Step4（20 runs 成功率） | 0 | 2 | pending |
+
+## Iteration 2 — Step 2 反爬實測（trinity）
+
+**結果：8/8 sources ✅ 全部成功（本地 provider 抓實際文章）**
+- 8 sources × 1 篇：success 全 true，word_count 848–2690（全 >100），無 paywall，avg ~13.2s
+- STAT News 4/4 ✅（1484–2177 words）、Fierce Biotech 4/4 ✅（576–1522 words）— Cloudflare 風險未觸發
+- 紀錄檔：`docs/phase1/crawl4ai-p2-antibotsnapshot.md`（新增）
+- finding：F-a bioRxiv connect feed 空回應（改走 biorxiv.org API 找 DOI）；F-b SynBioBeta 首頁 promo link 干擾（文章在 `/read/`）
+- 未動 code、未 apply DB、未寫入任何資料（範圍錨定遵守）
 | VERIFY（smith strict 93） | 0 | 3 | pending |
 
 ## Iterations
 
-（待填）
+### Iteration 1 — DISCOVER（morpheus）
+
+**關鍵發現**：
+- 🔴 **Supabase project subdomain 全域 NXDOMAIN**（`yihgpsbofjgoxbfypnia.supabase.co` — Cloudflare/Google DoH 皆 Status:3）→ sql/006 無法 apply；`supa()` / `supabase_request()` 會全失敗。**需用戶確認 project 狀態**（可能被刪/搬遷/.env stale）
+- 🟢 **5/8 easy sources RSS 直接可達**（STAT/BioPharma Dive/arXiv/Fierce/GEN 皆 200 + 真 XML，pipeline UA 也過）— **推翻 feasibility review 對 STAT/Fierce Cloudflare 的預期**
+- 🟡 bioRxiv feed 0-byte（伺服器端壞，但 primary=category_page 不受影響）
+- ✅ Nature sitemap 正常；SynBioBeta category page 200 待確認 targets
+- sql/006 + sql/003 名稱一致（Endpoints/BioCentury/Science）
+- .env 無 CRAWLER_PROVIDER / CRAWLER_ALLOW_CLOUD（Step 1 後需加）
+
+**Neo 策略決策**：P2 核心驗收（Step 2/3/4 反爬 + content_hash + 20 runs）**不依賴 live DB**（純本地 provider 測試）→ 先執行；Step 1（sql/006 apply）標記 BLOCKED 升級用戶。
+
+**Outcome: DISCOVER ✅ → EXECUTE-Step2（反爬實測，純本地）**
 
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 0%
-Status: HEALTHY
+Budget: 8%
+Status: HEALTHY（Step1 BLOCKED-user，其餘正常）
