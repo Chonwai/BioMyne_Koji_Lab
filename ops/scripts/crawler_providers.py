@@ -17,17 +17,29 @@ import json
 import time
 import asyncio
 
-# Import hash_markdown from the normalization module (same as _scrape_markdown.py)
+# hash_markdown: canonical text normalization (shared by both providers)
 try:
     from _pipeline_normalization import hash_markdown
 except ModuleNotFoundError:
     from ops.scripts._pipeline_normalization import hash_markdown
 
-# Import detect_paywall from _scrape_markdown.py
-try:
-    from _scrape_markdown import detect_paywall
-except ModuleNotFoundError:
-    from ops.scripts._scrape_markdown import detect_paywall
+# Paywall detection (canonical home; _scrape_markdown.py re-exports these symbols)
+PAYWALL_MARKERS = (
+    ("sign up to read this article for free", "signup_gate"),
+    ("become a premium subscriber", "premium_gate"),
+    ("purchase this article", "purchase_gate"),
+    ("already a subscriber? [log in]", "subscriber_login_gate"),
+    ("just want immediate access to this one article? purchase it now", "purchase_gate"),
+)
+
+
+def detect_paywall(markdown: str) -> tuple[bool, str | None]:
+    lowered = markdown.lower()
+    for marker, signal in PAYWALL_MARKERS:
+        if marker in lowered:
+            return True, signal
+    return False, None
+
 
 @dataclasses.dataclass
 class ScrapeResult:
