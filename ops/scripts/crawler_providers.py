@@ -23,6 +23,18 @@ try:
 except ModuleNotFoundError:
     from ops.scripts._pipeline_normalization import hash_markdown
 
+
+def env_int(name: str, default: int, minimum: int = 0) -> int:
+    """Read an integer env var with fallback and floor."""
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return max(default, minimum)
+    try:
+        value = int(raw)
+    except ValueError:
+        value = default
+    return max(value, minimum)
+
 # Paywall detection (canonical home; _scrape_markdown.py re-exports these symbols)
 PAYWALL_MARKERS = (
     ("sign up to read this article for free", "signup_gate"),
@@ -181,13 +193,6 @@ class FirecrawlProvider:
 
     def _scrape_sync(self, url: str, token: str) -> ScrapeResult:
         # Logic moved here from _scrape_markdown.py (spec §5 migration)
-        def env_int(name: str, default: int, minimum: int = 0) -> int:
-            raw = os.environ.get(name, "").strip()
-            if not raw: return max(default, minimum)
-            try: value = int(raw)
-            except ValueError: value = default
-            return max(value, minimum)
-
         def scrape_timeout_ms(url: str, attempt: int) -> int:
             base = env_int("FIRECRAWL_SCRAPE_TIMEOUT_MS", 120000, 30000)
             step = env_int("FIRECRAWL_SCRAPE_TIMEOUT_STEP_MS", 30000, 0)
@@ -269,13 +274,6 @@ class FirecrawlProvider:
 
     def _map_sync(self, url: str, token: str, search: str | None, limit: int, sitemap: str | None = None) -> list[dict]:
         # Logic absorbed from _discover_article_urls.py firecrawl_map (spec §5 migration)
-        def env_int(name: str, default: int, minimum: int = 0) -> int:
-            raw = os.environ.get(name, "").strip()
-            if not raw: return max(default, minimum)
-            try: value = int(raw)
-            except ValueError: value = default
-            return max(value, minimum)
-
         timeout_ms = env_int("DISCOVERY_MAP_TIMEOUT_MS", 90000)
         retry_attempts = env_int("DISCOVERY_MAP_RETRY_ATTEMPTS", 5)
         retryable = {408, 409, 425, 429, 500, 502, 503, 504}

@@ -629,6 +629,9 @@ def sitemap_candidates(source_name: str, limit: int, state: dict, rule: SourceRu
 
 
 def env_int(name: str, default: int, minimum: int = 1) -> int:
+    # NB: deliberately NOT reusing crawler_providers.env_int — this variant
+    # defaults minimum=1 (vs 0 there) and logs a stderr diagnostic on invalid
+    # values, which discovery runs rely on.
     raw = os.environ.get(name, "").strip()
     if not raw:
         return max(default, minimum)
