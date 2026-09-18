@@ -211,6 +211,7 @@ fi
 for helper in \
   "$SCRIPT_DIR/_discover_article_urls.py" \
   "$SCRIPT_DIR/_scrape_markdown.py" \
+  "$SCRIPT_DIR/_scrape_via_provider.py" \
   "$SCRIPT_DIR/_analyze_article.py" \
   "$SCRIPT_DIR/_write_pipeline_output.py" \
   "$SCRIPT_DIR/_fetch_firecrawl_credit_usage.py"; do
@@ -348,7 +349,11 @@ while IFS= read -r line; do
 
     ARTICLE_TMP=$(mktemp "$SCRAPED_DIR/.article_md_XXXXXX")
     set +e
-    SCRAPE_JSON=$(FIRECRAWL_KEY="$FIRECRAWL_KEY" python3 "$SCRIPT_DIR/_scrape_markdown.py" "$ARTICLE_URL")
+    if [ "$PROVIDER" = "firecrawl_cloud" ]; then
+      SCRAPE_JSON=$(FIRECRAWL_KEY="$FIRECRAWL_KEY" python3 "$SCRIPT_DIR/_scrape_markdown.py" "$ARTICLE_URL")
+    else
+      SCRAPE_JSON=$("$REPO_ROOT/.venv/bin/python3" "$SCRIPT_DIR/_scrape_via_provider.py" "$ARTICLE_URL" "$PROVIDER" 2>/dev/null || python3 "$SCRIPT_DIR/_scrape_markdown.py" "$ARTICLE_URL")
+    fi
     SCRAPE_EXIT=$?
     set -e
 
