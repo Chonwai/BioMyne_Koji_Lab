@@ -290,19 +290,29 @@ for s in json.load(sys.stdin):
 " > "$SCRAPED_DIR/sources.jsonl"
 
 while IFS= read -r line; do
-  SRC_ID=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['id'])" 2>/dev/null)
-  SRC_NAME=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['name'])" 2>/dev/null)
-  SRC_URL=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['url'])" 2>/dev/null)
-  SRC_TYPE=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('source_type','news'))" 2>/dev/null)
-  EXTRACTION_MODE=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('extraction_mode','homepage_links'))" 2>/dev/null)
-  REFRESH_ENABLED=$(echo "$line" | python3 -c "import sys,json; print(str(json.loads(sys.stdin.read()).get('refresh_enabled', False)).lower())" 2>/dev/null)
-  REFRESH_WINDOW_DAYS=$(echo "$line" | python3 -c "import sys,json; value=json.loads(sys.stdin.read()).get('refresh_window_days'); print('' if value is None else value)" 2>/dev/null)
-  REFRESH_CADENCE_HOURS=$(echo "$line" | python3 -c "import sys,json; value=json.loads(sys.stdin.read()).get('refresh_cadence_hours'); print('' if value is None else value)" 2>/dev/null)
-  REFRESH_PRIORITY=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('refresh_priority','low'))" 2>/dev/null)
+  # Single python3 call parses the source row into \x1f-separated fields (F-5)
+  IFS=$'\037' read -r SRC_ID SRC_NAME SRC_URL SRC_TYPE EXTRACTION_MODE REFRESH_ENABLED REFRESH_WINDOW_DAYS REFRESH_CADENCE_HOURS REFRESH_PRIORITY PROVIDER <<< "$(
+    printf '%s' "$line" | python3 -c 'import json, sys
+s = json.loads(sys.stdin.read())
+window = s.get("refresh_window_days")
+cadence = s.get("refresh_cadence_hours")
+fields = (
+    s.get("id") or "",
+    s.get("name") or "",
+    s.get("url") or "",
+    s.get("source_type", "news"),
+    s.get("extraction_mode", "homepage_links"),
+    str(bool(s.get("refresh_enabled", False))).lower(),
+    "" if window is None else str(window),
+    "" if cadence is None else str(cadence),
+    s.get("refresh_priority", "low"),
+    s.get("crawler_provider") or "",
+)
+print("\x1f".join(str(field) for field in fields))' 2>/dev/null
+  )"
 
   # Provider routing (spec §4.3): kill-switch > DB crawler_provider > env CRAWLER_PROVIDER
   ALLOW_CLOUD="${CRAWLER_ALLOW_CLOUD:-true}"
-  PROVIDER=$(echo "$line" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('crawler_provider') or '')" 2>/dev/null)
   [ -z "$PROVIDER" ] && PROVIDER="${CRAWLER_PROVIDER:-local}"
   [ "$ALLOW_CLOUD" = "false" ] && PROVIDER="local"
   # PROVIDER 值：local → 走 Crawl4AI（P1 實作）；firecrawl_cloud → 走 Firecrawl（既有路徑）
@@ -451,13 +461,14 @@ for item in d.get("candidates", []):
         continue
       fi
 
-      INSERTED=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('articles_inserted',0))" 2>/dev/null || echo "0")
-      DUPES=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('articles_duplicate',0))" 2>/dev/null || echo "0")
-      REFRESH_CHANGED=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('articles_refreshed_changed',0))" 2>/dev/null || echo "0")
-      REFRESH_UNCHANGED=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('articles_refreshed_unchanged',0))" 2>/dev/null || echo "0")
-      ART_ERRS=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('articles_errors',0))" 2>/dev/null || echo "0")
-      ENT_OK=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('entity_links_success',0))" 2>/dev/null || echo "0")
-      ENT_ERRS=$(echo "$WRITE_RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('entity_links_errors',0))" 2>/dev/null || echo "0")
+      # Single python3 call extracts all write counters (F-5)
+      WRITE_COUNTS=$(printf '%s' "$WRITE_RESULT" | python3 -c 'import sys, json
+d = json.load(sys.stdin)
+keys = ("articles_inserted", "articles_duplicate", "articles_refreshed_changed",
+        "articles_refreshed_unchanged", "articles_errors", "entity_links_success",
+        "entity_links_errors")
+print(" ".join(str(d.get(key, 0) or 0) for key in keys))' 2>/dev/null || echo "0 0 0 0 0 0 0")
+      read -r INSERTED DUPES REFRESH_CHANGED REFRESH_UNCHANGED ART_ERRS ENT_OK ENT_ERRS <<< "$WRITE_COUNTS"
 
       TOTAL_ARTICLES=$((TOTAL_ARTICLES + INSERTED + DUPES + REFRESH_CHANGED + REFRESH_UNCHANGED))
       ERRORS=$((ERRORS + ART_ERRS + ENT_ERRS))
