@@ -12,6 +12,10 @@ import xml.etree.ElementTree as ET
 from typing import Protocol, runtime_checkable
 import urllib.request
 import urllib.error
+import urllib.parse
+import json
+import time
+import asyncio
 
 # Import hash_markdown from the normalization module (same as _scrape_markdown.py)
 try:
@@ -157,12 +161,150 @@ class FirecrawlProvider:
     provider_name = "firecrawl_cloud"
 
     async def scrape(self, url: str) -> ScrapeResult:
-        """TODO(P1 Step 3): wrap _scrape_markdown.py logic via asyncio.to_thread."""
-        raise NotImplementedError("FirecrawlProvider.scrape — implement in P1 Step 3")
+        """Scrape via Firecrawl /v1/scrape (spec §4.2), wrapped in to_thread."""
+        token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
+        if not token:
+            return ScrapeResult(success=False, error="FIRECRAWL_KEY or FIRECRAWL_API_KEY is required", provider="firecrawl_cloud")
+        return await asyncio.to_thread(self._scrape_sync, url, token)
+
+    def _scrape_sync(self, url: str, token: str) -> ScrapeResult:
+        # Logic mirrors _scrape_markdown.py L79-112
+        def env_int(name: str, default: int, minimum: int = 0) -> int:
+            raw = os.environ.get(name, "").strip()
+            if not raw: return max(default, minimum)
+            try: value = int(raw)
+            except ValueError: value = default
+            return max(value, minimum)
+
+        def scrape_timeout_ms(url: str, attempt: int) -> int:
+            base = env_int("FIRECRAWL_SCRAPE_TIMEOUT_MS", 120000, 30000)
+            step = env_int("FIRECRAWL_SCRAPE_TIMEOUT_STEP_MS", 30000, 0)
+            bonus_base = env_int("FIRECRAWL_SCRAPE_SCHOLARLY_TIMEOUT_BONUS_MS", 60000, 0)
+            host = urllib.parse.urlparse(url).netloc.lower()
+            bonus = bonus_base if any(d in host for d in ("biorxiv.org", "medrxiv.org", "arxiv.org")) else 0
+            return base + bonus + (attempt * step)
+
+        retryable = {408, 409, 425, 429, 500, 502, 503, 504}
+        max_attempts = env_int("FIRECRAWL_SCRAPE_ATTEMPTS", 4, 1)
+        last_error = None
+
+        for attempt in range(max_attempts):
+            timeout_ms = scrape_timeout_ms(url, attempt)
+            payload = {
+                "url": url,
+                "formats": ["markdown"],
+                "onlyMainContent": True,
+                "timeout": timeout_ms,
+                "waitFor": 2000,
+            }
+            req = urllib.request.Request(
+                "https://api.firecrawl.dev/v1/scrape",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=max(90, (timeout_ms // 1000) + 30)) as resp:
+                    data = json.loads(resp.read())
+                if not data.get("success"):
+                    last_error = json.dumps(data)
+                    if attempt == max_attempts - 1: break
+                    time.sleep(2 ** attempt)
+                    continue
+                
+                markdown = data.get("data", {}).get("markdown", "")
+                paywall_detected, paywall_signal = detect_paywall(markdown)
+                return ScrapeResult(
+                    success=True,
+                    markdown=markdown,
+                    word_count=len(markdown.split()),
+                    content_hash=hash_markdown(markdown),
+                    paywall_detected=paywall_detected,
+                    paywall_signal=paywall_signal,
+                    provider="firecrawl_cloud",
+                    firecrawl_timeout_ms=timeout_ms
+                )
+            except urllib.error.HTTPError as exc:
+                body = exc.read().decode("utf-8", errors="ignore") if exc.fp else ""
+                last_error = f"HTTP {exc.code}: {body or exc.reason}"
+                if exc.code not in retryable or attempt == max_attempts - 1: break
+                time.sleep(2 ** attempt)
+            except Exception as exc:
+                last_error = str(exc)
+                if attempt == max_attempts - 1: break
+                time.sleep(2 ** attempt)
+
+        return ScrapeResult(
+            success=False,
+            error=last_error or "Unknown Firecrawl scrape failure",
+            provider="firecrawl_cloud"
+        )
 
     def map(self, url: str, *, search: str | None = None, limit: int = 50) -> list[dict]:
-        """TODO(P1 Step 3): call firecrawl_map logic from _discover_article_urls.py."""
-        raise NotImplementedError("FirecrawlProvider.map — implement in P1 Step 3")
+        """Discover URLs via Firecrawl /v2/map (spec §4.2), wrapped in to_thread."""
+        token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
+        if not token:
+            return []
+        return asyncio.run(asyncio.to_thread(self._map_sync, url, token, search, limit))
+
+    def _map_sync(self, url: str, token: str, search: str | None, limit: int) -> list[dict]:
+        # Logic mirrors _discover_article_urls.py firecrawl_map L225-269
+        def env_int(name: str, default: int, minimum: int = 0) -> int:
+            raw = os.environ.get(name, "").strip()
+            if not raw: return max(default, minimum)
+            try: value = int(raw)
+            except ValueError: value = default
+            return max(value, minimum)
+
+        timeout_ms = env_int("DISCOVERY_MAP_TIMEOUT_MS", 90000)
+        retry_attempts = env_int("DISCOVERY_MAP_RETRY_ATTEMPTS", 5)
+        retryable = {408, 409, 425, 429, 500, 502, 503, 504}
+
+        # Mirrors _discover_article_urls.py firecrawl_map(): when the url is a
+        # sitemap itself, pass it as the sitemap param; otherwise let Firecrawl infer.
+        sitemap = url if (url.lower().endswith(".xml") or "sitemap" in url.lower()) else None
+        payload = {
+            "url": url,
+            "sitemap": sitemap,
+            "includeSubdomains": False,
+            "ignoreQueryParameters": True,
+            "limit": limit,
+            "timeout": timeout_ms,
+        }
+        if search:
+            payload["search"] = search
+
+        last_error = None
+        for attempt in range(retry_attempts):
+            req = urllib.request.Request(
+                "https://api.firecrawl.dev/v2/map",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=max(70, (timeout_ms // 1000) + 20)) as resp:
+                    data = json.loads(resp.read())
+                break
+            except urllib.error.HTTPError as exc:
+                last_error = exc
+                if exc.code not in retryable or attempt == retry_attempts - 1: raise
+                time.sleep(2 ** attempt)
+            except Exception as exc:
+                last_error = exc
+                if attempt == retry_attempts - 1: raise
+                time.sleep(2 ** attempt)
+        
+        links = data.get("links", [])
+        if not isinstance(links, list):
+            return []
+        return [{"url": l, "title": "", "source": "firecrawl_cloud"} for l in links]
 
 
 def create_provider(name: str | None = None) -> CrawlerProvider:
