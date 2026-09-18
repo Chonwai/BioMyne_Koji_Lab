@@ -19,11 +19,11 @@ Budget: ~18 iterations
 
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
-| DISCOVER（目標檔案現況確認） | 1 | 1 | ✅ done（Neo 直接讀 3 關鍵檔案） |
-| PLAN（P1 實作 blueprint） | 0 | 1 | ➖ skipped（spec §4/§5 已定義，避免 over-planning） |
-| EXECUTE（trinity 分步） | 0 | 3 | 🔄 active |
-| VERIFY（smith strict 93） | 0 | 3 | pending |
-| REPAIR（trinity bounded） | 0 | 2 | pending |
+| DISCOVER | 1 | 1 | ✅ done |
+| PLAN | 0 | 1 | ➖ skipped |
+| EXECUTE（Step 1–6） | 3 | 3 | ✅ done（10 commits） |
+| VERIFY（edison-doc-reviewer） | 1 | 3 | ⚠️ R1 85.7 REPAIRABLE |
+| REPAIR（trinity + edison-hotfixer） | 6 | 2 | ❌ ALL FAILED（rate-limit/network） |
 
 ## 任務形態與範圍
 
@@ -46,6 +46,6 @@ Budget: ~18 iterations
 
 ## Circuit Breaker
 
-Consecutive fails: 0/3
-Budget: 5%
-Status: HEALTHY
+Consecutive fails: 1/3（REPAIR agent 失敗，非產品 code）
+Budget: 65%
+Status: **BLOCKED**（ESCALATED — 等待人類指示）
