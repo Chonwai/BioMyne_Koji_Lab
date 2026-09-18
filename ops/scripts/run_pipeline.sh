@@ -348,14 +348,15 @@ while IFS= read -r line; do
     echo -e "    ${YELLOW}→${NC} Scraping article: ${ARTICLE_URL}"
 
     ARTICLE_TMP=$(mktemp "$SCRAPED_DIR/.article_md_XXXXXX")
+    # F-1: every scrape goes through _scrape_via_provider.py (provider-parameterized);
+    # no direct _scrape_markdown.py branch remains.
     set +e
-    if [ "$PROVIDER" = "firecrawl_cloud" ]; then
-      SCRAPE_JSON=$(FIRECRAWL_KEY="$FIRECRAWL_KEY" python3 "$SCRIPT_DIR/_scrape_markdown.py" "$ARTICLE_URL")
-    else
-      SCRAPE_JSON=$("$REPO_ROOT/.venv/bin/python3" "$SCRIPT_DIR/_scrape_via_provider.py" "$ARTICLE_URL" "$PROVIDER" 2>/dev/null || python3 "$SCRIPT_DIR/_scrape_markdown.py" "$ARTICLE_URL")
-    fi
+    SCRAPE_JSON=$("$REPO_ROOT/.venv/bin/python3" "$SCRIPT_DIR/_scrape_via_provider.py" "$ARTICLE_URL" "$PROVIDER" 2>/dev/null)
     SCRAPE_EXIT=$?
     set -e
+    if [ "$SCRAPE_EXIT" -ne 0 ]; then
+      echo "    ${YELLOW}⚠${NC} Provider scrape failed for $ARTICLE_URL (exit $SCRAPE_EXIT)"
+    fi
 
     echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print(d.get("markdown", ""), end="")' > "$ARTICLE_TMP" 2>/dev/null || true
     SCRAPED_CONTENT_HASH=$(echo "$SCRAPE_JSON" | python3 -c 'import sys, json; d=json.load(sys.stdin); print(d.get("content_hash", "") or "")' 2>/dev/null)
