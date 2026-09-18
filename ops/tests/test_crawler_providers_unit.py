@@ -1,6 +1,11 @@
 """Unit tests for crawler_providers module (spec §8.1)."""
 
+import asyncio
 import dataclasses
+import json
+import time
+import urllib.error
+
 import pytest
 
 from crawler_providers import (
@@ -11,6 +16,22 @@ from crawler_providers import (
 )
 from _pipeline_normalization import hash_markdown
 from _scrape_markdown import PAYWALL_MARKERS
+
+
+class _FakeHTTPResponse:
+    """Minimal urlopen-compatible response (context manager + read)."""
+
+    def __init__(self, payload: bytes):
+        self._payload = payload
+
+    def read(self) -> bytes:
+        return self._payload
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
 
 
 # ── 8.1 Unit Tests ──────────────────────────────────────────────
@@ -123,3 +144,155 @@ class TestProviderFactory:
         monkeypatch.setenv("CRAWLER_PROVIDER", "firecrawl_cloud")
         p = create_provider()
         assert isinstance(p, FirecrawlProvider)
+
+
+# ── F-3 additions: map() + retry coverage ──────────────────────
+
+SITEMAP_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.com/article/one</loc></url>
+  <url><loc>https://example.com/article/two</loc></url>
+  <url><loc>https://example.com/article/three</loc></url>
+</urlset>
+"""
+
+
+class TestProviderMap:
+    """LocalCrawl4AIProvider.map parses sitemap XML (spec §8.1)."""
+
+    def test_map_parses_sitemap_xml(self, monkeypatch):
+        requests = []
+
+        def fake_urlopen(req, timeout=None):
+            requests.append(req)
+            return _FakeHTTPResponse(SITEMAP_XML.encode("utf-8"))
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        links = LocalCrawl4AIProvider().map("https://example.com/sitemap.xml")
+
+        assert [item["url"] for item in links] == [
+            "https://example.com/article/one",
+            "https://example.com/article/two",
+            "https://example.com/article/three",
+        ]
+        assert all(item["source"] == "local" for item in links)
+        assert len(requests) == 1  # direct .xml URL never falls back
+
+    def test_map_respects_limit(self, monkeypatch):
+        monkeypatch.setattr(
+            "urllib.request.urlopen",
+            lambda req, timeout=None: _FakeHTTPResponse(SITEMAP_XML.encode("utf-8")),
+        )
+        links = LocalCrawl4AIProvider().map("https://example.com/sitemap.xml", limit=2)
+        assert [item["url"] for item in links] == [
+            "https://example.com/article/one",
+            "https://example.com/article/two",
+        ]
+
+    def test_map_falls_back_to_sitemap_path(self, monkeypatch):
+        requested = []
+
+        def fake_urlopen(req, timeout=None):
+            requested.append(req.full_url)
+            if req.full_url.endswith("/sitemap.xml"):
+                return _FakeHTTPResponse(SITEMAP_XML.encode("utf-8"))
+            raise urllib.error.URLError("not a sitemap")
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        links = LocalCrawl4AIProvider().map("https://example.com")
+
+        assert requested == ["https://example.com", "https://example.com/sitemap.xml"]
+        assert len(links) == 3
+
+    def test_map_returns_empty_list_when_all_candidates_fail(self, monkeypatch):
+        def fake_urlopen(req, timeout=None):
+            raise urllib.error.URLError("offline")
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        assert LocalCrawl4AIProvider().map("https://example.com") == []
+
+
+class TestFirecrawlRetry:
+    """FirecrawlProvider retries retryable HTTP errors (spec §8.1)."""
+
+    SCRAPE_OK_BODY = {
+        "success": True,
+        "data": {"markdown": "# Article\n\n" + ("word " * 60)},
+    }
+
+    def _fake_key(self, monkeypatch):
+        monkeypatch.setenv("FIRECRAWL_KEY", "test-token")
+        monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+        monkeypatch.setattr(time, "sleep", lambda _seconds: None)
+
+    def test_scrape_retries_then_succeeds(self, monkeypatch):
+        self._fake_key(monkeypatch)
+        monkeypatch.setenv("FIRECRAWL_SCRAPE_ATTEMPTS", "3")
+        calls = {"count": 0}
+        body = json.dumps(self.SCRAPE_OK_BODY).encode("utf-8")
+
+        def fake_urlopen(req, timeout=None):
+            calls["count"] += 1
+            if calls["count"] == 1:
+                raise urllib.error.HTTPError(req.full_url, 503, "Service Unavailable", None, None)
+            return _FakeHTTPResponse(body)
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        result = asyncio.run(FirecrawlProvider().scrape("https://example.com/article"))
+
+        assert result.success is True
+        assert result.word_count >= 50
+        assert result.content_hash is not None
+        assert calls["count"] == 2  # one retry after the 503
+
+    def test_scrape_does_not_retry_non_retryable_error(self, monkeypatch):
+        self._fake_key(monkeypatch)
+        monkeypatch.setenv("FIRECRAWL_SCRAPE_ATTEMPTS", "3")
+        calls = {"count": 0}
+
+        def fake_urlopen(req, timeout=None):
+            calls["count"] += 1
+            raise urllib.error.HTTPError(req.full_url, 404, "Not Found", None, None)
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        result = asyncio.run(FirecrawlProvider().scrape("https://example.com/missing"))
+
+        assert result.success is False
+        assert calls["count"] == 1  # 404 is not retryable
+        assert "404" in (result.error or "")
+
+    def test_scrape_stops_after_max_attempts(self, monkeypatch):
+        self._fake_key(monkeypatch)
+        monkeypatch.setenv("FIRECRAWL_SCRAPE_ATTEMPTS", "3")
+        calls = {"count": 0}
+
+        def fake_urlopen(req, timeout=None):
+            calls["count"] += 1
+            raise urllib.error.HTTPError(req.full_url, 503, "Service Unavailable", None, None)
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        result = asyncio.run(FirecrawlProvider().scrape("https://example.com/article"))
+
+        assert result.success is False
+        assert calls["count"] == 3  # exactly FIRECRAWL_SCRAPE_ATTEMPTS attempts
+        assert "503" in (result.error or "")
+
+    def test_map_retries_then_succeeds(self, monkeypatch):
+        self._fake_key(monkeypatch)
+        monkeypatch.setenv("DISCOVERY_MAP_RETRY_ATTEMPTS", "3")
+        calls = {"count": 0}
+        body = json.dumps(
+            {"success": True, "links": ["https://example.com/article/one"]}
+        ).encode("utf-8")
+
+        def fake_urlopen(req, timeout=None):
+            calls["count"] += 1
+            if calls["count"] == 1:
+                raise urllib.error.HTTPError(req.full_url, 503, "Service Unavailable", None, None)
+            return _FakeHTTPResponse(body)
+
+        monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+        links = FirecrawlProvider().map("https://example.com")
+
+        assert [item["url"] for item in links] == ["https://example.com/article/one"]
+        assert calls["count"] == 2
