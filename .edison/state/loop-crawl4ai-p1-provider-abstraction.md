@@ -19,9 +19,9 @@ Budget: ~18 iterations
 
 | Stage | Current Round | Max Rounds | Status |
 | --- | :---: | :---: | --- |
-| DISCOVER（目標檔案現況確認） | 0 | 1 | pending |
-| PLAN（P1 實作 blueprint） | 0 | 1 | pending |
-| EXECUTE（trinity 分步） | 0 | 3 | pending |
+| DISCOVER（目標檔案現況確認） | 1 | 1 | ✅ done（Neo 直接讀 3 關鍵檔案） |
+| PLAN（P1 實作 blueprint） | 0 | 1 | ➖ skipped（spec §4/§5 已定義，避免 over-planning） |
+| EXECUTE（trinity 分步） | 0 | 3 | 🔄 active |
 | VERIFY（smith strict 93） | 0 | 3 | pending |
 | REPAIR（trinity bounded） | 0 | 2 | pending |
 
@@ -34,10 +34,18 @@ Budget: ~18 iterations
 
 ## Iterations
 
-（待填）
+### Iteration 1 — DISCOVER（Neo 直接掃描）
+
+讀 3 關鍵檔案確認 P1 接線點：
+- `_scrape_markdown.py`：Firecrawl 呼叫 L79–112 確認；輸出 JSON 含 `firecrawl_timeout_ms`（spec §4.4 7 欄相容，但 ScrapeResult dataclass 需決定是否保留此欄）
+- `run_pipeline.sh`：provider routing 已在 L302–308（上輪 B-2），但 `PROVIDER` 變數**尚未接入** discovery/scrape 呼叫（P1 接線點）
+- `_discover_article_urls.py`：`firecrawl_map()` L225–269 確認（map 回傳 list[dict]）
+- **決定：跳過 architect blueprint**（spec §4/§5 已定義介面與檔案清單；避免 over-planning）→ 直接 trinity 分步 EXECUTE
+
+**Outcome: DISCOVER ✅ → EXECUTE（trinity 分步，每步小 commit）**
 
 ## Circuit Breaker
 
 Consecutive fails: 0/3
-Budget: 0%
+Budget: 5%
 Status: HEALTHY
