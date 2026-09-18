@@ -2,7 +2,7 @@
 
 Goal: 正式啟動 P1 Provider Abstraction（spec §4/§5/Step 2–3 定義）：新增 `ops/scripts/crawler_providers.py`（CrawlerProvider Protocol + ScrapeResult + create_provider + FirecrawlProvider + LocalCrawl4AIProvider），將 `_scrape_markdown.py` 抽為 wrapper、`_discover_article_urls.py` firecrawl_map 走 provider.map、`_fetch_firecrawl_credit_usage.py` 條件化、`smoke_test.sh` 本地 health check、`ops/tests` pytest。達 strict 93 閘門。hackathon 式多 commit。
 Started: 2026-09-18
-Status: active
+Status: complete
 Quality Mode: strict (93)
 Depth Level: L3 Deep Dive
 Snapshot Cache: /Users/chonwai/Desktop/BioMyne_Intelligence_Operating_Layer/BiomyneKoji/biomyne-koji/docs/.project-context.md (STALE)
@@ -46,9 +46,9 @@ Budget: ~18 iterations
 
 ## Circuit Breaker
 
-Consecutive fails: 1/3（REPAIR agent 失敗，非產品 code）
+Consecutive fails: 1/3（REPAIR agent 失敗，非產品 code）— 歷史暫態，已於 Iteration 11 解除
 Budget: 65%
-Status: **BLOCKED**（ESCALATED — 等待人類指示）
+Status: HEALTHY（Loop complete ✅）
 ### Iteration 11 — VERIFY R2（smith 複審）
 
 **Measured Score: 95.25/100 → PASS**（+9.55 from 85.7；CR-D1=90 D2=90 D3=N/A D4=95 D5=100 D6=95 D7=100）
