@@ -11,6 +11,11 @@ import urllib.request
 
 
 def main() -> int:
+    # Skip credit check in local-only mode (no source uses cloud)
+    if os.environ.get("CRAWLER_ALLOW_CLOUD", "true").lower() == "false":
+        print(json.dumps({"skipped": "local-only mode (CRAWLER_ALLOW_CLOUD=false)", "remaining_credits": None}))
+        return 0
+
     token = os.environ.get("FIRECRAWL_KEY") or os.environ.get("FIRECRAWL_API_KEY")
     if not token:
         print(json.dumps({"error": "FIRECRAWL_KEY or FIRECRAWL_API_KEY is required"}))
