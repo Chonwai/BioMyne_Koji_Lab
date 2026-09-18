@@ -34,7 +34,13 @@ fi
 HERMES_URL="${HERMES_URL:-http://localhost:8642}"
 HERMES_KEY="${HERMES_KEY:-koji-phase1-local}"
 OLLAMA_URL="${OLLAMA_URL:-http://localhost:11434}"
-FIRECRAWL_KEY="${FIRECRAWL_KEY:?ERROR: FIRECRAWL_KEY not set in .env}"
+# --- F-6: only require FIRECRAWL_KEY when cloud scraping may be used ---
+ALLOW_CLOUD="${CRAWLER_ALLOW_CLOUD:-true}"
+if [ "$ALLOW_CLOUD" != "false" ] && [ -z "${FIRECRAWL_KEY:-}" ]; then
+  echo "Error: FIRECRAWL_KEY is required unless CRAWLER_ALLOW_CLOUD=false (local-only mode)"
+  exit 1
+fi
+FIRECRAWL_KEY="${FIRECRAWL_KEY:-}"
 SUPABASE_URL="${SUPABASE_URL:?ERROR: SUPABASE_URL not set in .env}"
 SUPABASE_KEY="${SUPABASE_SERVICE_ROLE_KEY:?ERROR: SUPABASE_SERVICE_ROLE_KEY not set in .env}"
 LANGFUSE_URL="${LANGFUSE_URL:-http://localhost:3001}"
@@ -89,36 +95,13 @@ else
   log_info "  Raw: $(echo "$CHAT_RESP" | head -c 200)"
 fi
 
-# ── 4. Firecrawl ──
-header "4. Firecrawl (Web Scraping)"
-SCRAPE_RESP=$(curl -s --max-time 30 -X POST https://api.firecrawl.dev/v1/scrape \
-  -H "Authorization: Bearer $FIRECRAWL_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.statnews.com/", "formats": ["markdown"], "onlyMainContent": true}' 2>/dev/null)
-
-if echo "$SCRAPE_RESP" | python3 -c "
-import sys, json
-d = json.load(sys.stdin)
-if d.get('success'):
-    md = d['data'].get('markdown', '')
-    print(f'Scraped {len(md.split())} words')
-    sys.exit(0)
-else:
-    sys.exit(1)
-" 2>/dev/null; then
-  WORD_COUNT=$(echo "$SCRAPE_RESP" | python3 -c "
-import sys, json
-md = json.load(sys.stdin)['data'].get('markdown', '')
-print(len(md.split()))
-" 2>/dev/null)
-  log_pass "Firecrawl scraped STAT News ($WORD_COUNT words)"
-else
-  log_fail "Firecrawl scrape failed"
-fi
-
-# ── Section 5b: Crawl4AI local health check (when CRAWLER_PROVIDER=local) ──
-if [ "${CRAWLER_PROVIDER:-local}" = "local" ]; then
-  echo -e "\n${CYAN}[5b] Crawl4AI local health check...${NC}"
+# ── 4. Web Scraping (provider-aware) ──
+header "4. Web Scraping (provider-aware)"
+if [ "$ALLOW_CLOUD" = "false" ]; then
+  # local-only mode: no Firecrawl check needed
+  log_pass "Cloud disabled (CRAWLER_ALLOW_CLOUD=false), skipping Firecrawl check"
+elif [ "${CRAWLER_PROVIDER:-local}" = "local" ]; then
+  # local provider → Crawl4AI health check via _scrape_via_provider.py
   CRAWL4AI_RESP=$("$REPO_ROOT/.venv/bin/python3" "$SCRIPT_DIR/_scrape_via_provider.py" "https://www.biorxiv.org/content/10.1101/2024.05.21.595135v1" 2>/dev/null)
   if echo "$CRAWL4AI_RESP" | python3 -c "
 import sys, json
@@ -133,6 +116,32 @@ else:
     log_pass "Crawl4AI local scrape OK"
   else
     log_fail "Crawl4AI local scrape failed"
+  fi
+else
+  # firecrawl_cloud → Firecrawl API check
+  SCRAPE_RESP=$(curl -s --max-time 30 -X POST https://api.firecrawl.dev/v1/scrape \
+    -H "Authorization: Bearer $FIRECRAWL_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{"url": "https://www.statnews.com/", "formats": ["markdown"], "onlyMainContent": true}' 2>/dev/null)
+
+  if echo "$SCRAPE_RESP" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+if d.get('success'):
+    md = d['data'].get('markdown', '')
+    print(f'Scraped {len(md.split())} words')
+    sys.exit(0)
+else:
+    sys.exit(1)
+" 2>/dev/null; then
+    WORD_COUNT=$(echo "$SCRAPE_RESP" | python3 -c "
+import sys, json
+md = json.load(sys.stdin)['data'].get('markdown', '')
+print(len(md.split()))
+" 2>/dev/null)
+    log_pass "Firecrawl scraped STAT News ($WORD_COUNT words)"
+  else
+    log_fail "Firecrawl scrape failed"
   fi
 fi
 
