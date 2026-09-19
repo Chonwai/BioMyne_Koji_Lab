@@ -72,7 +72,8 @@ if [ -z "$SUPABASE_DB_PASSWORD" ]; then
   exit 1
 fi
 
-DB_URL="postgresql://postgres.${SUPABASE_PROJECT_REF}:${SUPABASE_DB_PASSWORD}@db.${SUPABASE_PROJECT_REF}.supabase.co:5432/postgres"
+DB_PASS_ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote_plus(sys.argv[1], safe=''))" "$SUPABASE_DB_PASSWORD")
+DB_URL="postgresql://postgres.${SUPABASE_PROJECT_REF}:${DB_PASS_ENCODED}@db.${SUPABASE_PROJECT_REF}.supabase.co:5432/postgres"
 
 # --- Commands ---
 case "${1:-help}" in
@@ -101,7 +102,8 @@ case "${1:-help}" in
     echo "=== Migration Status ==="
     echo "Project: $SUPABASE_PROJECT_REF"
     echo ""
-    supabase migration list
+    # Use --db-url mode (not --linked) so it works without CLI account access
+    supabase migration list --db-url "$DB_URL"
     ;;
   new)
     name="${2:?Usage: db_migrate.sh new <name>}"

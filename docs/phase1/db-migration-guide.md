@@ -83,6 +83,8 @@ supabase migration repair --status applied 20260920000040
 ./ops/scripts/db_migrate.sh list   # all should show as "Applied"
 ```
 
+> **Note:** `list` runs in `--db-url` mode (no CLI account / `--linked` access needed), same as `status` and `dry-run`.
+
 ## Daily Workflow: Adding a New Migration
 
 ```bash
