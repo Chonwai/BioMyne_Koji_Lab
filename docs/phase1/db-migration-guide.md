@@ -5,7 +5,7 @@
 
 ## Why Migration Tooling?
 
-Before this guide, all 6 SQL files (`sql/001`–`006`) were applied manually via Supabase SQL Editor. This creates three risks:
+Before this guide, `sql/001`–`005` were applied manually via Supabase SQL Editor, and `sql/006` was never successfully applied (manual apply attempts blocked — see P2 loop state Step 1 BLOCKED). This creates three risks:
 
 | Risk | Consequence |
 |------|-------------|
@@ -22,7 +22,7 @@ Supabase CLI migration (`db push`) solves all three: it records every applied mi
 | `supabase/` directory | ✅ Initialized (`supabase init`) |
 | `supabase/migrations/` | ✅ 6 timestamp-prefixed migration files (copied from `sql/`) |
 | `sql/` directory | ⚠️ Retained as **read-only mirror** (see `sql/README.md`) |
-| Remote DB | 001–005 applied manually; 006 applied manually; **no `schema_migrations` table yet** |
+| Remote DB | 001–005 applied manually; **006 未 apply**（manual 從未成功，見 P2 loop state Step 1 BLOCKED）; **no `schema_migrations` table yet** |
 | `ops/scripts/db_migrate.sh` | ✅ Created |
 
 ## Migration Files
@@ -38,7 +38,7 @@ Supabase CLI migration (`db push`) solves all three: it records every applied mi
 
 ## First-Time Setup (after getting DB password)
 
-All 6 migrations were already applied manually to the remote DB. Supabase CLI doesn't know this yet. You need to **baseline** the remote state before pushing anything new.
+Migrations 001–005 were already applied manually to the remote DB (006 was never applied). Supabase CLI doesn't know this yet. You need to **baseline** the remote state before pushing anything new.
 
 ### Step 1: Set credentials
 
@@ -66,13 +66,15 @@ supabase migration repair --status applied 20260920000030
 supabase migration repair --status applied 20260920000040
 ```
 
-> **Why repair 001–005 only?** `006_crawl4ai_migration.sql` may not have been applied yet (check with SQL Editor: `SELECT * FROM schema_migrations;`). If it has, repair it too. If not, let `db push` apply it.
+> **Why repair 001–005 only?** 006 確定未 apply（manual 從未成功，見 P2 loop state Step 1 BLOCKED）— **不要 repair 它**。Step 4 由 `db push` 套用 006。
 
 ### Step 4: Push remaining migrations
 
 ```bash
 ./ops/scripts/db_migrate.sh dry-run   # should show only 006 (or nothing)
 ./ops/scripts/db_migrate.sh push      # apply with confirmation
+
+> **Note (CI / non-interactive):** `push` prompts for confirmation via `read`. In a non-interactive environment the read gets EOF immediately → `confirm` is empty → the script prints `Aborted.` and exits 0 without applying anything. If you need non-interactive push, either pipe `yes` or remove the guard deliberately — but prefer keeping the interactive guard for safety.
 ```
 
 ### Step 5: Verify
