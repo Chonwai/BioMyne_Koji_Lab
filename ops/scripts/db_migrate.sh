@@ -73,7 +73,9 @@ if [ -z "$SUPABASE_DB_PASSWORD" ]; then
 fi
 
 DB_PASS_ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote_plus(sys.argv[1], safe=''))" "$SUPABASE_DB_PASSWORD")
-DB_URL="postgresql://postgres.${SUPABASE_PROJECT_REF}:${DB_PASS_ENCODED}@db.${SUPABASE_PROJECT_REF}.supabase.co:5432/postgres"
+# Pooler host (transaction mode, 6543) — project region is ap-northeast-1 (Tokyo)
+SUPABASE_POOLER_HOST="${SUPABASE_POOLER_HOST:-aws-0-ap-northeast-1.pooler.supabase.com}"
+DB_URL="postgresql://postgres.${SUPABASE_PROJECT_REF}:${DB_PASS_ENCODED}@${SUPABASE_POOLER_HOST}:6543/postgres"
 
 # --- Commands ---
 case "${1:-help}" in
