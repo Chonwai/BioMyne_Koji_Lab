@@ -46,3 +46,18 @@ Budget: ~10 iterations
 Consecutive fails: 0/3
 Budget: 0%
 Status: HEALTHY
+### Iteration 1-3 — EXECUTE + VERIFY
+
+- EXECUTE（trinity）：supabase init + sql/001-006 移入 supabase/migrations/（timestamp 前綴）+ db_migrate.sh + .env.example + guide（3 commits: e0f9dce/601ebb9/b2cc1f6）
+- VERIFY R1（smith）：92.25 REPAIRABLE — CRA-001 High（guide 006 矛盾）/ CRA-002 Medium（percent-encode）/ CRA-003 Medium（list --db-url）/ CRA-004 Medium（P2 state）/ CRA-005/006 Low
+- REPAIR（trinity）：6 findings 全修 + 掃同族（guide :8/:41）（3 commits: 6c1bef6/a034e07/41fb129）
+- VERIFY R2（smith）：**95.20 PASS** — 6/6 FIXED、percent-encode libpq 4 組實測、--db-url 5 處、byte-identical 6/6、state 已同步；CRA-007 Low（guide CI note exit code 描述，不阻塞）
+
+## 最終結果
+
+**DB Migration 工具鏈建立完成 ✅（PASS 95.20/93）**
+- supabase/migrations/：6 個 timestamp 前綴 migration（001-006，byte-identical）
+- ops/scripts/db_migrate.sh：dry-run/push/list/new/status（Bash 3.2、percent-encoded、push confirm、help 免憑證）
+- docs/phase1/db-migration-guide.md：首次 setup（repair 001-005 + push 006）+ 金律 + rollback
+- 待用戶：提供 SUPABASE_DB_PASSWORD → 執行首次 setup（db push --dry-run → repair 001-005 → push 006）
+- CRA-007（Low）：guide Step 4 CI note exit code 描述待修正（下次 touch 時）
