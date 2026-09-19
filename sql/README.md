@@ -18,5 +18,5 @@
 ## Why keep this mirror?
 
 - Human-readable index for code review (numbered prefix is easier to scan than timestamps)
-- Quick reference for `run_pipeline.sh` which calls these directly in dev mode
+- Quick reference for code review (numbered prefix is easier to scan than timestamps)
 - Content is identical to `supabase/migrations/` — verified by `diff`

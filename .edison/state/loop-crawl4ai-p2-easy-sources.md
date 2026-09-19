@@ -36,8 +36,8 @@ Budget: ~16 iterations
 | DISCOVER（反爬現況 + Supabase） | 1 | 2 | ✅ done（Iteration 1） |
 | EXECUTE-Step1（sql/006 apply + DB 更新） | 0 | 2 | 🔴 **BLOCKED**（Supabase NXDOMAIN） |
 | EXECUTE-Step2（反爬實測） | 1 | 2 | ✅ done（Iteration 2 — 8/8 ✅） |
-| EXECUTE-Step3（content_hash 穩定率） | 0 | 2 | pending |
-| EXECUTE-Step4（20 runs 成功率） | 0 | 2 | pending |
+| EXECUTE-Step3（content_hash 穩定率） | 0 | 2 | ✅ done（Iteration 3 — 5/5 = 100%） |
+| EXECUTE-Step4（20 runs 成功率） | 1 | 2 | ✅ done（Iteration 4 — 160/160 = 100%） |
 
 ## Iteration 2 — Step 2 反爬實測（trinity）
 
@@ -78,6 +78,17 @@ Budget: ~16 iterations
 - commit `412ad36` fix(crawler): F-1+F-2 content_hash stability
 
 **Outcome: Step3 ✅ → EXECUTE-Step4（20 runs 成功率）**
+
+### Iteration 4 — EXECUTE-Step4（trinity 20 runs 成功率）
+
+**結果：160/160 runs（100%）全部成功 ✅（AC-1 PASS）**
+
+- 8 sources × 20 runs = 160 次本地 provider scrape（`LocalCrawl4AIProvider`），success = True AND word_count ≥ 100
+- 平均成功率 100%（spec ≥95%）；最低單一 source 100%（spec ≥80%）；無 403 / timeout / paywall
+- 產出：`docs/phase1/crawl4ai-p2-success-rates.md`（新增）
+- commit `3e19421` docs: add P2 success-rate statistics (160 runs, 100% across 8 sources)
+
+**Outcome: Step4 ✅ → VERIFY（smith strict 93 gate）**
 
 ## Circuit Breaker
 
