@@ -65,6 +65,20 @@ Budget: ~16 iterations
 
 **Outcome: DISCOVER ✅ → EXECUTE-Step2（反爬實測，純本地）**
 
+### Iteration 2 — EXECUTE-Step2（trinity 反爬實測）
+
+**8/8 easy sources 本地抓取全部成功**（含 STAT/Fierce 額外 4+4 篇，0 失敗）— 推翻 feasibility review 對 STAT/Fierce Cloudflare 的預期；RSS 直達 + 全文抓取皆通。commit `d39db9a`（docs/phase1/crawl4ai-p2-antibotsnapshot.md）
+
+### Iteration 3 — EXECUTE-Step3（trinity content_hash 穩定率）
+
+**初始 40% ❌（2/5 穩定）→ 修復後 100% ✅（5/5）**
+- 飄移來源：Nature `_csrf` token / STAT OneTrust cookie modal（+453 words）/ GEN ADVERTISEMENT 行
+- 修復（412ad36）：F-1 hash 改用 fit_markdown（word_count 同步）；F-2 normalize 加 boilerplate 排除（CSRF/OneTrust/Nature banner/Sage banner/ADVERTISEMENT + MAX cap 防護）；36 tests pass
+- STAT word_count 1484→760（modal 排除後純正文）；hash 基底變更 → DB 既有記錄接受一次不匹配（refresh 循環自然覆蓋）
+- commit `412ad36` fix(crawler): F-1+F-2 content_hash stability
+
+**Outcome: Step3 ✅ → EXECUTE-Step4（20 runs 成功率）**
+
 ## Circuit Breaker
 
 Consecutive fails: 0/3
