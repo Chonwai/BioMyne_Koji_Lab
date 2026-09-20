@@ -55,6 +55,26 @@ preflight() {
   fi
 }
 
+# ─── Hermes Gateway (Docker :8642 — LLM pipeline backend) ───
+start_hermes() {
+  log "Starting Hermes Gateway (Docker :8642)..."
+  cd "$KOJI_DIR"
+  if docker ps 2>/dev/null | grep -q koji-hermes; then
+    ok "Hermes Gateway already running"
+  else
+    docker compose up -d hermes-agent 2>&1 | tail -2
+    log "Waiting for Hermes Gateway to be ready..."
+    for i in $(seq 1 20); do
+      sleep 2
+      if curl -s -m 3 "$HERMES_URL/health" 2>/dev/null | python3 -c "import sys,json;sys.exit(0 if json.load(sys.stdin).get('status')=='ok' else 1)" 2>/dev/null; then
+        ok "Hermes Gateway ready at $HERMES_URL"
+        return 0
+      fi
+    done
+    warn "Hermes Gateway may still be starting — check docker compose logs hermes-agent"
+  fi
+}
+
 # ─── Dashboard (Next.js :3300) ───
 start_dashboard() {
   log "Starting Dashboard (Next.js on :$DASHBOARD_PORT)..."
@@ -104,7 +124,7 @@ status() {
   if [ -f "$KOJI_DIR/.env" ]; then
     project_ref="$(grep -E '^SUPABASE_PROJECT_REF=' "$KOJI_DIR/.env" | cut -d= -f2 || true)"
   fi
-  lsof -i :"$DASHBOARD_PORT" >/dev/null 2>&1 && ok "Dashboard :$DASHBOARD_PORT (http://localhost:$DASHBOARD_PORT)" || warn "Dashboard :$DASHBOARD_PORT — down"
+  docker ps 2>/dev/null | grep -q koji-hermes && ok "Hermes Gateway :8642" || warn "Hermes Gateway — down (run: ./demo_start.sh hermes)"
   docker ps 2>/dev/null | grep -qi langfuse && ok "Langfuse (Docker)" || warn "Langfuse — down"
   if [ -n "$project_ref" ]; then
     curl -s -m 3 "https://$project_ref.supabase.co/rest/v1/sources?select=id&limit=1" \
@@ -134,6 +154,7 @@ stop_all() {
 
 # ─── Dispatch ───
 case "${1:-full}" in
+  hermes)    start_hermes ;;
   dashboard) preflight; start_dashboard ;;
   pipeline)  preflight; run_pipeline ;;
   langfuse)  start_langfuse ;;
@@ -141,6 +162,7 @@ case "${1:-full}" in
   stop)      stop_all ;;
   full|all)
     preflight
+    start_hermes
     start_langfuse
     start_dashboard
     log "────────────────────────────"
@@ -149,5 +171,5 @@ case "${1:-full}" in
     ok "Status:     ./scripts/demo_start.sh status"
     log "────────────────────────────"
     ;;
-  *) echo "Usage: $0 [full|dashboard|pipeline|langfuse|status|stop]"; exit 1 ;;
+  *) echo "Usage: $0 [full|hermes|dashboard|pipeline|langfuse|status|stop]"; exit 1 ;;
 esac
